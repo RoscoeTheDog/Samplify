@@ -21,7 +21,7 @@ engine = create_engine('sqlite:///' + app_settings.database_name)
 Base.metadata.bind = engine
 
 # declare MetaData, so we can view it later
-meta = MetaData()
+table_meta = MetaData()
 
 # declare a new sessionmaker and connect to database 'engine'
 session = sessionmaker(bind=engine)
@@ -32,6 +32,9 @@ session = session()
 # call our logger locally
 logger = logging.getLogger('event_log')
 
+# instantiate ImageHandler
+image_handler = img_handler.ImageHandler()
+
 
 # temporary data to test behavior
 def insert_template():
@@ -39,8 +42,10 @@ def insert_template():
     # INPUT FOLDERS
     entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input')
     session.add(entry)
-    entry = InputDirectories(folder_path='D:/MOVIES & SHOWS')
-    session.add(entry)
+    # entry = InputDirectories(folder_path='C:/')
+    # session.add(entry)
+    # entry = InputDirectories(folder_path='D:/MOVIES & SHOWS')
+    # session.add(entry)
     entry = InputDirectories(folder_path='C:/Users/Aspen/Pictures')
     session.add(entry)
 
@@ -484,8 +489,6 @@ def samplify():
                         break  # avoid re-iterations for multiple actions on same file
 
 
-
-
 def check_date(file_date, start, end):
 
     # date = datetime.strptime(file_date, '%m/%d/%Y')
@@ -501,8 +504,6 @@ def check_date(file_date, start, end):
 
     else:
         return False
-
-
 
 
 def creation_date(path_to_file):
@@ -567,9 +568,6 @@ def learn_extension(file):
             session.commit()
 
 
-
-
-
 def store_codec_config(extension_type, v_format, v_codec, a_format, a_codec, sample_rate, channel_size):
 
     print(extension_type, v_format, v_codec, a_format, a_codec)
@@ -587,8 +585,6 @@ def store_codec_config(extension_type, v_format, v_codec, a_format, a_codec, sam
     if not entry_exist is True:
         session.add(entry)
         session.commit()
-
-
 
 
 def copy(input, output):
@@ -609,9 +605,9 @@ def copy(input, output):
 
 def db_print():
 
-    meta.reflect(engine)
+    table_meta.reflect(engine)
 
-    for table in meta.tables.values():
+    for table in table_meta.tables.values():
         print('Table Info: ' + f'{table}')
         for row in session.query(table):
             print(row)
@@ -638,117 +634,184 @@ def scan_files():
         for root, directory, files in os.walk(path):
 
             for f in files:
+                # create/clear dictionary
+                file_meta = {}
+
                 # merge our strings
                 path = os.path.join(root, f)
                 path = os.path.abspath(path)  # cleanup backslashes (Note: bug when nesting abspath and join-- use seperately)
 
+                # remove /paths/
+                _basename = os.path.basename(path)
+
                 # log the event
                 logger.info(f"Event: File scan {path} {os.path.isdir(path)}")
 
-                # remove /paths/ from string
-                _basename = os.path.basename(path)
+                # create a new dict
+                file_meta['file_path'] = path
 
-                # isolate file_name string
-                file_name = os.path.splitext(_basename)[0]
+                # file_name
+                file_meta["file_name"] = os.path.splitext(_basename)[0]
 
-                # isolate .ext string
-                extension_name = os.path.splitext(_basename)[1]
+                # .extension
+                file_meta["extension"] = os.path.splitext(_basename)[1]
 
-                # get creation date
-                date = creation_date(path)
+                # creation date
+                file_meta["date_created"] = creation_date(path)
 
-                # collect meta-data from PyAV
-                meta_dict = av_handler.meta_info(path)
+                # AV info
+                av_meta = av_handler.meta_info(path)  # returns dict
+                file_meta.update(av_meta)  # update dict
 
-                if meta_dict['succeeded'] is False:
-                    stdout, stderr = av_handler.meta_ffprobe(path)
-                    meta_dict = av_handler.parse_ffprobe(stdout, stderr)
-                    print(meta_dict)
-
-                    # time.sleep(10)
+                # probe if AV fails
+                if file_meta['succeeded'] is False:
+                    stdout, stderr = av_handler.ffprobe(path)
+                    ffprobe_meta = av_handler.parse_ffprobe(stdout, stderr)  # returns dictionary of parsed metadata
+                    file_meta.update(ffprobe_meta)
 
                 # VIDEO TABLE
-                if meta_dict['v_stream'] is True:
-
-                    entry = FilesVideo(
-                        file_path=path,
-                        file_name=file_name,
-                        extension=extension_name,
-                        creation_date=date,
-                        v_stream=meta_dict['v_stream'],
-                        v_width=meta_dict['v_width'],
-                        v_height=meta_dict['v_height'],
-                        v_frame_rate=meta_dict['v_frame_rate'],
-                        v_pix_format=meta_dict['v_pix_fmt'],
-                        v_is_rgb=meta_dict['v_is_rgb'],
-                        a_stream=meta_dict['a_stream'],
-                        a_sample_rate=meta_dict['a_sample_rate'],
-                        a_bit_depth=meta_dict['a_bit_depth'],
-                        a_sample_fmt=meta_dict['a_sample_fmt'],
-                        a_bit_rate=meta_dict['a_bit_rate'],
-                        a_channels=meta_dict['channels'],
-                        a_channel_layout=meta_dict['channel_layout']
-                    )
-
-                    session.add(entry)
+                if file_meta['v_stream'] is True:
+                    insert_video(file_meta)
 
                 # AUDIO TABLE
-                elif meta_dict['v_stream'] is False and meta_dict['a_stream'] is True:
-
-                    entry = FilesAudio(
-                        file_path=path,
-                        file_name=file_name,
-                        extension=extension_name,
-                        creation_date=date,
-                        v_stream=meta_dict['v_stream'],
-                        a_stream=meta_dict['a_stream'],
-                        i_stream=meta_dict['i_stream'],
-                        a_sample_rate=meta_dict['a_sample_rate'],
-                        a_bit_depth=meta_dict['a_bit_depth'],
-                        a_sample_fmt=meta_dict['a_sample_fmt'],
-                        a_bit_rate=meta_dict['a_bit_rate'],
-                        a_channels=meta_dict['channels'],
-                        a_channel_layout=meta_dict['channel_layout']
-                    )
-
-                    session.add(entry)
+                elif file_meta['v_stream'] is False and file_meta['a_stream'] is True:
+                    insert_audio(file_meta)
 
                 # IMG TABLE
-                # TODO: troubleshoot img class and get meta-info into database
-                if meta_dict['v_stream'] is False and meta_dict['a_stream'] is False:
+                elif file_meta['v_stream'] is False and file_meta['a_stream'] is False or file_meta['i_stream'] is True:
 
-                    try:
-                        file = img_handler.ImageHandler()
-                        img_meta = file.meta_info(input=path)
+                    """
+                        * Because of large temp files and inefficiencies in wand, avoid decoding 'other_files'
+                        * Because FFprobe may ignore some image formats, do not check for i_stream until wand checks the file
+                    """
 
-                        entry = FilesImage(
-                            file_path=path,
-                            file_name=file_name,
-                            extension=extension_name,
-                            creation_date=date,
-                            i_stream=img_meta['i_stream'],
-                            i_fmt=img_meta['format'],
-                            i_frames=img_meta['frames'],
-                            i_width=img_meta['width'],
-                            i_height=img_meta['height'],
-                            i_alpha=img_meta['alpha_channel']
-                        )
+                    # IMG info
+                    img_meta = image_handler.meta_info(input=path)
+                    file_meta.update(img_meta)
 
-                        session.add(entry)
+                    if file_meta['i_stream'] is True:
+                        insert_image(file_meta)
+
+                # (ALL) FILES TABLE
+                insert_file(file_meta)
+
+                # write everything to database
+                session.commit()
 
 
-                    except Exception as e:
-                        logger.warning(f'Warning: {e}')
+def insert_file(metadata):
+
+    entry = Files(
+        file_path=metadata['file_path'],
+        file_name=metadata['file_name'],
+        extension=metadata['extension'],
+        creation_date=metadata['date_created'],
+        v_stream=metadata['v_stream'],
+        a_stream=metadata['a_stream'],
+        i_stream=metadata['i_stream'],
+    )
+
+    session.add(entry)
 
 
-                # OTHER TABLE
-                entry = Files(file_path=path, file_name=file_name, extension=extension_name, creation_date=date,
-                              v_stream=meta_dict['v_stream'], a_stream=meta_dict['a_stream'], i_stream=meta_dict['i_stream'])
+def insert_image(metadata):
 
-                session.add(entry)
+    entry = FilesImage(
+        file_path=metadata['file_path'],
+        file_name=metadata['file_name'],
+        extension=metadata['extension'],
+        creation_date=metadata['date_created'],
+        i_stream=metadata['i_stream'],
+        i_fmt=metadata['i_format'],
+        i_width=metadata['i_width'],
+        i_height=metadata['i_height'],
+        i_frames=metadata['nb_frames'],
+        i_alpha=metadata['alpha_channel']
+    )
 
-            # write everything to database
-            session.commit()
+    session.add(entry)
+
+
+def insert_audio(metadata):
+
+    entry = FilesAudio(
+        file_path=metadata['file_path'],
+        file_name=metadata['file_name'],
+        extension=metadata['extension'],
+        creation_date=metadata['date_created'],
+        v_stream=metadata['v_stream'],
+        a_stream=metadata['a_stream'],
+        i_stream=metadata['i_stream'],
+        a_sample_rate=metadata['a_sample_rate'],
+        a_bit_depth=metadata['a_bit_depth'],
+        a_sample_fmt=metadata['a_sample_fmt'],
+        a_bit_rate=metadata['a_bit_rate'],
+        a_channels=metadata['channels'],
+        a_channel_layout=metadata['channel_layout']
+    )
+
+    session.add(entry)
+
+
+def insert_video(metadata):
+
+    # first add entry with just video info
+    entry = FilesVideo(
+        file_path=metadata['file_path'],
+        file_name=metadata['file_name'],
+        extension=metadata['extension'],
+        creation_date=metadata['date_created'],
+        v_stream=metadata['v_stream'],
+        v_width=metadata['v_width'],
+        v_height=metadata['v_height'],
+        nb_frames=metadata['nb_frames'],
+        v_frame_rate=metadata['v_frame_rate'],
+        v_pix_format=metadata['v_pix_fmt'],
+    )
+
+    session.add(entry)
+
+    if metadata['a_stream'] is True:
+        session.query(FilesVideo).\
+            filter(FilesVideo.file_path == metadata['file_path']).\
+            update(
+            {
+                'a_stream': metadata['a_stream'],
+                'a_sample_rate': metadata['a_sample_rate'],
+                'a_bit_depth': metadata['a_bit_depth'],
+                'a_sample_fmt': metadata['a_sample_fmt'],
+                'a_bit_rate': metadata['a_bit_rate'],
+                'a_channels': metadata['channels'],
+                'a_channel_layout': metadata['channel_layout']
+            }
+        )
+
+
+    # (
+    #     a_stream=metadata['a_stream'],
+    # a_sample_rate=metadata['a_sample_rate'],
+    # a_bit_depth=metadata['a_bit_depth'],
+    # a_sample_fmt=metadata['a_sample_fmt'],
+    # a_bit_rate=metadata['a_bit_rate'],
+    # a_channels=metadata['channels'],
+    # a_channel_layout=metadata['channel_layout']
+    # )
+
+    # # add to entry if audio stream exists
+    # if metadata['a_stream'] is True:
+    #     session.query(FilesVideo).\
+    #         filter(FilesVideo.file_path == metadata['file_path']).\
+    #         merge(
+    #         a_stream=metadata['a_stream'],
+    #         a_sample_rate=metadata['a_sample_rate'],
+    #         a_bit_depth=metadata['a_bit_depth'],
+    #         a_sample_fmt=metadata['a_sample_fmt'],
+    #         a_bit_rate=metadata['a_bit_rate'],
+    #         a_channels=metadata['channels'],
+    #         a_channel_layout=metadata['channel_layout']
+    #     )
+
+
 
 
 def get_root_output(path):
@@ -887,13 +950,15 @@ def remove_output_folder(path):
     session.commit()
 
 
-def insert_file(path, frame_rate, bit_depth, bit_rate):
+# deprecated
 
-    entry = Files(file_path = f"{path}", frame_rate = f'{frame_rate}', bit_depth = f"{bit_depth}", bit_rate = f"{bit_rate}")
-
-    session.add(entry)
-
-    session.commit()
+# def insert_file(path, frame_rate, bit_depth, bit_rate):
+#
+#     entry = Files(file_path = f"{path}", frame_rate = f'{frame_rate}', bit_depth = f"{bit_depth}", bit_rate = f"{bit_rate}")
+#
+#     session.add(entry)
+#
+#     session.commit()
 
 
 def remove_file(path):

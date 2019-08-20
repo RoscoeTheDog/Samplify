@@ -15,8 +15,8 @@ else:
 
 gpu_vendor = ''
 
-def set_vendor(vendor):
-    gpu_vendor = vendor
+validate_audio = True
+validate_video = True
 
 exception_counter = 0
 

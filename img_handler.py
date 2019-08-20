@@ -2,87 +2,57 @@ import wand
 from wand.image import Image
 from wand.display import display
 import logging
-import os
 
 logger = logging.getLogger('event_log')
+
 
 class ImageHandler:
 
     def __init__(self):
         # super(Image, display).__init__()
 
-
-
-        """
-            put defaults settings here
-        """
-
         self.img_format = 'png'
         self.scale = 'x100'  # resize scale in %
-
-
-
-
 
         """
             show file preview when gui is built here
         """
 
-
-
     def meta_info(self, input):
 
         meta_dict = {
             "i_stream": False,
-            "format": '',
-            "frames": '',
-            "width": '',
-            "height": '',
+            "i_format": '',
+            "i_width": '',
+            "i_height": '',
+            "nb_frames": '',
             "alpha_channel": False,
         }
 
         try:
+            with Image(filename=input) as original:
 
-            _basename = os.path.basename(input)
+                meta_dict["i_stream"] = True
+                meta_dict["i_format"] = original.format
+                meta_dict["i_width"] = original.width
+                meta_dict["i_height"] = original.height
+                meta_dict["nb_frames"] = len(original.sequence)
+                meta_dict["alpha_channel"] = original.alpha_channel
 
-            extension_name = os.path.splitext(_basename)[1]
-
-            # TODO: BUG: some video files are not being detected by PyAV
-            if not extension_name == '.avi':
-
-                with Image(filename=input) as original:
-
-                    # print(input)
-                    #
-                    # print(original.format, len(original.sequence), original.width, original.height, original.alpha_channel)
-
-                    meta_dict["i_stream"] = True
-                    meta_dict["format"] = original.format
-                    meta_dict["frames"] = len(original.sequence)
-                    meta_dict["width"] = original.width
-                    meta_dict["height"] = original.height
-                    meta_dict["alpha_channel"] = original.alpha_channel
-
-                    # meta_dict= {
-                    #     "i_stream": True,
-                    #     "format": original.format,
-                    #     "frames": len(original.sequence),
-                    #     "width": original.width,
-                    #     "height": original.height,
-                    #     "alpha_channel": original.alpha_channel,
-                    # }
-
-                    return meta_dict
+                return meta_dict
 
         except Exception as e:
-
-            if e:
-                logger.critical(f'Critical: {e}')
-
-            else:
-                logger.warning(f'Warning: {input} not an image file')
+            logger.warning(f'Warning: {input} not an image file')
 
             return meta_dict
+
+    def convert_image(self, input, output, format):
+
+        with Image(filename=input) as original:
+
+            with original.convert(format='png') as copy:
+                copy.save(filename=output.format(format))
+
 
 
 

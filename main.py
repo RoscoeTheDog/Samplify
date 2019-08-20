@@ -90,10 +90,10 @@ def main():
     # scan all input folders
     db_handler.scan_files()
     print('scan completed!')
-    # time.sleep(2)
+    time.sleep(2)
 
-    # stdout, stderr = av_handler.meta_ffprobe('D:\\MOVIES & SHOWS\\Dr.Strange.2016.DVDScr.XVID.AC3.HQ.Hive-CM8\\Doctor.Strange.2016.DVDScr.XVID.AC3.HQ.Hive-CM8.avi')
-    # print(stderr)
+    # stdout, stderr = av_handler.ffprobe('C:\\OpenCV 4.1.0\\opencv\\sources\\doc\\acircles_pattern.png')
+    # print(stdout)
     # av_handler.parse_ffprobe(stdout, stderr)
 
     # end benchmark (input)

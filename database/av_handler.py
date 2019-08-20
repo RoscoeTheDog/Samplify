@@ -10,6 +10,7 @@ import glob
 import app_settings
 import time
 from database import db_handler
+import json
 
 logger = logging.getLogger('event_log')
 number = 0
@@ -17,27 +18,17 @@ number = 0
 
 def meta_info(input):
 
-    # declare dict so if fail, still inserts to DB
-    meta_dict = {
-        'succeeded': True,
+    file_meta ={
+            'succeeded': True,
 
-        'v_stream': False,
-        'v_width': '',
-        'v_height': '',
-        'v_frame_rate': '',
-        'v_pix_fmt': '',
-        'v_is_rgb': '',
+            'v_stream': False,
 
-        'a_stream': False,
-        'a_sample_fmt': '',
-        'a_sample_rate': '',
-        'a_bit_rate': '',
-        'a_bit_depth': '',
-        'channels': '',
-        'channel_layout': '',
+            'a_stream': False,
 
-        'i_stream': False,
-    }
+            'i_stream': False,
+
+            'file_other': False
+        }
 
     # need to filter out by extension type to avoid copy/move errors
     if not 'desktop.ini' in input:
@@ -46,35 +37,47 @@ def meta_info(input):
             container = av.open(input)
 
             for frame in container.decode(audio=0):
-                channels = frame.layout.channels  # verbose method
+                channels = frame.layout.channels  # returns list of channels
+                counter = 0
+                for ch in channels:  # count channels
+                    counter = counter + 1
 
-                meta_dict['channel_layout'] = frame.layout.name
+                if not counter == 0:
+                    file_meta['channels'] = counter
 
-                num = 0
-                for ch in channels:  # numerical method
-                    num = num + 1
-
-                meta_dict['channels'] = num
+                file_meta['channel_layout'] = frame.layout.name
 
                 break  # we don't need to decode all frames to get metadata info
 
             for s in container.streams:
 
-                meta_dict['a_bit_rate'] = container.bit_rate / 1000
+                if not int(container.bit_rate / 1000) == 0:
+                    file_meta['a_bit_rate'] = container.bit_rate / 1000
 
-                # do stuff with video stream
+                # VIDEO STREAM
                 if s.type == 'video':
-                    meta_dict['v_stream'] = True
+                    file_meta['v_stream'] = True
 
-                    # container resolution
-                    meta_dict['v_width'] = s.width
-                    meta_dict['v_height'] = s.height
+                    # encoded container resolution
+                    if not int(s.width) == 0:
+                        file_meta['v_width'] = s.width
+                    if not int(s.height) == 0:
+                        file_meta['v_height'] = s.height
 
-                    # actual encoded resolution
-                    meta_dict['v_buffer_width'] = s.coded_width
-                    meta_dict['v_buffer_height'] = s.coded_height
+                    # actual resolution of video
+                    if not int(s.coded_width) == 0:
+                        file_meta['v_buffer_width'] = s.coded_width
+                    if not int(s.coded_height) == 0:
+                        file_meta['v_buffer_height'] = s.coded_height
 
+                    # frame info
+                    if not int(s.frames) == 0:
+                        file_meta['nb_frames'] = s.frames
+                    if not int(s.rate) == 0:
+                        file_meta['v_frame_rate'] = float(s.rate)
 
+                    # format info
+                    file_meta['v_pix_fmt'] = s.pix_fmt
 
                     """
                         commented-out code shows some additional video API
@@ -98,25 +101,42 @@ def meta_info(input):
                     # gop_size = s.gop_size
                     # print(gop_size)
 
-                # do stuff with audio stream
+                # AUDIO STREAM
                 if s.type == 'audio':
-                    meta_dict['a_stream'] = True
-                    meta_dict['a_sample_fmt'] = s.format.name
-                    meta_dict['a_sample_rate'] = s.sample_rate
-                    meta_dict['a_bit_depth'] = s.format.bits
+                    file_meta['a_stream'] = True
+                    file_meta['a_sample_fmt'] = s.format.name
+                    if not int(s.sample_rate) == 0:
+                        file_meta['a_sample_rate'] = s.sample_rate
+                    if not int(s.format.bits) == 0:
+                        file_meta['a_bit_depth'] = s.format.bits
 
-            return meta_dict
+            if app_settings.validate_video is True:
+                check_keys = ['v_width', 'v_height', 'v_frame_rate', 'v_pix_fmt', 'nb_frames']
+
+                for key in check_keys:
+                    if not key in file_meta:
+                        file_meta['v_stream'] = False
+
+            if app_settings.validate_audio is True:
+                check_keys = ['a_sample_rate', 'a_sample_fmt', 'a_bit_rate', 'channels', 'channel_layout']
+
+                for key in check_keys:
+                    if not key in file_meta:
+                        file_meta['a_stream'] = False
+
+            return file_meta
 
         except Exception as e:
-            logger.warning(f'Warning: {input} not an audio or video file!')
-            meta_dict['succeeded'] = False
+            logger.warning(f'Error {e}')
+            # logger.warning(f'Warning: {input} not an audio or video file!')
+            file_meta['succeeded'] = False
 
-            return meta_dict
+            return file_meta
 
     else:
         logger.warning(f'Warning: desktop.ini not a modifiable file')
 
-        return meta_dict
+        return file_meta
 
 
 def convert_pyav(input, output, file_name, extension, a_codec, v_codec, sample_rate, sample_fmt, channels):
@@ -202,8 +222,6 @@ def convert_pyav(input, output, file_name, extension, a_codec, v_codec, sample_r
             out.mux(packet)
 
         out.close()
-
-
 
     except Exception as e:
         app_settings.exception_counter = app_settings.exception_counter + 1
@@ -390,9 +408,11 @@ def parse_ffmpeg(stdout, stderr):
     return export, v_format, v_codec, a_format, a_codec
 
 
-def meta_ffprobe(input):
+def ffprobe(input):
 
-    ff_args = ['ffprobe', '-i', input]
+    # ff_args = ['ffprobe', '-print_format', 'json', '-i', input, '-show_streams']
+
+    ff_args = ['ffprobe', '-v', 'quiet', '-show_entries', 'format=format_name', '-of', 'default=noprint_wrappers=1', '-print_format', 'json', input, '-show_streams']
 
     process = subprocess.Popen(ff_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     stdout, stderr = process.communicate()
@@ -401,6 +421,172 @@ def meta_ffprobe(input):
 
 
 def parse_ffprobe(stdout, stderr):
+
+    """
+        file_meta['i_stream'] is essentially treated as "image or other undesired format"
+    """
+
+    # print(stderr)
+    # print(stdout)
+
+    # try:
+    file_meta = {
+        'v_stream': False,
+
+        'a_stream': False,
+
+
+        'i_stream': False,
+
+        'file_other': False,
+
+        'a_bit_depth': '',  # have this declared until we correctly parse bits_per_sample
+    }
+
+    try:
+
+        data = json.loads(stdout)
+
+        for sub_dict, list in data.items():
+
+            if 'format' in sub_dict:  # format does not contain list unlike 'streams'
+                for key, value in list.items():
+
+                    if value in ['image2', 'tty', 'ico', 'gif', 'png_pipe', 'jpeg_pipe', 'svg_pipe', 'bmp_pipe', 'psd_pipe', 'ppm_pipe']:
+                        file_meta['i_stream'] = True
+
+                    if 'pipe' in value:
+                        file_meta['i_stream'] = True
+
+                    # file_meta['v_pix_fmt'] = value
+
+            else:
+                for count, dictionary in enumerate(list):
+                    # print('Stream:', count, dictionary)
+
+                    for key, value in dictionary.items():
+                        # print(key, value)
+
+                        if key == 'codec_type' and value == 'video':
+                            file_meta['v_stream'] = True
+
+                        if file_meta['v_stream'] is True:
+
+                            if key == 'width':
+                                if not int(value) == 0:
+                                    file_meta['v_width'] = value
+
+                            if key == 'height':
+                                if not int(value) == 0:
+                                    file_meta['v_height'] = value
+
+                            if key == 'avg_frame_rate':
+                                # convert string then divide
+                                num, den = value.split('/')
+
+                                if int(den):
+                                    value = float(int(num)/int(den))
+                                    value = round(value, 3)
+
+                                    if not int(value) == 0:
+                                        file_meta['v_frame_rate'] = value
+
+                            if key == 'nb_frames':
+                                if not int(value) == 0:
+                                    file_meta['nb_frames'] = value
+
+                            if key == 'pix_fmt':
+                                file_meta['v_pix_fmt'] = value
+
+                        if key == 'codec_type' and value == 'audio':
+                            file_meta['a_stream'] = True
+
+                        if file_meta['a_stream'] is True:
+
+                            if key == 'sample_rate':
+                                if not int(value) == 0:
+                                    file_meta['a_sample_rate'] = value
+
+                            if key == 'sample_fmt':
+                                file_meta['a_sample_fmt'] = value
+
+                            if key == 'bit_rate':
+                                if not int(value) == 0:
+                                    file_meta['a_bit_rate'] = value
+
+                            if key == 'channels':
+                                if not int(value) == 0:
+                                    file_meta['channels'] = value
+
+                            if key == 'channel_layout':
+                                file_meta['channel_layout'] = value
+
+    except Exception as e:
+        logger.warning(f'Warning: {e}')
+
+    # print(file_meta)
+
+    if app_settings.validate_audio is True:
+        check_keys = ['a_sample_rate', 'a_sample_fmt', 'channels', 'channel_layout']
+
+        for key in check_keys:
+            if not key in file_meta:
+                file_meta['a_stream'] = False
+
+        # for key in check_keys:
+        #     if 'Null' in str(file_meta[key]):
+        #         file_meta['a_stream'] = False
+
+    if app_settings.validate_video is True:
+        check_keys = ['v_width', 'v_height', 'v_frame_rate', 'v_pix_fmt', 'nb_frames']
+
+        for key in check_keys:
+            if not key in file_meta:
+                file_meta['v_stream'] = False
+
+        # for key in check_keys:
+        #     if 'Null' in str(file_meta[key]):
+        #         file_meta['v_stream'] = False
+
+    # turn off v_stream if file classified as image.
+    if file_meta['i_stream'] is True:
+        file_meta['v_stream'] = False
+
+
+
+
+
+
+
+
+
+
+    # time.sleep(.22)
+    # print('a_stream', file_meta['a_stream'])
+
+    # if '' in file_meta.values():
+
+
+    # if not key in check_keys:
+
+
+    # reduce the amount of false-positives by validating all entries
+    # if not file_meta['a_sample_rate'] and file_meta['a_sample_fmt'] and file_meta['a_bit_depth'] and file_meta['a_bit_rate'] and file_meta['channels'] and file_meta['channel_layout']:
+    #     file_meta['a_stream'] = False
+
+
+    # if cannot collect frames, we know it is not a video or image file
+    # if file_meta['v_frame_rate'] is '':
+    #     file_meta['file_other'] = True
+
+
+
+    # print(file_meta)
+
+    return file_meta
+
+
+def _parse_ffprobe(stdout, stderr):
 
     _meta = {
         'succeeded': False,
@@ -512,7 +698,7 @@ def parse_ffprobe(stdout, stderr):
                 a_sample_rate = a_stream[match.start():match.end()][:-3]
                 _meta['a_sample_rate'] = a_sample_rate
 
-                print(a_sample_rate)
+                # print(a_sample_rate)
 
 
 
@@ -527,7 +713,7 @@ def parse_ffprobe(stdout, stderr):
                     channel_layout = a_stream[match.start():match.end()][len(unformated_a_sample_rate)+2:-1]
                     _meta['channel_layout'] = channel_layout
 
-                    print(channel_layout)
+                    # print(channel_layout)
 
                     a_fmt_pattern = re.compile(unformated_channel_layout + r'\s([^,]{,10}),')
                     find_a_fmt = a_fmt_pattern.finditer(a_stream)
@@ -562,7 +748,7 @@ def parse_ffprobe(stdout, stderr):
 
                 for match in find_a_codec:
                     a_codec = a_encoder[match.end() + 1:]
-                    print('audio codec:', a_codec)
+                    # print('audio codec:', a_codec)
 
     return _meta
 

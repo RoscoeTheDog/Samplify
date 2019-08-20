@@ -4,7 +4,6 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 import app_settings
-import os
 from datetime import datetime
 
 Base = declarative_base()
@@ -110,9 +109,9 @@ class FilesVideo(Base):
     v_stream = Column(Boolean, default=False)
     v_width = Column(String)
     v_height = Column(String)
+    nb_frames = Column(String)
     v_frame_rate = Column(String)
     v_pix_format = Column(String)
-    v_is_rgb = Column(String)
 
     a_stream = Column(Boolean, default=False)
     a_sample_rate = Column(String)
