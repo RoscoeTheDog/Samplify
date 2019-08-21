@@ -1,10 +1,10 @@
 from configparser import ConfigParser
-import bin
+import samplify
 
 # SETUP
 config = ConfigParser()
 
-template_new = bin.config_setup.template_write()
+template_new = samplify.config_setup.template_write()
 print(template_new)
 
 def write_config():

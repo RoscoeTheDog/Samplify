@@ -1,5 +1,5 @@
 import settings
-import bin.pd_functions as pd_func
+import samplify.pd_functions as pd_func
 
 import time
 import os

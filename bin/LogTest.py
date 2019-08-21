@@ -1,5 +1,4 @@
 import logging
-import main
 
 
 def foo():

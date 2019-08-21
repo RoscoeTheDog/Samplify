@@ -1,6 +1,4 @@
-import app_settings
 import pydub as pd
-import os
 import logging
 import os
 

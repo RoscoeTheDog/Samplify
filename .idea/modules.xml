@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Samplify.iml" filepath="$PROJECT_DIR$/.idea/Samplify.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/samplify-git.iml" filepath="$PROJECT_DIR$/.idea/samplify-git.iml" />
     </modules>
   </component>
 </project>
