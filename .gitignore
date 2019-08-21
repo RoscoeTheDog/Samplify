@@ -1,0 +1,11 @@
+
+samplify/database/database.db
+samplify/app/__pycache__/settings.cpython-37.pyc
+samplify/app/__pycache__/output.cpython-37.pyc
+samplify/app/__pycache__/input.cpython-37.pyc
+.idea/workspace.xml
+samplify/handlers/__pycache__/av_handler.cpython-37.pyc
+samplify/handlers/__pycache__/database_handler.cpython-37.pyc
+samplify/handlers/__pycache__/date_handler.cpython-37.pyc
+samplify/handlers/__pycache__/image_handler.cpython-37.pyc
+samplify/Samplify.log
