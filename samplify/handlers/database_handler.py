@@ -21,14 +21,14 @@ logger = logging.getLogger('event_log')
 def insert_template():
 
     # INPUT FOLDERS
-    entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input')
-    session.add(entry)
+    # entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input')
+    # session.add(entry)
     # entry = InputDirectories(folder_path='C:/')
     # session.add(entry)
     entry = InputDirectories(folder_path='D:/MOVIES & SHOWS')
     session.add(entry)
-    entry = InputDirectories(folder_path='C:/Users/Aspen/Pictures')
-    session.add(entry)
+    # entry = InputDirectories(folder_path='C:/Users/Aspen/Pictures')
+    # session.add(entry)
 
     # OUTPUT FOLDERS
     entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/photos', extension='.png', a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
@@ -744,7 +744,8 @@ def insert_video(metadata):
         v_stream=metadata['v_stream'],
         v_width=metadata['v_width'],
         v_height=metadata['v_height'],
-        nb_frames=metadata['nb_frames'],
+        v_duration=metadata['v_duration'],
+        # nb_frames=metadata['nb_frames'],
         v_frame_rate=metadata['v_frame_rate'],
         v_pix_format=metadata['v_pix_fmt'],
     )
@@ -760,7 +761,7 @@ def insert_video(metadata):
                 'a_sample_rate': metadata['a_sample_rate'],
                 'a_bit_depth': metadata['a_bit_depth'],
                 'a_sample_fmt': metadata['a_sample_fmt'],
-                'a_bit_rate': metadata['a_bit_rate'],
+                # 'a_bit_rate': metadata['a_bit_rate'],
                 'a_channels': metadata['channels'],
                 'a_channel_layout': metadata['channel_layout']
             }

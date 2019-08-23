@@ -45,9 +45,37 @@ def scan_files():
                     'date_created': date_handler.created(path)
                 }
 
+                # this particular file takes awhile to open -- good test file
+                if path == 'D:\MOVIES & SHOWS\Tihoye.Mesto.2018.DUAL.BDRip.x264.-HELLYWOOD.mkv':
+                    print()
+
                 # av stream info
                 av_meta = av_handler.stream_info(path)  # returns dict
                 file_meta.update(av_meta)  # update file_meta
+
+
+
+
+
+
+
+                # try:
+                #     stdout, stderr = av_handler.ffprobe(path)
+                #     parsed = av_handler.parse_ffprobe(stdout, stderr)
+                #     updated = av_handler.validate_keys(parsed)
+                #     file_meta.update(updated)
+                #     # print(file_meta)
+                #     # time.sleep(2)
+                #
+                # except Exception as e:
+                #     logger.info(f'Warning: {e}')
+
+
+
+
+
+
+
 
                 # insert into database
                 if file_meta['v_stream'] is True:
@@ -58,9 +86,11 @@ def scan_files():
 
                 elif file_meta['v_stream'] is False and file_meta['a_stream'] is False or file_meta['i_stream'] is True:
 
-                    # check for image info *after* av streams to avoid accidental decoding of video files
-                    img_meta = image_handler.metadata(input=path)  # returns dict
-                    file_meta.update(img_meta)  # update file_meta
+                    # If a video makes it to image_handler program will stall &
+                    # large temp files will be created. AVOID AT ALL COSTS!
+
+                    img_meta = image_handler.metadata(input=path)
+                    file_meta.update(img_meta)
 
                     if file_meta['i_stream'] is True:
                         database_handler.insert_image(file_meta)

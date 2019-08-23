@@ -108,6 +108,7 @@ class FilesVideo(Base):
     v_stream = Column(Boolean, default=False)
     v_width = Column(String)
     v_height = Column(String)
+    v_duration = Column(String)
     nb_frames = Column(String)
     v_frame_rate = Column(String)
     v_pix_format = Column(String)

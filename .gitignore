@@ -20,3 +20,6 @@ samplify/database/__pycache__/av_handler.cpython-37.pyc.65585384
 samplify/database/__pycache__/db_query.cpython-37.pyc
 samplify/database/__pycache__/db_setup.cpython-37.pyc
 samplify/handlers/__pycache__/__init__.cpython-37.pyc
+samplify/Samplify.log
+samplify/database/database.db
+samplify/Samplify.log
