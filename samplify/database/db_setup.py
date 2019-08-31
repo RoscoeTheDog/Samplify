@@ -46,6 +46,7 @@ class OutputDirectories(Base):
     a_strip_silence = Column(Boolean, default=False)
     a_silence_threshold = Column(String, default='-80')
     reduce = Column(Boolean, default=True)
+    i_fmt = Column(String, default='default')
 
 
 class SupportedExtensions(Base):
@@ -157,6 +158,7 @@ class FilesImage(Base):
     i_width = Column(String)
     i_height = Column(String)
     i_alpha = Column(Boolean)
+    i_mode =  Column(String)
 
     # frame_rate = Column(Integer)
     # bit_depth = Column(String)

@@ -3,9 +3,9 @@ import platform
 import os
 
 
-def is_between(current, date_start, date_end):
+def is_between(file_date, calendar_start, calendar_end):
 
-    if date_start <= current <= date_end:
+    if calendar_start <= file_date <= calendar_end:
         return True
 
     else:

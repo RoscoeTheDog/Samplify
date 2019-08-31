@@ -17,21 +17,22 @@ from samplify.app import output
 # call our logger locally
 logger = logging.getLogger('event_log')
 
+
 # temporary data to test behavior
 def insert_template():
 
     # INPUT FOLDERS
-    # entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input')
-    # session.add(entry)
+    entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input')
+    session.add(entry)
     # entry = InputDirectories(folder_path='C:/')
     # session.add(entry)
     entry = InputDirectories(folder_path='D:/MOVIES & SHOWS')
     session.add(entry)
-    # entry = InputDirectories(folder_path='C:/Users/Aspen/Pictures')
-    # session.add(entry)
+    entry = InputDirectories(folder_path='C:/Users/Aspen/Pictures')
+    session.add(entry)
 
     # OUTPUT FOLDERS
-    entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/photos', extension='.png', a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
+    entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/photos', extension='.png', i_fmt='PNG', a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
                               image_only=True, a_normalize=False)
     session.add(entry)
     entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/hat', extension='default', a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='1',
@@ -468,9 +469,13 @@ def samplify():
 
                                 # NO CHANGE; SIMPLE COPY
 
-                                # if extension == image_entry.extension:
-                                print('trying Copy Method...')
-                                copy(input, directory_entry.folder_path)
+                                if extension == image_entry.extension:
+                                    print('trying Copy Method...')
+                                    copy(input, directory_entry.folder_path)
+
+                                else:
+                                    print('trying Pillow Method...')
+                                    image_handler.convert_image(input, output, directory_entry.i_fmt)
 
                         break  # avoid re-iterations for multiple actions on same file
 
@@ -565,6 +570,24 @@ def store_codec_config(extension_type, v_format, v_codec, a_format, a_codec, sam
     if not entry_exist is True:
         session.add(entry)
         session.commit()
+
+
+def is_video_extension(extension: str):
+    """
+    :param extension: checks existing video table to see if exists
+    :return: boolean: True or False (exists or not)
+    """
+
+    return bool(session.query(FilesVideo).filter(FilesVideo.extension == extension).first())
+
+
+def is_image_extension(extension: str):
+    """
+    :param extension: checks existing image table to see if exists
+    :return: boolean: True or False (exists or not)
+    """
+
+    return bool(session.query(FilesImage).filter(FilesImage.extension == extension).first())
 
 
 def copy(input, output):
@@ -681,6 +704,7 @@ def scan_files():
 
 def insert_file(metadata):
 
+    # add entry with basic file information
     entry = Files(
         file_path=metadata['file_path'],
         file_name=metadata['file_name'],
@@ -690,12 +714,12 @@ def insert_file(metadata):
         a_stream=metadata['a_stream'],
         i_stream=metadata['i_stream'],
     )
-
     session.add(entry)
 
 
 def insert_image(metadata):
 
+    # add entry with file image information
     entry = FilesImage(
         file_path=metadata['file_path'],
         file_name=metadata['file_name'],
@@ -706,14 +730,15 @@ def insert_image(metadata):
         i_width=metadata['i_width'],
         i_height=metadata['i_height'],
         i_frames=metadata['nb_frames'],
-        i_alpha=metadata['alpha_channel']
+        i_alpha=metadata['alpha_channel'],
+        i_mode=metadata['i_mode']
     )
-
     session.add(entry)
 
 
 def insert_audio(metadata):
 
+    # add entry with file audio information
     entry = FilesAudio(
         file_path=metadata['file_path'],
         file_name=metadata['file_name'],
@@ -729,13 +754,12 @@ def insert_audio(metadata):
         a_channels=metadata['channels'],
         a_channel_layout=metadata['channel_layout']
     )
-
     session.add(entry)
 
 
 def insert_video(metadata):
 
-    # first add entry with just video info
+    # add entry with file video information
     entry = FilesVideo(
         file_path=metadata['file_path'],
         file_name=metadata['file_name'],
@@ -749,9 +773,10 @@ def insert_video(metadata):
         v_frame_rate=metadata['v_frame_rate'],
         v_pix_format=metadata['v_pix_fmt'],
     )
-
     session.add(entry)
 
+    # then check if audio exists and update entry
+    # - avoids exceptions for files with video only
     if metadata['a_stream'] is True:
         session.query(FilesVideo).\
             filter(FilesVideo.file_path == metadata['file_path']).\
@@ -766,33 +791,6 @@ def insert_video(metadata):
                 'a_channel_layout': metadata['channel_layout']
             }
         )
-
-
-    # (
-    #     a_stream=metadata['a_stream'],
-    # a_sample_rate=metadata['a_sample_rate'],
-    # a_bit_depth=metadata['a_bit_depth'],
-    # a_sample_fmt=metadata['a_sample_fmt'],
-    # a_bit_rate=metadata['a_bit_rate'],
-    # a_channels=metadata['channels'],
-    # a_channel_layout=metadata['channel_layout']
-    # )
-
-    # # add to entry if audio stream exists
-    # if metadata['a_stream'] is True:
-    #     session.query(FilesVideo).\
-    #         filter(FilesVideo.file_path == metadata['file_path']).\
-    #         merge(
-    #         a_stream=metadata['a_stream'],
-    #         a_sample_rate=metadata['a_sample_rate'],
-    #         a_bit_depth=metadata['a_bit_depth'],
-    #         a_sample_fmt=metadata['a_sample_fmt'],
-    #         a_bit_rate=metadata['a_bit_rate'],
-    #         a_channels=metadata['channels'],
-    #         a_channel_layout=metadata['channel_layout']
-    #     )
-
-
 
 
 def get_root_output(path):

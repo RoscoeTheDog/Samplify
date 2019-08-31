@@ -99,7 +99,7 @@ def main():
     timer = time.time()
 
     # SAMPLIFY!
-    # db_handler.start_program()
+    database_handler.start_program()
 
     # collect all files/folders from output
     # db_handler.get_root_output(App_Settings.output_path)

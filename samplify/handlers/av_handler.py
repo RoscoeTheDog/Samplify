@@ -13,114 +13,128 @@ logger = logging.getLogger('event_log')
 number = 0
 
 
-def stream_info(path):
+def stream_info(path: str) -> dict:
+    """
+    :param path: str 'path to file'
+    :return: dict -> 'dictionary of meta data from file path'
+    """
 
+    # declare our different possible decoded stream types
+    # - Default: False since added to database later
     file_meta ={
-            'succeeded': True,
-
             'v_stream': False,
-
             'a_stream': False,
-
             'i_stream': False,
-
-            'file_other': False
         }
 
-    is_image = False
-
     try:
-        # TODO: find out why open() takes long on some files
+        # TODO: find out why open() takes long return times on some files
         container = av.open(path)
 
+        # FOR ANY INTEGER VALUE:
+        # - Do not add any terms to dict if value == 0 (decoded a false positive)
+
+        # decode audio channels first
+        # - most likely thing to fail within scope
+        # - do this for speed/efficiency
         for frame in container.decode(audio=0):
-            channels = frame.layout.channels  # returns list of channels
+            channels = frame.layout.channels  # returns tuple list of channels
             counter = 0
-            for ch in channels:  # count channels
-                counter = counter + 1
-
-            if not counter == 0:
+            for ch in channels:
+                counter += 1
+            if not counter == 0:  # don't add terms to dict if 0 -- likely a false positive
                 file_meta['channels'] = counter
+                file_meta['channel_layout'] = frame.layout.name
+            break  # not all frames need decoding for channel info
 
-            file_meta['channel_layout'] = frame.layout.name
+        # decode file bit-rate
+        if not int(container.bit_rate / 1000) == 0:
+            file_meta['a_bit_rate'] = container.bit_rate / 1000
 
-            break  # we don't need to decode *all* frames to get channel info
-
+        # decode file streams
         for s in container.streams:
 
-            # file bit rate (all streams)
-            if not int(container.bit_rate / 1000) == 0:
-                file_meta['a_bit_rate'] = container.bit_rate / 1000
+            # check if stream is a image format
+            # - avoids inaccurate values for video
+            file_meta['i_stream'] = is_image_stream(s.codec_context.format.name)
 
-            # VIDEO STREAM
-            if s.type == 'video':
+            if file_meta['i_stream'] is True:  # skip stream if is
+                continue
 
-                # check if the video stream is actual single image
-                is_image = is_image_stream(s.codec_context.format.name)
+            # check if stream is a video format
+            elif s.type == 'video':
 
-                # skip over stream if image
-                if is_image is True:
-                    file_meta['i_stream'] = True
-                    continue
+                file_meta['v_stream'] = True
 
-                else:
-                    file_meta['v_stream'] = True
+                # decode stream duration
+                file_meta['v_duration'] = s.metadata.get('DURATION', '')
 
-                    # encoded container resolution
-                    if not s.width == 0:
-                        file_meta['v_width'] = s.width
-                    if not s.height == 0:
-                        file_meta['v_height'] = s.height
+                # use FFprobe if can't decode duration
+                if file_meta['v_duration'] == '':
+                    stdout, stderr = ffprobe(path)
+                    file_meta = parse_ffprobe(stdout, stderr)
+                    file_meta = validate_keys(file_meta)
+                    break  # stop iterating streams - FFprobe did all the work already
 
-                    # actual resolution of video
-                    if not s.coded_width == 0:
-                        file_meta['v_buffer_width'] = s.coded_width
-                    if not s.coded_height == 0:
-                        file_meta['v_buffer_height'] = s.coded_height
+                # decode the encoder resolution
+                if not s.width == 0:
+                    file_meta['v_width'] = s.width
+                if not s.height == 0:
+                    file_meta['v_height'] = s.height
 
-                    # get track duration
-                    file_meta['v_duration'] = s.metadata.get('DURATION', '')
+                # decode actual resolution of video
+                if not s.coded_width == 0:
+                    file_meta['v_buffer_width'] = s.coded_width
+                if not s.coded_height == 0:
+                    file_meta['v_buffer_height'] = s.coded_height
 
-                    # total frames in stream
-                    file_meta['nb_frames'] = s.frames
+                # decode total number of frames
+                file_meta['nb_frames'] = s.frames  # returns 0 if unknown
 
-                    if s.frames == 0:  # returns 0 if unknown
-                        file_meta['nb_frames'] = s.metadata.get('NUMBER_OF_FRAMES', '')
+                # decode from metadata table if available
+                if s.frames == 0:
+                    file_meta['nb_frames'] = s.metadata.get('NUMBER_OF_FRAMES', '')
 
-                    if not int(s.rate) == 0:  # s.rate returns fraction
-                        file_meta['v_frame_rate'] = round(float(s.rate), 3)
+                # decode frame-rate
+                if not int(s.rate) == 0:  # returns fraction
+                    file_meta['v_frame_rate'] = float(s.rate)
 
-                    # format info
-                    if s.pix_fmt:
-                        file_meta['v_pix_fmt'] = s.pix_fmt
+                # decode video format
+                if s.pix_fmt:
+                    file_meta['v_pix_fmt'] = s.pix_fmt
 
-            # AUDIO STREAM
-            if s.type == 'audio':
+            # check if stream is an audio format
+            elif s.type == 'audio':
                 file_meta['a_stream'] = True
 
-                # sample format
+                # decode sample format
                 if s.format.name:
                     file_meta['a_sample_fmt'] = s.format.name
 
-                # sample rate
+                # decode sample rate
                 if not int(s.sample_rate) == 0:
                     file_meta['a_sample_rate'] = s.sample_rate
 
-                # sample bit depth (note: 24 bit will show as 32 for some sample formats)
+                # decode bit depth (note: 24 bit will show as 32 -- check sample_fmt for pcm_s24le instead)
                 if not int(s.format.bits) == 0:
                     file_meta['a_bit_depth'] = s.format.bits
 
+        # check dict keys for missing entries or 0s -- minimize decoding false positives into database
         file_meta = validate_keys(file_meta)
 
     except Exception as e:
         logger.warning(f'Error: {e}')
-
         logger.info(f'Event: AV decode failure! using ffprobe')
 
         # don't send to ffprobe if we know file is an image already
-        if not is_image:
+        if file_meta['i_stream'] is False:
             stdout, stderr = ffprobe(path)
             file_meta = parse_ffprobe(stdout, stderr)
+
+        # # don't send to ffprobe if we know file is an image already
+        # if not is_image:
+        #     stdout, stderr = ffprobe(path)
+        #     file_meta = parse_ffprobe(stdout, stderr)
 
     return file_meta
 
@@ -136,7 +150,6 @@ def is_image_stream(stream_fmt: str):
         _stream = True
 
     return _stream
-
 
 
 def convert_pyav(input, output, file_name, extension, a_codec, v_codec, sample_rate, sample_fmt, channels):
@@ -412,7 +425,7 @@ def ffprobe(input):
 
     logger.info(input)
 
-    ff_args = ['ffprobe', '-v', 'quiet', '-show_entries', 'format=format_name,duration', '-sexagesimal', '-of', 'default=noprint_wrappers=1', '-print_format', 'json', input, '-show_streams']
+    ff_args = ['ffprobe', '-v', 'quiet', '-show_entries', 'format=format_name,duration,bit_rate', '-sexagesimal', '-of', 'default=noprint_wrappers=1', '-print_format', 'json', input, '-show_streams']
 
     process = subprocess.Popen(ff_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, bufsize=9999999)
     stdout, stderr = process.communicate()
@@ -447,17 +460,22 @@ def parse_ffprobe(stdout, stderr):
 
         for sub_dict, dict_list in data.items():
 
-            if 'format' in sub_dict:
+            if 'format' in sub_dict:  # custom search variables are in 'format' dict
                 for key, value in dict_list.items():  # 'format' is {}, NOT []
 
                     if 'pipe' in value:  # 'pipe' types are image decoders
                         file_meta['i_stream'] = True
+                        break
 
                     if value in ['image2', 'tty', 'ico', 'gif']:  # list of some other image decoders
                         file_meta['i_stream'] = True
+                        break
 
                     if key == 'duration':
                         file_meta['v_duration'] = value
+
+                    if key == 'bit_rate':
+                        file_meta['a_bit_rate'] = value
 
             else:
                 # switches that avoid assigning wrong values to dict during multiple iterations
@@ -496,7 +514,6 @@ def parse_ffprobe(stdout, stderr):
 
                                 if int(den):
                                     value = float(int(num)/int(den))
-                                    value = round(value, 3)
 
                                     if not int(value) == 0:
                                         file_meta['v_frame_rate'] = value
@@ -541,8 +558,9 @@ def parse_ffprobe(stdout, stderr):
     if file_meta['i_stream'] is True:
         file_meta['v_stream'] = False
 
-    # validate dict keys to minimize false positives
-    file_meta = validate_keys(file_meta)
+    # validate video/audio dictionary values to minimize false positives
+    else:
+        file_meta = validate_keys(file_meta)
 
     return file_meta
 
@@ -561,7 +579,7 @@ def validate_keys(file_meta: dict):
                 file_meta['a_stream'] = False
 
     if settings.validate_video is True:
-        check_keys = ['v_width', 'v_height', 'v_frame_rate', 'v_pix_fmt']
+        check_keys = ['v_width', 'v_height', 'v_frame_rate', 'v_pix_fmt', 'v_duration']
 
         for key in check_keys:
             if not key in file_meta:
