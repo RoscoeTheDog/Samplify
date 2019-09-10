@@ -2,9 +2,11 @@ import subprocess
 import re
 import platform
 from samplify.app import settings
-import logging
+import structlog
 
-logger = logging.getLogger('event_log')
+
+# call our logger locally
+logger = structlog.get_logger('samplify.log')
 
 
 def hardware():

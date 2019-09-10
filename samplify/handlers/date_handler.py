@@ -1,7 +1,10 @@
 from datetime import datetime
 import platform
 import os
+import structlog
 
+# call our logger locally
+logger = structlog.get_logger('samplify.log')
 
 def is_between(file_date, calendar_start, calendar_end):
 

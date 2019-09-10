@@ -1,49 +1,15 @@
-# import wand
-# from wand.image import Image
-# from wand.display import display
-from PIL import Image
 import logging
+from logging import Logger
+from logging import manager
+from PIL import Image
 import time
+import structlog
 
-logger = logging.getLogger('event_log')
 
+logging.Logger.manager.loggerDict[__name__] = structlog.get_logger('samplify.log')
 
-# def metadata(input):
-#
-#     meta_dict = {
-#         'v_stream': False,
-#         'a_stream': False,
-#         "i_stream": False,
-#         "i_format": '',
-#         "i_width": '',
-#         "i_height": '',
-#         "nb_frames": '',
-#         "alpha_channel": False,
-#     }
-#
-#     try:
-#         with Image(filename=input) as original:
-#
-#             meta_dict["i_stream"] = True
-#             meta_dict["i_format"] = original.format
-#             meta_dict["i_width"] = original.width
-#             meta_dict["i_height"] = original.height
-#             meta_dict["nb_frames"] = len(original.sequence)
-#             meta_dict["alpha_channel"] = original.alpha_channel
-#
-#             return meta_dict
-#
-#     except Exception as e:
-#         logger.warning(f'Error: {e}')
-#
-#         return meta_dict
-#
-# def convert_image(self, input, output, format):
-#
-#     with Image(filename=input) as original:
-#
-#         with original.convert(format='png') as copy:
-#             copy.save(filename=output.format(format))
+# # call our logger locally
+logger = structlog.get_logger('samplify.log')
 
 
 def metadata(input):

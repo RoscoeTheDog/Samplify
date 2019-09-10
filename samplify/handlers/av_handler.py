@@ -1,5 +1,4 @@
 import subprocess
-import logging
 import re
 import av
 import av.filter
@@ -8,8 +7,11 @@ import pydub as pd
 from samplify.app import settings
 import time
 import json
+import structlog
 
-logger = logging.getLogger('event_log')
+
+# call our logger locally
+logger = structlog.get_logger('samplify.log')
 number = 0
 
 

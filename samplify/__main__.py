@@ -2,35 +2,79 @@ import argparse
 import os
 import logging
 import time
+import structlog
+from structlog.stdlib import *
+from structlog.processors import *
+from pythonjsonlogger import jsonlogger
+import sys
 
 from samplify.handlers import database_handler
 from samplify.app import input, output, settings, gpu
 
-logger = logging.getLogger('event_log')
+logger = structlog.get_logger('samplify.log')
 
 
 def logging_config():
 
-    # determines what will be logged
-    logger.setLevel(logging.DEBUG)
+    # declare a custom formatter for our dev stream log
+    stream_formatter = structlog.stdlib.ProcessorFormatter(
+        processor=structlog.dev.ConsoleRenderer(level_styles=
+        {
+            'info:': '\033[31m',
+            # colorama ANSI sequences
+            # print(structlog.dev.ConsoleRenderer.get_default_level_styles()) for further example
+        }
+        ),
+    )
 
-    # formatting for the different handlers
-    format_log = logging.Formatter('%(pathname)s:%(asctime)s:%(levelname)s: %(message)s')
-    format_stream = logging.Formatter('%(message)s')
+    # declare a custom formatter for our log file
+    file_formatter = structlog.stdlib.ProcessorFormatter(
+        processor=structlog.processors.JSONRenderer(sort_keys=False),
+    )
 
-    # file handlers read/write log files
-    file_handler = logging.FileHandler('Samplify.log')
-    file_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(format_log)
+    # declare our file handler
+    file_handler = logging.FileHandler('samplify.log')
 
-    # stream handlers show the messages as they are logged in real time
+    # set our custom formatter for the log file
+    file_handler.setFormatter(file_formatter)  # In theory, jsonlogger.JsonFormatter() could be used with custom override methods which may allow us to re-order keys
+
+    # declare our stream handler
     stream_handler = logging.StreamHandler()
-    stream_handler.setLevel(logging.DEBUG)
-    stream_handler.setFormatter(format_stream)
+    # set our custom formatter for the stream
+    stream_handler.setFormatter(stream_formatter)
 
-    # attach handlers to logger
-    logger.addHandler(file_handler)
-    logger.addHandler(stream_handler)
+    # get a standard logger
+    root_logger = logging.getLogger()
+    # add handlers to standard logger
+    root_logger.addHandler(stream_handler)
+    root_logger.addHandler(file_handler)
+
+    # set global log level
+    root_logger.setLevel(logging.DEBUG)
+    # set log level for stdout/stderr stream
+    stream_handler.setLevel(logging.DEBUG)
+
+    # basic structlog configuration with processor chain
+    structlog.configure(
+        context_class=dict,
+        wrapper_class=structlog.BoundLogger,
+        processors=[
+            TimeStamper(fmt='iso'),
+            ExceptionPrettyPrinter(),
+            structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+        ],
+        logger_factory=structlog.stdlib.LoggerFactory(),
+    )
+
+    structlog.wrap_logger(
+        root_logger,
+        processors=[
+            TimeStamper(fmt='iso'),
+            ExceptionPrettyPrinter(),
+            structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+        ]
+    )
+
 
 
 def args_configure():
@@ -66,6 +110,9 @@ def main():
 
     # start logging
     logging_config()
+
+    logger.warning('test message')
+    # time.sleep(5)
 
     # configure hardware
     gpu.hardware()

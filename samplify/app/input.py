@@ -2,13 +2,15 @@
 # from sqlalchemy import MetaData
 from samplify.database.db_setup import *
 from samplify.handlers import database_handler
-import logging
+# import logging
 import os
 import time
 from samplify.handlers import av_handler, image_handler, date_handler
+import structlog
+
 
 # call our logger locally
-logger = logging.getLogger('event_log')
+logger = structlog.get_logger('samplify.log')
 
 
 def scan_files():

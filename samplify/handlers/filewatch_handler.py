@@ -7,7 +7,10 @@ import os
 from samplify.app import settings
 from samplify.handlers import av_handler, database_handler
 
-logger = logging.getLogger('event_log')
+import structlog
+
+# call our logger locally
+logger = structlog.get_logger('samplify.log')
 
 
 class InputMonitoring(events.PatternMatchingEventHandler):

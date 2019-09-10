@@ -3,7 +3,6 @@ from sqlalchemy import MetaData
 from samplify.database.db_setup import *
 import os
 import time
-import logging
 import shutil
 import threading
 import subprocess
@@ -13,9 +12,11 @@ from datetime import datetime
 from samplify.app import settings
 from samplify.handlers import av_handler, image_handler
 from samplify.app import output
+import structlog
+
 
 # call our logger locally
-logger = logging.getLogger('event_log')
+logger = structlog.get_logger('samplify.log')
 
 
 # temporary data to test behavior

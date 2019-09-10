@@ -2,8 +2,12 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData
 from samplify.database.db_setup import *
 from samplify.handlers import database_handler
-import logging
 import os
+import structlog
+
+
+# call our logger locally
+logger = structlog.get_logger('samplify.log')
 
 # connect engine and bind engine to metadata
 engine = create_engine(settings.database_path)
@@ -17,9 +21,6 @@ session = sessionmaker(bind=engine)
 
 # you must also instantiate the session before querying
 session = session()
-
-# call our logger locally
-logger = logging.getLogger('event_log')
 
 
 def create_directories():
