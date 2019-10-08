@@ -1,6 +1,6 @@
 import threading
 import os
-from samplify import database
+import database
 
 database_name = 'database.db'
 database_path = 'sqlite:///' + os.path.dirname(database.__file__) + '/' + database_name

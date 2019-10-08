@@ -1,6 +1,6 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData
-from samplify.database.db_setup import *
+from database.db_setup import *
 import os
 import time
 import shutil
@@ -9,9 +9,9 @@ import subprocess
 import re
 import platform
 from datetime import datetime
-from samplify.app import settings
-from samplify.handlers import av_handler, image_handler
-from samplify.app import output
+from app import settings
+from handlers import av_handler, image_handler
+from app import output
 import structlog
 
 

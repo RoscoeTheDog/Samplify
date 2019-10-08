@@ -1,11 +1,11 @@
 # from sqlalchemy.orm import sessionmaker
 # from sqlalchemy import MetaData
-from samplify.database.db_setup import *
-from samplify.handlers import database_handler
+from database.db_setup import *
+from handlers import database_handler
 # import logging
 import os
 import time
-from samplify.handlers import av_handler, image_handler, date_handler
+from handlers import av_handler, image_handler, date_handler
 import structlog
 
 

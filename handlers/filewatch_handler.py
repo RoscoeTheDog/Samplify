@@ -4,8 +4,8 @@ import time
 import logging
 import os
 
-from samplify.app import settings
-from samplify.handlers import av_handler, database_handler
+from app import settings
+from handlers import av_handler, database_handler
 
 import structlog
 

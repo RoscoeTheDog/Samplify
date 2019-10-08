@@ -1,7 +1,7 @@
 import subprocess
 import re
 import platform
-from samplify.app import settings
+from app import settings
 import structlog
 
 

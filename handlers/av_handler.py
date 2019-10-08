@@ -4,7 +4,7 @@ import av
 import av.filter
 import os
 import pydub as pd
-from samplify.app import settings
+from app import settings
 import time
 import json
 import structlog

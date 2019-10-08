@@ -1,7 +1,7 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData
-from samplify.database.db_setup import *
-from samplify.handlers import database_handler
+from database.db_setup import *
+from handlers import database_handler
 import os
 import structlog
 

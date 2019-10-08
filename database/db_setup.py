@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
-from samplify.app import settings
+from app import settings
 from datetime import datetime
 import os
 

@@ -5,12 +5,11 @@ import time
 import structlog
 from structlog.stdlib import *
 from structlog.processors import *
-import samplify.logging.processors
 from pythonjsonlogger import jsonlogger
 import sys
 
-from samplify.handlers import database_handler
-from samplify.app import input, output, settings, gpu
+from handlers import database_handler
+from app import input, output, settings, gpu, custom_processors
 
 logger = structlog.get_logger('samplify.log')
 
@@ -82,9 +81,9 @@ def logging_config():
         processors=[
             TimeStamper(fmt='iso'),
             # format_exc_info,
-            samplify.logging.processors.add_structlog_level,
+            custom_processors.add_structlog_level,
             # order_keys,
-            samplify.logging.processors.OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'path', 'exc_info']),
+            custom_processors.OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'path', 'exc_info']),
             structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
         ],
         logger_factory=structlog.stdlib.LoggerFactory(),
