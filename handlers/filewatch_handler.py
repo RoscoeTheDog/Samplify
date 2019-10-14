@@ -1,16 +1,32 @@
 from watchdog.observers import Observer
 from watchdog import events
 import time
-import logging
+
+from handlers import av_handler, database_handler
+from app import settings
 import os
 
-from app import settings
-from handlers import av_handler, database_handler
+from database.database_setup import InputDirectories
 
 import structlog
 
+import threading
+
 # call our logger locally
 logger = structlog.get_logger('samplify.log')
+
+
+# def schedule_watches():
+#
+#     monitor_id = 0
+#
+#     for folder_entry in session.query(InputDirectories):
+#
+#         monitor_id += 1
+#
+#         observer = InputMonitoring()
+#
+#         observer.schedule_watch(path=folder_entry.folder_path)
 
 
 class InputMonitoring(events.PatternMatchingEventHandler):
@@ -36,75 +52,159 @@ class InputMonitoring(events.PatternMatchingEventHandler):
                 on_deleted: Executed when a file or directory is deleted.
     """
 
+    db_handler = database_handler.NewHandler()
+
     def on_created(self, event):
-        # fix backslash formatting
-        path = os.path.abspath(event.src_path)
+
+        # db_session = self.db_handler()
+
+        path = os.path.abspath(event.src_path) # fix backslash formatting
 
         if os.path.isdir(path):
-            logger.info(f"Event: Folder {event.event_type} {path} {event.is_directory}")
-            database_handler.insert_input_folder(path)
+            logger.info(f'admin_message', msg='Folder created', path=path)
+            self.db_handler.insert_input_folder(path)
 
             # update our cache by ONE item!
             settings.input_cache.append(path)
-            logger.info(f"Event: File added to input cache {path}")
+            # logger.info(f'admin_message', msg='input cache updated', path=path)
 
-        elif os.path.isfile(event.src_path):
-            logger.info(f"Event: File {event.event_type} {path} {event.is_directory}")
+        elif os.path.isfile(path):
+            logger.info(f'admin_message', msg='File created', path=path)
 
-            ## PYDUB METHOD (depreciated)
-            # file = pd.open_audio(path)
-            # sample_rate = pd.get_sample_rate(file)
-            # bit_depth = pd.get_bit_depth(file)
-
-            # FFPROBE METHOD (depreciated)
-            # string_handler.open_file(event.src_path)
-            # frame_rate = string_handler.frame_rate(event.src_path)
-            # bit_depth = string_handler.bit_depth(event.src_path)
-            # bit_rate = string_handler.bit_rate(event.src_path)
-
-            # PyAV METHOD
-            sample_format, frame_rate, bit_depth = av_handler.get_info(path)
-            bit_rate = None
-
-            database_handler.insert_file(path, frame_rate, bit_depth, bit_rate)
-
+            metadata = av_handler.decode_file(path)
+            self.db_handler.sort_to_table(metadata)
 
     def on_deleted(self, event):
 
-        # fix backslash formatting
-        path = os.path.abspath(event.src_path)
+        path = os.path.abspath(event.src_path) # fix backslash formatting
+
+        # if os.path.isdir(path):
+        # database_handler.remove_input_folder(path)
 
         if path in settings.input_cache:
-            logger.info(f"Event: Folder {event.event_type} {path} True")
-            database_handler.remove_input_folder(path)
+            logger.info(f'admin_message', msg='File deleted', path=path)
+            self.db_handler.remove_input_folder(path)
 
             # update our cache by ONE item!
             settings.input_cache.remove(path)
             logger.info(f"Event: File removed from input cache {path}")
 
+        # elif os.path.isfile(path):
+        #     database_handler.remove_file(path)
+
         else:
             try:
-                database_handler.remove_file(event.src_path)
-                logger.info(f"Event: File {event.event_type} {event.src_path} {event.is_directory}")
+                self.db_handler.remove_file(event.src_path)
+                logger.info(f'admin_message', msg=event.event_type, path=path)
 
             except:
-                logger.error(f"Event: Entry not in database {event.src_path} {event.is_directory}")
+                logger.error(f'admin_message', msg='Entry not in database', path=path)
 
 
-    def start_observer(self):
 
-        observer = Observer()
-        observer.schedule(InputMonitoring(), path=settings.input_path, recursive=True)
-        observer.isDaemon()
-        observer.start()
+    # def schedule_watch(self, path):
+    #
+    #     logger.info('user_message', msg=f'Started monitoring folder', path=path)
+    #
+    #     try:
+    #         observer = Observer()
+    #         observer.schedule(InputMonitoring(), path=path, recursive=True)
+    #         observer.isDaemon()
+    #         observer.start()
+    #
+    #         # try:
+    #         #     while True:
+    #         #         time.sleep(0)
+    #         # except KeyboardInterrupt:
+    #         #     observer.stop()
+    #
+    #         observer.join()
+    #
+    #     except Exception as e:
+    #         logger.error('admin_message', msg='Could not monitor input directory', exc_info=e)
 
-        try:
+    def schedule_watches(self):
+
+        # rows = self.db_handler.return_rows('InputDirectories')
+
+        # for folder_entry in rows:
+        #
+
+        session = self.db_handler.return_current_session()
+        
+        for folder_entry in session.query(InputDirectories):
+
+            if folder_entry.monitor is True:
+
+                try:
+                    observer = Observer()
+                    observer.schedule(InputMonitoring(), path=folder_entry.folder_path, recursive=True)
+                    observer.isDaemon()
+                    observer.start()
+                    logger.info('user_message', msg=f'Started monitoring folder', path=folder_entry.folder_path)
+
+                except Exception as e:
+                    logger.error('admin_message', msg=f'Could not monitor input directory {folder_entry.folder_path}', exc_info=e)
+
+        def interrupt_watch():
+
             while True:
-                time.sleep(0)
-        except KeyboardInterrupt:
-            observer.stop()
 
-        observer.join()
+                try:
+                    while True:
+                        time.sleep(1)
+
+                except KeyboardInterrupt:
+                    observer = Observer()
+                    observer.unschedule_all()  # kill all watchdog threads
+                    return
+                    # thread = threading.current_thread()
+                    # thread.join()  # kill current keyboard monitor thread
+
+        monitor_thread = threading.Thread(target=interrupt_watch())
+        monitor_thread.isDaemon()
+        monitor_thread.start()
+
+        print('the main thread is proceeding forward')
+        time.sleep(2)
+
+
+
+
+
+
+
+        # #TODO: get the monitor thread to work in a daemon like fashion
+        #
+        # id = 0
+        #
+        # for threads in range(2):
+        #
+        #     # if id == 0:
+        #     #     main_thread = threading.Thread()
+        #     #     main_thread.isDaemon()
+        #     #     main_thread.start()
+        #
+        #     if id == 1:
+        #
+        #         monitor_thread = threading.Thread(target=interrupt_watch())
+        #         # monitor_thread.isDaemon()
+        #         monitor_thread.start()
+        #
+        #     id += 1
+
+
+
+
+
+
+        # def stop_thread(monitor_thread, thread_stop):
+        #     thread_stop.wait()
+        #     monitor_thread.join()
+
+        # start_thread()
+
+
 
 
 class OutputMonitoring(events.PatternMatchingEventHandler):

@@ -11,17 +11,19 @@ import structlog
 logger = structlog.get_logger('samplify.log')
 
 
-def metadata(input):
+def decode_image(input):
 
     meta_dict = {
         'v_stream': False,
         'a_stream': False,
-        "i_stream": False,
-        "i_format": '',
-        "i_width": '',
-        "i_height": '',
-        "nb_frames": '',
-        "alpha_channel": False,
+        'i_stream': False,
+        'i_format': '',
+        'i_width': '',
+        'i_height': '',
+        'nb_frames': '',
+        'alpha_channel': False,
+
+        'succeeded': False,
     }
 
     try:

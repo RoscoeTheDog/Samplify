@@ -20,6 +20,7 @@ def add_structlog_level(logger, name, event_dict):
 
     return event_dict
 
+
 def order_keys(logger, name, event_dict):
     keys = ['timestamp', 'level', 'event', 'msg', 'path', 'exception', 'exc_info', 'path']
 

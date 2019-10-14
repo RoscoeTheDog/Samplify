@@ -172,6 +172,7 @@ class InputDirectories(Base):
 
     id = Column(Integer, primary_key=True)
     folder_path = Column(String)
+    monitor = Column(Boolean, default=True)
 
 class SearchByDate(Base):
     __tablename__ = 'searchByDate'
@@ -188,8 +189,8 @@ Base.metadata.drop_all(engine)
 # creates all table meta-data info (columns, rows, keys, etc)
 Base.metadata.create_all(engine)
 
-# declare a new session maker and connect to database 'engine'
-session = sessionmaker(bind=engine)
-
-# you must also instantiate the session before querying
-session = session()
+# # declare a new session maker and connect to database 'engine'
+# session = sessionmaker(bind=engine)
+#
+# # you must also instantiate the session before querying
+# session = session()

@@ -8,7 +8,7 @@ from structlog.processors import *
 from pythonjsonlogger import jsonlogger
 import sys
 
-from handlers import database_handler
+from handlers import database_handler, filewatch_handler
 from app import input, output, settings, gpu, custom_processors
 
 logger = structlog.get_logger('samplify.log')
@@ -28,15 +28,17 @@ def logging_config():
         #     # print(structlog.dev.ConsoleRenderer.get_default_level_styles()) for further example
         # }
         ),
-        # foreign_pre_chain=[
-        #     TimeStamper(fmt='iso'),
-        #     # format_exc_info,
-        #     add_structlog_level,
-        #     order_keys,
-        #     # OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'exc_info']),
-        #     # structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
-        #
-        #                   ],
+        foreign_pre_chain=
+        [
+            TimeStamper(fmt='iso'),
+            # custom_processors.OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'path', 'exc_info']),
+            # format_exc_info,
+            # add_structlog_level,
+            # order_keys,
+            # OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'exc_info']),
+            # structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+
+        ],
         # keep_exc_info=True,
         # keep_stack_info=True,
     )
@@ -44,12 +46,12 @@ def logging_config():
     # declare a custom formatter for our log file
     file_formatter = structlog.stdlib.ProcessorFormatter(
         processor=structlog.processors.JSONRenderer(sort_keys=False),
-        foreign_pre_chain=[
-                TimeStamper(fmt='iso'),
-                structlog.stdlib.add_log_level,
-                # OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'exc_info']),
-                # ProcessorFormatter.wrap_for_formatter,
-                          ],
+        foreign_pre_chain=
+        [
+            TimeStamper(fmt='iso'),
+            structlog.stdlib.add_log_level,
+            # custom_processors.OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'path', 'exc_info'])
+        ],
     )
 
     # declare our file handler
@@ -140,35 +142,47 @@ def main():
     # configure hardware
     gpu.hardware()
 
-    # add temporary template
-    database_handler.insert_template()
+    db_startup = database_handler.NewHandler()
+
+    db_startup.insert_template()
+
+    # # add temporary template
+    # database_handler.insert_template()
 
     # create outputs
     output.validate_directories()
 
+    db_startup.start_input_cache()
+    db_startup.start_output_cache()
+
+
+
+
+    # db_startup.start_input_cache()
+
     # initialize file monitor cache
-    # database.start_input_cache()
-    # database.start_output_cache()
+    # database_handler.start_input_cache()
+    # database_handler.start_output_cache()
 
-    # start benchmark (input)
-    timer = time.time()
-
-    # scan all input folders
-    input.scan_files()
-    time.sleep(2)
+    # # start benchmark (input)
+    # timer = time.time()
+    #
+    # # scan all input folders
+    # input.scan_files()
+    # time.sleep(2)
 
     # stdout, stderr = av_handler.ffprobe('C:\\OpenCV 4.1.0\\opencv\\sources\\doc\\acircles_pattern.png')
     # print(stdout)
     # av_handler.parse_ffprobe(stdout, stderr)
 
     # end benchmark (input)
-    bench_input = time.time() - timer
+    # bench_input = time.time() - timer
 
     # start benchmark (output)
     timer = time.time()
 
     # SAMPLIFY!
-    database_handler.start_program()
+    # database_handler.samplify()
 
     # collect all files/folders from output
     # db_handler.get_root_output(App_Settings.output_path)
@@ -176,15 +190,18 @@ def main():
     # end benchmark (output)
     bench_output = time.time() - timer
 
-    print('input scan: ', bench_input)
-    print('output scan: ', bench_output)
+    # print('input scan: ', bench_input)
+    # print('output scan: ', bench_output)
+
+    # filewatch_handler.schedule_watches()
+
 
     # start monitoring thread for input events
-    # input_monitor = bin.monitor_events.InputMonitoring()
-    # input_monitor.start_observer()
+    input_monitor = filewatch_handler.InputMonitoring()
+    input_monitor.schedule_watches()
 
     # start monitoring thread for output events
-    # output_monitor = bin.monitor_events.OutputMonitoring()
+    # output_monitor = filewatch_handler.OutputMonitoring()
     # output_monitor.start_observer()
 
 

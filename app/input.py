@@ -1,6 +1,6 @@
 # from sqlalchemy.orm import sessionmaker
 # from sqlalchemy import MetaData
-from database.db_setup import *
+from database.database_setup import *
 from handlers import database_handler
 # import logging
 import os

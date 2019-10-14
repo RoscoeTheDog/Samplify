@@ -1,6 +1,6 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData
-from database.db_setup import *
+from database.database_setup import *
 from handlers import database_handler
 import os
 import structlog
@@ -25,16 +25,14 @@ session = session()
 
 def validate_directories():
 
-    logger.info('user_message', msg=f'searching for existing output directories...')
+    logger.info('user_message', msg=f'Validating output structure')
 
     for directory_entry in session.query(OutputDirectories):
+
         path = directory_entry.folder_path
 
         if not os.path.exists(path):
             logger.warning(f'admin_message', msg=f'output directory does not exist', path=path)
-
-            # logger.info(f'admin_message', msg=f'attempting to create new directory', path=path)
-            # logger.info(f'Event: {path} does not exist! Creating new directory...')
 
             try:
                 os.mkdir(path)

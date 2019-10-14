@@ -8,6 +8,8 @@ from app import settings
 import time
 import json
 import structlog
+import handlers.database_handler as database_handler
+from handlers import image_handler, file_handler
 
 
 # call our logger locally
@@ -15,24 +17,65 @@ logger = structlog.get_logger('samplify.log')
 number = 0
 
 
-def stream_info(path: str) -> dict:
+def decode_file(path: str):
+
+    # check if file was moved before decoding
+    try:
+        os.chdir(path)
+    except Exception as e:
+        logger.warning('admin_message', exc_info=e)
+
+    file_meta = {}
+    _basename = os.path.basename(path)
+
+    file_meta['file_path'] = path
+    file_meta["file_name"] = os.path.splitext(_basename)[0]
+    file_meta["extension"] = os.path.splitext(_basename)[1]
+    file_meta["date_created"] = file_handler.creation_date(path)
+
+    # AV info
+    av_meta = pyav_decode(path)  # returns dict
+    file_meta.update(av_meta)  # update dict
+
+    # use FFprobe if AV fails
+    if file_meta['succeeded'] is False:
+        stdout, stderr = ffprobe(path)
+        ff_meta = parse_ffprobe(stdout, stderr)
+        file_meta.update(ff_meta)
+
+    # use FFprobe if no audio/video detected
+    if file_meta['v_stream'] is False and file_meta['a_stream'] is False or file_meta['i_stream'] is True:
+
+        """
+            * Because of large temp files and inefficiencies in wand, avoid decoding 'other_files'
+            * Because FFprobe may ignore some image formats, do not check for i_stream until wand checks the file
+        """
+
+        # IMG info
+        img_meta = image_handler.decode_image(input=path)
+        file_meta.update(img_meta)
+
+    return file_meta
+
+
+def pyav_decode(path: str) -> dict:
     """
     :param path: :str: "path to file"
     :return: :dict: "dict of metadata from file"
     """
 
     # declare different types of streams (defaults to false)
-    file_meta ={
-            'v_stream': False,
+    file_meta =\
+        {
             'a_stream': False,
+            'v_stream': False,
             'i_stream': False,
+            'succeeded': False,
         }
 
     try:
         # TODO: investigate why open() can take awhile to return in some cases
         container = av.open(path)
-
-
 
         """
         In this scope:
@@ -133,12 +176,15 @@ def stream_info(path: str) -> dict:
         # check dict keys for missing entries or 0s -- minimize decoding false positives into database
         file_meta = validate_keys(file_meta)
 
+        file_meta['succeeded'] = True
+
     except Exception as e:
+        file_meta['succeeded'] = False
         logger.error(f'admin_message', msg='Decode failed using PyAV', exception=e)
 
-        if file_meta['i_stream'] is False:
-            stdout, stderr = ffprobe(path)
-            file_meta = parse_ffprobe(stdout, stderr)
+        # if file_meta['i_stream'] is False:
+        #     stdout, stderr = ffprobe(path)
+        #     file_meta = parse_ffprobe(stdout, stderr)
 
     return file_meta
 
@@ -451,12 +497,11 @@ def parse_ffprobe(stdout, stderr):
 
     # try:
     file_meta = {
-        'v_stream': False,
-
         'a_stream': False,
-
-
+        'v_stream': False,
         'i_stream': False,
+
+        'succeeded': False,
 
         'a_bit_depth': '',  # have this declared until we correctly parse bits_per_sample
     }
