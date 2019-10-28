@@ -1042,3 +1042,95 @@
 {"timestamp": "2019-10-14T05:46:07.380907Z", "level": "error", "event": "admin_message", "msg": "Could not monitor input directory C:/Users/Admin/Desktop/Input/Sample Videos", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified.', None, 3)"}
 {"timestamp": "2019-10-14T05:46:12.345191Z", "level": "info", "event": "admin_message", "msg": "File created", "path": "C:\\Users\\Aspen\\Desktop\\Input\\4-HiHat\\Basics\\BT-Hat 2 Ticks - Copy - Copy (2) - Copy - Copy (2).wav"}
 {"timestamp": "2019-10-14T05:46:12.346191Z", "level": "warning", "event": "admin_message", "exc_info": "NotADirectoryError(20, 'The directory name is invalid')"}
+{"timestamp": "2019-10-28T00:22:20.399803Z", "level": "info", "event": "user_message", "msg": "GPU type identified as NVIDIA"}
+{"timestamp": "2019-10-28T00:22:20.399803Z", "level": "info", "event": "user_message", "msg": "Hardware acceleration enabled"}
+{"timestamp": "2019-10-28T00:22:20.429805Z", "level": "info", "event": "user_message", "msg": "Validating output structure"}
+{"timestamp": "2019-10-28T00:22:20.433805Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Aspen/Desktop/Output/kick"}
+{"timestamp": "2019-10-28T00:22:20.434805Z", "level": "info", "event": "admin_message", "msg": "new output directory created", "path": "C:/Users/Aspen/Desktop/Output/kick"}
+{"timestamp": "2019-10-28T00:22:20.434805Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/photos"}
+{"timestamp": "2019-10-28T00:22:20.434805Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:22:20.435805Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/hat"}
+{"timestamp": "2019-10-28T00:22:20.435805Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:22:20.435805Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/dragon ball"}
+{"timestamp": "2019-10-28T00:22:20.435805Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:23:01.757169Z", "level": "info", "event": "user_message", "msg": "GPU type identified as NVIDIA"}
+{"timestamp": "2019-10-28T00:23:01.757169Z", "level": "info", "event": "user_message", "msg": "Hardware acceleration enabled"}
+{"timestamp": "2019-10-28T00:23:01.792171Z", "level": "info", "event": "user_message", "msg": "Validating output structure"}
+{"timestamp": "2019-10-28T00:23:01.797171Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/photos"}
+{"timestamp": "2019-10-28T00:23:01.797171Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:23:01.797171Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/hat"}
+{"timestamp": "2019-10-28T00:23:01.798171Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:23:01.798171Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/dragon ball"}
+{"timestamp": "2019-10-28T00:23:01.798171Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:34:41.579196Z", "level": "info", "event": "user_message", "msg": "GPU type identified as NVIDIA"}
+{"timestamp": "2019-10-28T00:34:41.579196Z", "level": "info", "event": "user_message", "msg": "Hardware acceleration enabled"}
+{"timestamp": "2019-10-28T00:34:41.609198Z", "level": "info", "event": "user_message", "msg": "Validating output structure"}
+{"timestamp": "2019-10-28T00:34:41.614198Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/photos"}
+{"timestamp": "2019-10-28T00:34:41.614198Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:34:41.615198Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/hat"}
+{"timestamp": "2019-10-28T00:34:41.615198Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:34:41.615198Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/dragon ball"}
+{"timestamp": "2019-10-28T00:34:41.615198Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:34:41.694203Z", "level": "info", "event": "user_message", "msg": "Started monitoring folder", "path": "C:/Users/Aspen/Desktop/Input/4-HiHat"}
+{"timestamp": "2019-10-28T00:34:41.695203Z", "level": "info", "event": "user_message", "msg": "Started monitoring folder", "path": "C:/Users/Aspen/Desktop/Input/1-Kick"}
+{"timestamp": "2019-10-28T00:34:41.695203Z", "level": "error", "event": "admin_message", "msg": "Could not monitor input directory C:/Users/Admin/Desktop/Input/", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified.', None, 3)"}
+{"timestamp": "2019-10-28T00:48:45.001437Z", "level": "info", "event": "user_message", "msg": "GPU type identified as NVIDIA"}
+{"timestamp": "2019-10-28T00:48:45.001437Z", "level": "info", "event": "user_message", "msg": "Hardware acceleration enabled"}
+{"timestamp": "2019-10-28T00:48:45.033439Z", "level": "info", "event": "user_message", "msg": "Validating output structure"}
+{"timestamp": "2019-10-28T00:48:45.038439Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/photos"}
+{"timestamp": "2019-10-28T00:48:45.038439Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:48:45.038439Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/hat"}
+{"timestamp": "2019-10-28T00:48:45.038439Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:48:45.038439Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/dragon ball"}
+{"timestamp": "2019-10-28T00:48:45.039439Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:48:45.121444Z", "level": "info", "event": "user_message", "msg": "Started monitoring folder", "path": "C:/Users/Aspen/Desktop/Input/4-HiHat"}
+{"timestamp": "2019-10-28T00:48:45.121444Z", "level": "info", "event": "user_message", "msg": "Started monitoring folder", "path": "C:/Users/Aspen/Desktop/Input/1-Kick"}
+{"timestamp": "2019-10-28T00:48:45.122444Z", "level": "error", "event": "admin_message", "msg": "Could not monitor input directory C:/Users/Admin/Desktop/Input/", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified.', None, 3)"}
+{"timestamp": "2019-10-28T00:49:14.493124Z", "level": "info", "event": "user_message", "msg": "GPU type identified as NVIDIA"}
+{"timestamp": "2019-10-28T00:49:14.494124Z", "level": "info", "event": "user_message", "msg": "Hardware acceleration enabled"}
+{"timestamp": "2019-10-28T00:49:14.524126Z", "level": "info", "event": "user_message", "msg": "Validating output structure"}
+{"timestamp": "2019-10-28T00:49:14.528126Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/photos"}
+{"timestamp": "2019-10-28T00:49:14.529126Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:49:14.529126Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/hat"}
+{"timestamp": "2019-10-28T00:49:14.529126Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:49:14.529126Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/dragon ball"}
+{"timestamp": "2019-10-28T00:49:14.529126Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:49:14.609131Z", "level": "info", "event": "user_message", "msg": "Started monitoring folder", "path": "C:/Users/Aspen/Desktop/Input/4-HiHat"}
+{"timestamp": "2019-10-28T00:49:14.610131Z", "level": "info", "event": "user_message", "msg": "Started monitoring folder", "path": "C:/Users/Aspen/Desktop/Input/1-Kick"}
+{"timestamp": "2019-10-28T00:49:14.610131Z", "level": "error", "event": "admin_message", "msg": "Could not monitor input directory C:/Users/Admin/Desktop/Input/", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified.', None, 3)"}
+{"timestamp": "2019-10-28T00:55:22.344164Z", "level": "info", "event": "user_message", "msg": "GPU type identified as NVIDIA"}
+{"timestamp": "2019-10-28T00:55:22.344164Z", "level": "info", "event": "user_message", "msg": "Hardware acceleration enabled"}
+{"timestamp": "2019-10-28T00:55:22.373166Z", "level": "info", "event": "user_message", "msg": "Validating output structure"}
+{"timestamp": "2019-10-28T00:55:22.377166Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/photos"}
+{"timestamp": "2019-10-28T00:55:22.377166Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:55:22.378166Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/hat"}
+{"timestamp": "2019-10-28T00:55:22.378166Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:55:22.378166Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/dragon ball"}
+{"timestamp": "2019-10-28T00:55:22.378166Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:55:22.459170Z", "level": "info", "event": "user_message", "msg": "Started monitoring folder", "path": "C:/Users/Aspen/Desktop/Input/4-HiHat"}
+{"timestamp": "2019-10-28T00:55:22.460171Z", "level": "info", "event": "user_message", "msg": "Started monitoring folder", "path": "C:/Users/Aspen/Desktop/Input/1-Kick"}
+{"timestamp": "2019-10-28T00:55:22.460171Z", "level": "error", "event": "admin_message", "msg": "Could not monitor input directory C:/Users/Admin/Desktop/Input/", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified.', None, 3)"}
+{"timestamp": "2019-10-28T00:59:51.673569Z", "level": "info", "event": "user_message", "msg": "GPU type identified as NVIDIA"}
+{"timestamp": "2019-10-28T00:59:51.673569Z", "level": "info", "event": "user_message", "msg": "Hardware acceleration enabled"}
+{"timestamp": "2019-10-28T00:59:51.706571Z", "level": "info", "event": "user_message", "msg": "Validating output structure"}
+{"timestamp": "2019-10-28T00:59:51.710571Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/photos"}
+{"timestamp": "2019-10-28T00:59:51.710571Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:59:51.711571Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/hat"}
+{"timestamp": "2019-10-28T00:59:51.711571Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:59:51.711571Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/dragon ball"}
+{"timestamp": "2019-10-28T00:59:51.711571Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T00:59:51.791575Z", "level": "info", "event": "user_message", "msg": "Started monitoring folder", "path": "C:/Users/Aspen/Desktop/Input/4-HiHat"}
+{"timestamp": "2019-10-28T00:59:51.791575Z", "level": "info", "event": "user_message", "msg": "Started monitoring folder", "path": "C:/Users/Aspen/Desktop/Input/1-Kick"}
+{"timestamp": "2019-10-28T00:59:51.792575Z", "level": "error", "event": "admin_message", "msg": "Could not monitor input directory C:/Users/Admin/Desktop/Input/", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified.', None, 3)"}
+{"timestamp": "2019-10-28T01:02:06.398274Z", "level": "info", "event": "user_message", "msg": "GPU type identified as NVIDIA"}
+{"timestamp": "2019-10-28T01:02:06.399275Z", "level": "info", "event": "user_message", "msg": "Hardware acceleration enabled"}
+{"timestamp": "2019-10-28T01:02:06.449277Z", "level": "info", "event": "user_message", "msg": "Validating output structure"}
+{"timestamp": "2019-10-28T01:02:06.455278Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/photos"}
+{"timestamp": "2019-10-28T01:02:06.456278Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T01:02:06.456278Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/hat"}
+{"timestamp": "2019-10-28T01:02:06.457278Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T01:02:06.457278Z", "level": "warning", "event": "admin_message", "msg": "output directory does not exist", "path": "C:/Users/Admin/Desktop/Output/dragon ball"}
+{"timestamp": "2019-10-28T01:02:06.457278Z", "level": "error", "event": "admin_message", "msg": "path is not a valid directory location", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified')"}
+{"timestamp": "2019-10-28T01:02:06.554283Z", "level": "info", "event": "user_message", "msg": "Started monitoring folder", "path": "C:/Users/Aspen/Desktop/Input/4-HiHat"}
+{"timestamp": "2019-10-28T01:02:06.555283Z", "level": "info", "event": "user_message", "msg": "Started monitoring folder", "path": "C:/Users/Aspen/Desktop/Input/1-Kick"}
+{"timestamp": "2019-10-28T01:02:06.556284Z", "level": "error", "event": "admin_message", "msg": "Could not monitor input directory C:/Users/Admin/Desktop/Input/", "exc_info": "FileNotFoundError(2, 'The system cannot find the path specified.', None, 3)"}

@@ -174,6 +174,12 @@ class InputDirectories(Base):
     folder_path = Column(String)
     monitor = Column(Boolean, default=True)
 
+class InputMonitoringExclusions(Base):
+    __tablename__ = 'inputMonitoringExclusions'
+
+    id = Column(Integer, primary_key=True)
+    folder_path = Column(String)
+
 class SearchByDate(Base):
     __tablename__ = 'searchByDate'
 

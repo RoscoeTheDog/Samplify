@@ -26,3 +26,20 @@ def creation_date(path_to_file):
             # We're probably on Linux. No easy way to get creation dates here,
             # so we'll settle for when its content was last modified.
             return stat.st_mtime
+
+
+def find_parents_in_hierarchy(hierarchy):
+
+    new_hierarchy = hierarchy.copy()
+
+    # check position first-last
+    for path_x in hierarchy:
+
+        # compare against all other positions first-last
+        for path_y in hierarchy:
+
+            # remove any child paths
+            if path_x in path_y and path_x is not path_y:
+                new_hierarchy.remove(path_y)
+
+    return new_hierarchy

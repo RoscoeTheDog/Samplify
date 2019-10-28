@@ -2,11 +2,12 @@ from watchdog.observers import Observer
 from watchdog import events
 import time
 
-from handlers import av_handler, database_handler
+from handlers import av_handler, database_handler, file_handler
 from app import settings
 import os
+import threading
 
-from database.database_setup import InputDirectories
+from database.database_setup import InputDirectories, InputMonitoringExclusions
 
 import structlog
 
@@ -14,19 +15,6 @@ import threading
 
 # call our logger locally
 logger = structlog.get_logger('samplify.log')
-
-
-# def schedule_watches():
-#
-#     monitor_id = 0
-#
-#     for folder_entry in session.query(InputDirectories):
-#
-#         monitor_id += 1
-#
-#         observer = InputMonitoring()
-#
-#         observer.schedule_watch(path=folder_entry.folder_path)
 
 
 class InputMonitoring(events.PatternMatchingEventHandler):
@@ -53,12 +41,29 @@ class InputMonitoring(events.PatternMatchingEventHandler):
     """
 
     db_handler = database_handler.NewHandler()
+    drop_call = False
 
     def on_created(self, event):
 
-        # db_session = self.db_handler()
+        path = os.path.abspath(event.src_path)  # normalize backslash formatting
 
-        path = os.path.abspath(event.src_path) # fix backslash formatting
+
+
+
+
+
+
+        # for folder_entry in session.query(InputMonitoringExclusions):
+        #
+        #     if path in folder_entry:
+        #         drop_call = True
+        #
+        # if not self.drop_call:
+
+
+
+
+
 
         if os.path.isdir(path):
             logger.info(f'admin_message', msg='Folder created', path=path)
@@ -76,7 +81,27 @@ class InputMonitoring(events.PatternMatchingEventHandler):
 
     def on_deleted(self, event):
 
+        session = self.db_handler.return_current_session()
+
         path = os.path.abspath(event.src_path) # fix backslash formatting
+
+
+
+
+
+
+        # for folder_entry in session.query(InputMonitoringExclusions):
+        #
+        #     if path in folder_entry:
+        #         drop_call = True
+        #
+        # if not self.drop_call:
+
+
+
+
+
+
 
         # if os.path.isdir(path):
         # database_handler.remove_input_folder(path)
@@ -100,111 +125,50 @@ class InputMonitoring(events.PatternMatchingEventHandler):
             except:
                 logger.error(f'admin_message', msg='Entry not in database', path=path)
 
-
-
-    # def schedule_watch(self, path):
-    #
-    #     logger.info('user_message', msg=f'Started monitoring folder', path=path)
-    #
-    #     try:
-    #         observer = Observer()
-    #         observer.schedule(InputMonitoring(), path=path, recursive=True)
-    #         observer.isDaemon()
-    #         observer.start()
-    #
-    #         # try:
-    #         #     while True:
-    #         #         time.sleep(0)
-    #         # except KeyboardInterrupt:
-    #         #     observer.stop()
-    #
-    #         observer.join()
-    #
-    #     except Exception as e:
-    #         logger.error('admin_message', msg='Could not monitor input directory', exc_info=e)
-
     def schedule_watches(self):
 
-        # rows = self.db_handler.return_rows('InputDirectories')
-
-        # for folder_entry in rows:
-        #
-
         session = self.db_handler.return_current_session()
-        
+
+        # filter out children from hierarchy first.
+        hierarchy = []
+
+        # create a list of folder paths
+        for folder_entry in session.query(InputDirectories):
+            hierarchy.append(folder_entry.folder_path)
+
+        # call function to filter out child paths from parents.
+        parent_list = file_handler.find_parents_in_hierarchy(hierarchy)
+
+        # query Table again
         for folder_entry in session.query(InputDirectories):
 
+            # check if monitor is enabled
             if folder_entry.monitor is True:
 
-                try:
-                    observer = Observer()
-                    observer.schedule(InputMonitoring(), path=folder_entry.folder_path, recursive=True)
-                    observer.isDaemon()
-                    observer.start()
-                    logger.info('user_message', msg=f'Started monitoring folder', path=folder_entry.folder_path)
+                # check if path is in parent hierarchy
+                if folder_entry.folder_path in parent_list:
 
-                except Exception as e:
-                    logger.error('admin_message', msg=f'Could not monitor input directory {folder_entry.folder_path}', exc_info=e)
+                    # try to create a watch on the parent directory.
+                    try:
+                        observer = Observer()
+                        observer.schedule(InputMonitoring(), path=folder_entry.folder_path, recursive=True)
+                        observer.setDaemon(False)
+                        # observer.isDaemon()
+                        observer.start()
+                        logger.info('user_message', msg=f'Started monitoring folder', path=folder_entry.folder_path)
 
-        def interrupt_watch():
+                    except Exception as e:
+                        logger.error('admin_message', msg=f'Could not monitor input directory {folder_entry.folder_path}', exc_info=e)
 
-            while True:
+    def handler_dbquery(self):
+        db_handler = database_handler.NewHandler()
+        session = db_handler.return_current_session()
 
-                try:
-                    while True:
-                        time.sleep(1)
+    def watch_handler(self):
 
-                except KeyboardInterrupt:
-                    observer = Observer()
-                    observer.unschedule_all()  # kill all watchdog threads
-                    return
-                    # thread = threading.current_thread()
-                    # thread.join()  # kill current keyboard monitor thread
-
-        monitor_thread = threading.Thread(target=interrupt_watch())
-        monitor_thread.isDaemon()
-        monitor_thread.start()
-
-        print('the main thread is proceeding forward')
-        time.sleep(2)
-
-
-
-
-
-
-
-        # #TODO: get the monitor thread to work in a daemon like fashion
-        #
-        # id = 0
-        #
-        # for threads in range(2):
-        #
-        #     # if id == 0:
-        #     #     main_thread = threading.Thread()
-        #     #     main_thread.isDaemon()
-        #     #     main_thread.start()
-        #
-        #     if id == 1:
-        #
-        #         monitor_thread = threading.Thread(target=interrupt_watch())
-        #         # monitor_thread.isDaemon()
-        #         monitor_thread.start()
-        #
-        #     id += 1
-
-
-
-
-
-
-        # def stop_thread(monitor_thread, thread_stop):
-        #     thread_stop.wait()
-        #     monitor_thread.join()
-
-        # start_thread()
-
-
+        t = threading.Thread(target=self.handler_dbquery())
+        t.setDaemon(False)
+        t.start()
 
 
 class OutputMonitoring(events.PatternMatchingEventHandler):

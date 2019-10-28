@@ -29,30 +29,43 @@ class NewHandler:
         # you must also instantiate the self.session before querying
         self.session = self.session()
 
-    def return_rows(self, table: str):
-
-        try:
-            return self.session.query(table)
-
-        except Exception as e:
-            logger.error('admin_message', msg='Table is not valid', exc_info=e)
-
     def return_current_session(self):
-
         return self.session
+
+
+    # def initialize_watches(self):
+    #
+    #     for folder_entry in self.session.query(InputDirectories):
+    #
+    #         if folder_entry.monitor is True:
+    #             filewatch_handler.InputMonitoring.schedule_watch(folder_entry.folder_path)
+
 
     # temporary data to test behavior
     def insert_template(self):
 
         # INPUT FOLDERS
-        entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input')
+        entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/4-HiHat')
         self.session.add(entry)
+        entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick')
+        self.session.add(entry)
+        entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Acoustic')
+        self.session.add(entry)
+        entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Basics')
+        self.session.add(entry)
+        entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Dubstep')
+        self.session.add(entry)
+
+        entry = InputMonitoringExclusions(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Dubstep')
+        self.session.add(entry)
+
+
         # entry = InputDirectories(folder_path='C:/')
         # self.session.add(entry)
-        entry = InputDirectories(folder_path='D:/MOVIES & SHOWS')
-        self.session.add(entry)
-        entry = InputDirectories(folder_path='C:/Users/Aspen/Pictures')
-        self.session.add(entry)
+        # entry = InputDirectories(folder_path='D:/MOVIES & SHOWS')
+        # self.session.add(entry)
+        # entry = InputDirectories(folder_path='C:/Users/Aspen/Pictures')
+        # self.session.add(entry)
 
         # laptop test directories
         entry = InputDirectories(folder_path='C:/Users/Admin/Desktop/Input/')
@@ -60,14 +73,18 @@ class NewHandler:
         entry = InputDirectories(folder_path='C:/Users/Admin/Desktop/Input/Sample Videos')
         self.session.add(entry)
 
-
         # OUTPUT FOLDERS
         entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/photos', extension='.png', i_fmt='PNG', a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
                                   image_only=True, a_normalize=False)
         self.session.add(entry)
+
+        entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/kick', extension='default', a_channels='1', audio_only=True, a_normalize=False, a_strip_silence=False, a_silence_threshold='-80', reduce=False)
+        self.session.add(entry)
+
         entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/hat', extension='default', a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='1',
                                   audio_only=True, a_normalize=False, a_strip_silence=False, a_silence_threshold='-80', reduce=False)
         self.session.add(entry)
+
         entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/dragon ball', extension='.mp4', a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
                                   video_only=True, reduce=False)
         self.session.add(entry)
@@ -76,9 +93,11 @@ class NewHandler:
         entry = OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/photos', extension='.png', i_fmt='PNG', a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
                                   image_only=True, a_normalize=False)
         self.session.add(entry)
+
         entry = OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/hat', extension='default', a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='1',
                                   audio_only=True, a_normalize=False, a_strip_silence=False, a_silence_threshold='-80', reduce=False)
         self.session.add(entry)
+
         entry = OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/dragon ball', extension='.mp4', a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
                                   video_only=True, reduce=False)
         self.session.add(entry)
