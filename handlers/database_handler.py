@@ -10,7 +10,7 @@ import re
 import platform
 from datetime import datetime
 from app import settings
-from handlers import av_handler, image_handler
+from handlers import av_handler, image_handler, file_handler, filewatch_handler
 from app import output
 import structlog
 
@@ -166,6 +166,36 @@ class NewHandler:
 
                 except Exception as e:
                     logger.error(f'admin_message', f'path is not a valid directory', path=path, exc_info=e)
+
+    def filter_children_directories(self):
+
+        # filter out children from hierarchy first.
+        hierarchy = []
+
+        # create a list of folder paths
+        for folder_entry in self.session.query(InputDirectories):
+            hierarchy.append(folder_entry.folder_path)
+
+        # call function to filter out child paths from parents.
+        parent_list = file_handler.find_parents_in_hierarchy(hierarchy)
+
+        return parent_list
+
+    def start_threads(self):
+
+        parent_directories = self.filter_children_directories()
+
+        for folder_entry in self.session.query(InputDirectories):
+
+            # check if monitor is enabled
+            if folder_entry.monitor is True:
+
+                # check if path is in parent hierarchy
+                if folder_entry.folder_path in parent_directories:
+                    handler = filewatch_handler.ThreadHandler()
+
+                    handler.schedule_observer(folder_entry.folder_path)
+
 
 
     # def update_directory_search_by_name(self):
@@ -1147,7 +1177,7 @@ class NewHandler:
 
     def remove_file(self, path):
 
-        self.session.query(Files).filter_by(file_path = f"{path}").delete()
+        self.session.query(Files).filter_by(file_path=path).delete()
 
         self.session.commit()
 

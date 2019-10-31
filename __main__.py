@@ -14,146 +14,171 @@ from app import input, output, settings, gpu, custom_processors
 logger = structlog.get_logger('samplify.log')
 
 
-def logging_config():
+class Samplify():
 
-    # declare a custom formatter for our dev stream log
-    stream_formatter = structlog.stdlib.ProcessorFormatter(
-        #TODO: Create custom ConsoleRenderer that pops() in desired order
-        # and formats in corresponding colors.
-        processor=structlog.dev.ConsoleRenderer(
-        #     level_styles=
-        # {
-        #     'info:': '\033[31m',
-        #     # colorama ANSI sequences
-        #     # print(structlog.dev.ConsoleRenderer.get_default_level_styles()) for further example
-        # }
-        ),
-        foreign_pre_chain=
-        [
-            TimeStamper(fmt='iso'),
-            # custom_processors.OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'path', 'exc_info']),
-            # format_exc_info,
-            # add_structlog_level,
-            # order_keys,
-            # OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'exc_info']),
-            # structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+    def __init__(self):
+        self.db_manager = database_handler.NewHandler()
+        self.filewatch_manager = filewatch_handler.NewHandler(self.db_manager)
 
-        ],
-        # keep_exc_info=True,
-        # keep_stack_info=True,
-    )
+        # insert default template
+        self.db_manager.insert_template()
 
-    # declare a custom formatter for our log file
-    file_formatter = structlog.stdlib.ProcessorFormatter(
-        processor=structlog.processors.JSONRenderer(sort_keys=False),
-        foreign_pre_chain=
-        [
-            TimeStamper(fmt='iso'),
-            structlog.stdlib.add_log_level,
-            # custom_processors.OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'path', 'exc_info'])
-        ],
-    )
+        # initialize input/output cache (for watchdog)
+        self.db_manager.start_input_cache()
+        self.db_manager.start_output_cache()
 
-    # declare our file handler
-    file_handler = logging.FileHandler('samplify.log')
+    @staticmethod
+    def logging_config():
 
-    # set our custom formatter for the log file
-    file_handler.setFormatter(file_formatter)  # In theory, jsonlogger.JsonFormatter() could be used with custom override methods which may allow us to re-order keys
+        # declare a custom formatter for our dev stream log
+        stream_formatter = structlog.stdlib.ProcessorFormatter(
+            #TODO: Create custom ConsoleRenderer that pops() in desired order
+            # and formats in corresponding colors.
+            processor=structlog.dev.ConsoleRenderer(
+            #     level_styles=
+            # {
+            #     'info:': '\033[31m',
+            #     # colorama ANSI sequences
+            #     # print(structlog.dev.ConsoleRenderer.get_default_level_styles()) for further example
+            # }
+            ),
+            foreign_pre_chain=
+            [
+                TimeStamper(fmt='iso'),
+                # custom_processors.OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'path', 'exc_info']),
+                # format_exc_info,
+                # add_structlog_level,
+                # order_keys,
+                # OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'exc_info']),
+                # structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
 
-    # declare our stream handler
-    stream_handler = logging.StreamHandler()
-    # set our custom formatter for the stream
-    stream_handler.setFormatter(stream_formatter)
+            ],
+            # keep_exc_info=True,
+            # keep_stack_info=True,
+        )
 
-    # get a standard logger
-    root_logger = logging.getLogger()
-    # add handlers to standard logger
-    root_logger.addHandler(stream_handler)
-    root_logger.addHandler(file_handler)
+        # declare a custom formatter for our log file
+        file_formatter = structlog.stdlib.ProcessorFormatter(
+            processor=structlog.processors.JSONRenderer(sort_keys=False),
+            foreign_pre_chain=
+            [
+                TimeStamper(fmt='iso'),
+                structlog.stdlib.add_log_level,
+                # custom_processors.OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'path', 'exc_info'])
+            ],
+        )
 
-    # set global log level
-    root_logger.setLevel(logging.DEBUG)
-    # set log level for stdout/stderr stream
-    stream_handler.setLevel(logging.DEBUG)
+        # declare our file handler
+        file_handler = logging.FileHandler('samplify.log')
 
-    # basic structlog configuration with processor chain
-    structlog.configure(
-        context_class=dict,
-        wrapper_class=structlog.stdlib.BoundLogger,
-        processors=[
-            TimeStamper(fmt='iso'),
-            # format_exc_info,
-            custom_processors.add_structlog_level,
-            # order_keys,
-            custom_processors.OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'path', 'exc_info']),
-            structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
-        ],
-        logger_factory=structlog.stdlib.LoggerFactory(),
-    )
+        # set our custom formatter for the log file
+        file_handler.setFormatter(file_formatter)  # In theory, jsonlogger.JsonFormatter() could be used with custom override methods which may allow us to re-order keys
 
-    structlog.wrap_logger(
-        root_logger,
-        processors=[
-            TimeStamper(fmt='iso'),
-            structlog.stdlib.add_log_level,
-        ]
-    )
+        # declare our stream handler
+        stream_handler = logging.StreamHandler()
+        # set our custom formatter for the stream
+        stream_handler.setFormatter(stream_formatter)
+
+        # get a standard logger
+        root_logger = logging.getLogger()
+        # add handlers to standard logger
+        root_logger.addHandler(stream_handler)
+        root_logger.addHandler(file_handler)
+
+        # set global log level
+        root_logger.setLevel(logging.DEBUG)
+        # set log level for stdout/stderr stream
+        stream_handler.setLevel(logging.DEBUG)
+
+        # basic structlog configuration with processor chain
+        structlog.configure(
+            context_class=dict,
+            wrapper_class=structlog.stdlib.BoundLogger,
+            processors=[
+                TimeStamper(fmt='iso'),
+                # format_exc_info,
+                custom_processors.add_structlog_level,
+                # order_keys,
+                custom_processors.OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'path', 'exc_info']),
+                structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+            ],
+            logger_factory=structlog.stdlib.LoggerFactory(),
+        )
+
+        structlog.wrap_logger(
+            root_logger,
+            processors=[
+                TimeStamper(fmt='iso'),
+                structlog.stdlib.add_log_level,
+            ]
+        )
 
 
-    # print(structlog.dev.ConsoleRenderer.get_default_level_styles())
+        # print(structlog.dev.ConsoleRenderer.get_default_level_styles())
 
-def args_configure():
+    @staticmethod
+    def args_configure():
 
-    # create a parser
-    parser = argparse.ArgumentParser()
+        # create a parser
+        parser = argparse.ArgumentParser()
 
-    # give positional arguments
-    parser.add_argument("source", help="input directory path to convert", type=str)
-    parser.add_argument("destination", help="output directory path to export ", type=str)
-    parser.add_argument("--search", "-s", help="words in files to search for", type=str)
-    parser.add_argument("--ignore", "-i", help="words in files to ignore from search", type=str)
-    parser.add_argument("--verbose", "-v", help="enable detailed verbose reports", type=str)
+        # give positional arguments
+        parser.add_argument("source", help="input directory path to convert", type=str)
+        parser.add_argument("destination", help="output directory path to export ", type=str)
+        parser.add_argument("--search", "-s", help="words in files to search for", type=str)
+        parser.add_argument("--ignore", "-i", help="words in files to ignore from search", type=str)
+        parser.add_argument("--verbose", "-v", help="enable detailed verbose reports", type=str)
 
-    # create args from parser
-    args = parser.parse_args()
+        # create args from parser
+        args = parser.parse_args()
 
-    if not os.path.exists(args.source):
-        logger.warning('source destination invalid')
+        if not os.path.exists(args.source):
+            logger.warning('source destination invalid')
 
-    else:
-        logger.info('source: ' + args.source)
+        else:
+            logger.info('source: ' + args.source)
 
-    if not os.path.exists(args.destination):
-        logger.info('destination does not exist! creating new directory')
-        os.mkdir(args.destination)
+        if not os.path.exists(args.destination):
+            logger.info('destination does not exist! creating new directory')
+            os.mkdir(args.destination)
 
-    else:
-        logger.info('destination: ' + args.destination)
+        else:
+            logger.info('destination: ' + args.destination)
+
+    @staticmethod
+    def validate_directories():
+        output.validate_directories()
+
+    def start_watchdog(self):
+        self.filewatch_manager.schedule_all_observers()
+        self.filewatch_manager.start_db_task_thread()
+
+
+
 
 
 def main():
 
-    # start logging
-    logging_config()
+    # class instance
+    samplify = Samplify()
 
-    # logger.info('user_message', msg='some message', exception='some info')
-    time.sleep(2)
+    # start logging
+    samplify.logging_config()
+
+    # configure args
+    # samplify.args_configure()
 
     # configure hardware
     gpu.hardware()
 
-    db_startup = database_handler.NewHandler()
+    # validate output folders
+    samplify.validate_directories()
 
-    db_startup.insert_template()
-
-    # # add temporary template
-    # database_handler.insert_template()
+    # start watchdog threading
+    samplify.start_watchdog()
 
     # create outputs
     output.validate_directories()
-
-    db_startup.start_input_cache()
-    db_startup.start_output_cache()
 
 
 
@@ -197,8 +222,8 @@ def main():
 
 
     # start monitoring thread for input events
-    input_monitor = filewatch_handler.InputMonitoring()
-    input_monitor.schedule_watches()
+    # input_monitor = filewatch_handler.InputMonitoring()
+    # input_monitor.schedule_watches()
 
     # start monitoring thread for output events
     # output_monitor = filewatch_handler.OutputMonitoring()

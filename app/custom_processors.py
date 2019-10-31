@@ -43,6 +43,7 @@ def order_keys(logger, name, event_dict):
 
     return event_dict
 
+
 class OrderKeys(object):
 
     def __new__(cls, keys=None):

@@ -21,7 +21,7 @@ def decode_file(path: str):
 
     # check if file was moved before decoding
     try:
-        os.chdir(path)
+        os.chdir(os.path.split(path)[0])
     except Exception as e:
         logger.warning('admin_message', exc_info=e)
 
