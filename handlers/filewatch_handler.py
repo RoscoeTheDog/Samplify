@@ -8,6 +8,7 @@ import os
 from multiprocessing import Queue
 import threading
 import inspect
+from enum import Enum
 
 from database.database_setup import InputDirectories, InputMonitoringExclusions
 
@@ -19,85 +20,163 @@ import threading
 logger = structlog.get_logger('samplify.log')
 
 
-task_queue = Queue()
+signal_queue = Queue()
+
 
 # manages watchdog observer threads
 class NewHandler():
 
-    #TODO: Setup a communication channel to the threads so they can recieve an updated
-    #      list of directories that filter and drop the events before they are put into the consumer queue.
-
     def __init__(self, database_handler):
         self.db_manager = database_handler
 
-    def start_db_task_thread(self):
-
-        # dirty way of getting child directory exclusions from list.
-        self.filter_paths = []
-
-        for folder_entry in self.db_manager.session.query(InputMonitoringExclusions):
-            self.filter_paths.append(os.path.abspath(folder_entry.folder_path))
-
+    def start_db_threaded(self):
         logger.info("admin_message", msg="Database task thread started")
 
         while True:
 
-            task = task_queue.get()
+            signal = signal_queue.get()
 
-            try:
-                #TODO: play with Enums instead of sending the tuple.
-                name, event = task
+            path = os.path.abspath(signal.src_path)
 
-                # get path from event
-                path = os.path.abspath(event.src_path)
+            drop_list = []
 
-                # drop events from child directories if in filter list
-                for exclusion in self.filter_paths:
+            # TODO: Signal an update of the drop-list to consumer thread when user inserts field in db
+            for row in self.db_manager.session.query(InputMonitoringExclusions):
+                drop_list.append(os.path.abspath(row.folder_path))
 
-                    if exclusion not in path:
+            # check drop events
+            for directory in drop_list:
+                if directory not in path:
 
-                        if name == 'on_any_event':
-                            pass
+                    if signal.event_type == 'created':
 
-                        if name == 'on_created':
+                        if os.path.isdir(path):
+                            logger.info(f'admin_message', msg='Folder created', path=path)
 
-                            if os.path.isdir(path):
-                                logger.info(f'admin_message', msg='Folder created', path=path)
+                            # update our cache file-tree with the item
+                            settings.input_cache.append(path)
 
-                                # update our cache by ONE item!
-                                settings.input_cache.append(path)
+                        elif os.path.isfile(path):
+                            logger.info(f'admin_message', msg='File created', path=path)
+                            self.db_manager.decode_file(path)
 
-                            elif os.path.isfile(path):
-                                logger.info(f'admin_message', msg='File created', path=path)
+                            # metadata = av_handler.decode_file(path)
+                            # self.db_manager.sort_to_table(metadata)
 
-                                # TODO: optimize decode_file algarhythm.
-                                metadata = av_handler.decode_file(path)
-                                self.db_manager.sort_to_table(metadata)
+                    if signal.event_type == 'modified':
+                        pass
 
-                        if name == 'on_modified':
-                            pass
+                    if signal.event_type == 'moved':
+                        pass
 
-                        if name == 'on_deleted':
+                    if signal.event_type == 'deleted':
 
-                            # note: This essentially checks if path is dir. input_cache == a list of directories.
-                            if path in settings.input_cache:
+                        # Note: Check input_cache (list of directories) if path exists.
+                        #       This checks to see if path is a folder
+
+                        if path in settings.input_cache:
+                            logger.info(f'admin_message', msg='Folder deleted', path=path)
+                            self.db_manager.remove_input_folder(path)
+
+                            # update the list-cache by the one item that was changed.
+                            settings.input_cache.remove(path)
+
+                        else:
+                            try:
+                                self.db_manager.remove_file(path)
                                 logger.info(f'admin_message', msg='File deleted', path=path)
-                                self.db_manager.remove_input_folder(path)
 
-                                # update our cache by ONE item!
-                                settings.input_cache.remove(path)
-
-                            else:
-                                try:
-                                    self.db_manager.remove_file(event.src_path)
-                                    logger.info(f'admin_message', msg=event.event_type, path=path)
-
-                                except Exception as e:
-                                    logger.error(f'admin_message', msg='Entry not in database', path=path, exc_info=e)
+                            except Exception as e:
+                                logger.error(f'admin_message', msg='Entry not in database', path=path, exc_info=e)
 
 
-            except Exception as e:
-                print("Task is not a tuple object", e)
+
+            # if signal == Task.on_any_event:
+            #     pass
+            #
+            # if signal == Task.on_modified:
+            #     pass
+            #
+            # if signal == Task.on_created:
+
+                # if os.path.isdir(path):
+                #     logger.info(f'admin_message', msg='Folder created', path=path)
+                #
+                #     # update our cache by ONE item!
+                #     settings.input_cache.append(path)
+                #
+                # elif os.path.isfile(path):
+                #     logger.info(f'admin_message', msg='File created', path=path)
+                #
+                #     # TODO: optimize decode_file algarhythm.
+                #     metadata = av_handler.decode_file(path)
+                #     self.db_manager.sort_to_table(metadata)
+
+            # if signal == Task.on_deleted:
+            #     pass
+
+
+
+
+
+
+
+
+
+
+            # try:
+            #     #TODO: play with Enums instead of sending the tuple.
+            #     name, event = signal
+            #
+            #     # get path from event
+            #     path = os.path.abspath(event.src_path)
+            #
+            #     # drop events from child directories if in filter list
+            #     for exclusion in self.filter_paths:
+            #
+            #         if exclusion not in path:
+            #
+            #             if name == 'on_any_event':
+            #                 pass
+            #
+            #             if name == 'on_created':
+            #
+            #                 if os.path.isdir(path):
+            #                     logger.info(f'admin_message', msg='Folder created', path=path)
+            #
+            #                     # update our cache by ONE item!
+            #                     settings.input_cache.append(path)
+            #
+            #                 elif os.path.isfile(path):
+            #                     logger.info(f'admin_message', msg='File created', path=path)
+            #
+            #                     # TODO: optimize decode_file algarhythm.
+            #                     metadata = av_handler.decode_file(path)
+            #                     self.db_manager.sort_to_table(metadata)
+            #
+            #             if name == 'on_modified':
+            #                 pass
+            #
+            #             if name == 'on_deleted':
+            #
+            #                 # note: This essentially checks if path is dir. input_cache == a list of directories.
+            #                 if path in settings.input_cache:
+            #                     logger.info(f'admin_message', msg='File deleted', path=path)
+            #                     self.db_manager.remove_input_folder(path)
+            #
+            #                     # update our cache by ONE item!
+            #                     settings.input_cache.remove(path)
+            #
+            #                 else:
+            #                     try:
+            #                         self.db_manager.remove_file(event.src_path)
+            #                         logger.info(f'admin_message', msg=event.event_type, path=path)
+            #
+            #                     except Exception as e:
+            #                         logger.error(f'admin_message', msg='Entry not in database', path=path, exc_info=e)
+            #
+            # except Exception as e:
+            #     print("Task is not a tuple object", e)
 
     def schedule_all_observers(self):
 
@@ -205,32 +284,47 @@ class InputMonitoring(events.PatternMatchingEventHandler):
                 on_deleted: Executed when a file or directory is deleted.
     """
 
-    drop_call = False
+    # def __init__(self):
+    #     super().__init__()
+    #     self.drop_list = []
+    #
+    # def listener(self):
+    #
+    #     while True:
+    #
+    #         self.drop_list = []
+    #
+    #         update = drop_list_queue.get()
+    #
+    #         try:
+    #             for directory in update:
+    #                 self.drop_list.append(directory)
+    #
+    #         except Exception as e:
+    #             logger.error('admin_message', msg='Could not receive from communicated thread', exc_info=e)
+
+    # class Task(Enum):
+    #
+    #     def __init__(self, event):
+    #         self.event = event
+    #
+    #         self.on_any_event = self.event.event_type
+    #         self.on_created = object
+    #         self.on_modified = object
+    #         self.on_deleted = object
 
     def on_created(self, event):
 
         path = os.path.abspath(event.src_path)  # normalize backslash formatting
 
-        # get method name from within method (using inspect)
-        _name = inspect.currentframe().f_code.co_name
-
-        # create a signal object (tuple)
-        signal = (_name, event)
+        # # get method name from within method (using inspect)
+        # _name = inspect.currentframe().f_code.co_name
+        #
+        # # create a signal object (tuple)
+        # signal = (_name, event)
 
         # send the task to the consumer thread
-        task_queue.put(signal)
-
-
-
-
-
-
-
-
-
-
-
-
+        signal_queue.put(event)
 
         # # for folder_entry in session.query(InputMonitoringExclusions):
         # #
@@ -273,20 +367,7 @@ class InputMonitoring(events.PatternMatchingEventHandler):
         signal = (_name, event)
 
         # send the task to the consumer thread
-        task_queue.put(signal)
-
-
-
-
-
-
-
-
-
-
-
-
-
+        signal_queue.put(event)
 
         # session = self.db_handler.return_current_session()
 

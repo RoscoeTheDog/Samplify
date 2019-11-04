@@ -151,7 +151,7 @@ class Samplify():
 
     def start_watchdog(self):
         self.filewatch_manager.schedule_all_observers()
-        self.filewatch_manager.start_db_task_thread()
+        self.filewatch_manager.start_db_threaded()
 
 
 
@@ -174,13 +174,23 @@ def main():
     # validate output folders
     samplify.validate_directories()
 
+    # run a manual scan on input directories.
+    samplify.db_manager.scan_files()
+
     # start watchdog threading
     samplify.start_watchdog()
 
-    # create outputs
-    output.validate_directories()
+    # start benchmark (input)
+    timer = time.time()
 
+    # # run a manual scan on input directories.
+    # samplify.db_manager.scan_files()
 
+    # end benchmark (output)
+    bench_input = time.time() - timer
+
+    # print benchmark
+    print('input scan: ', bench_input)
 
 
     # db_startup.start_input_cache()
@@ -191,7 +201,7 @@ def main():
 
     # # start benchmark (input)
     # timer = time.time()
-    #
+
     # # scan all input folders
     # input.scan_files()
     # time.sleep(2)
@@ -204,7 +214,7 @@ def main():
     # bench_input = time.time() - timer
 
     # start benchmark (output)
-    timer = time.time()
+    # timer = time.time()
 
     # SAMPLIFY!
     # database_handler.samplify()
@@ -213,7 +223,7 @@ def main():
     # db_handler.get_root_output(App_Settings.output_path)
 
     # end benchmark (output)
-    bench_output = time.time() - timer
+    # bench_output = time.time() - timer
 
     # print('input scan: ', bench_input)
     # print('output scan: ', bench_output)

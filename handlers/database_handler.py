@@ -49,11 +49,14 @@ class NewHandler:
         self.session.add(entry)
         entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick')
         self.session.add(entry)
-        entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Acoustic')
-        self.session.add(entry)
-        entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Basics')
-        self.session.add(entry)
-        entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Dubstep')
+        # entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Acoustic')
+        # self.session.add(entry)
+        # entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Basics')
+        # self.session.add(entry)
+        # entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Dubstep')
+        # self.session.add(entry)
+
+        entry = InputDirectories(folder_path='C:/Users/Aspen/Pictures')
         self.session.add(entry)
 
         entry = InputMonitoringExclusions(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Dubstep')
@@ -723,7 +726,6 @@ class NewHandler:
     #
     #     self.session.close_all()
 
-
     def scan_files(self):
 
         logger.info(f'user_message', msg="Starting Input Scan")
@@ -733,160 +735,198 @@ class NewHandler:
 
             path = row.folder_path
 
-            # check if file was moved before decoding
-            try:
-                os.chdir(path)
-            except Exception as e:
-                logger.warning('admin_message', exc_info=e)
+            self.decode_directory(path)
 
-            for root, directory, files in os.walk(path):
 
-                for f in files:
+            #
+            #
+            #
+            #
+            #
+            #
+            #
+            #
+            #
+            #
+            #
+            #
+            #
+            #
+            #
+            #
+            #
+            # # safely check if file was moved before attempting a decode
+            # try:
+            #     os.chdir(path)
+            #
+            # except Exception as e:
+            #     logger.warning('admin_message', exc_info=e)
+            #
+            # for root, directory, files in os.walk(path):
+            #
+            #     for f in files:
+            #
+            #         # create and/or clear dictionary
+            #         file_meta = {}
+            #
+            #         # merge our strings
+            #         path = os.path.join(root, f)
+            #         path = os.path.abspath(path)  # cleanup backslashes (Note: bug when nesting abspath and join-- use seperately)
+            #
+            #         # remove /paths/
+            #         _basename = os.path.basename(path)
+            #
+            #         # log the event
+            #         logger.info(f"Event: File scan {path} {os.path.isdir(path)}")
+            #
+            #         # create a new dict
+            #         file_meta['file_path'] = path
+            #
+            #         # file_name
+            #         file_meta["file_name"] = os.path.splitext(_basename)[0]
+            #
+            #         # .extension
+            #         file_meta["extension"] = os.path.splitext(_basename)[1]
+            #
+            #         # creation date
+            #         file_meta["date_created"] = self.creation_date(path)
+            #
+            #         # AV info
+            #         av_meta = av_handler.pyav_decode(path)  # returns dict
+            #         file_meta.update(av_meta)  # update dict
+            #
+            #         # probe if AV fails
+            #         if file_meta['succeeded'] is False:
+            #             stdout, stderr = av_handler.ffprobe(path)
+            #             ffprobe_meta = av_handler.parse_ffprobe(stdout, stderr)  # returns dictionary of parsed metadata
+            #             file_meta.update(ffprobe_meta)
+            #
+            #         # VIDEO TABLE
+            #         if file_meta['v_stream'] is True:
+            #             self.insert_video(file_meta)
+            #
+            #         # AUDIO TABLE
+            #         elif file_meta['v_stream'] is False and file_meta['a_stream'] is True:
+            #             self.insert_audio(file_meta)
+            #
+            #         # IMG TABLE
+            #         elif file_meta['v_stream'] is False and file_meta['a_stream'] is False or file_meta['i_stream'] is True:
+            #
+            #             """
+            #                 * Because of large temp files and inefficiencies in wand, avoid decoding 'other_files'
+            #                 * Because FFprobe may ignore some image formats, do not check for i_stream until wand checks the file
+            #             """
+            #
+            #             # IMG info
+            #             img_meta = image_handler.decode_image(input=path)
+            #             file_meta.update(img_meta)
+            #
+            #             if file_meta['i_stream'] is True:
+            #                 self.insert_image(file_meta)
+            #
+            #         # (ALL) FILES TABLE
+            #         self.insert_other(file_meta)
+            #
+            #         # write everything to database
+            #         self.session.commit()
 
-                    # create and/or clear dictionary
-                    file_meta = {}
+    def decode_directory(self, path):
+        # check if path is a valid directory
+        try:
+            os.chdir(path)
 
-                    # merge our strings
-                    path = os.path.join(root, f)
-                    path = os.path.abspath(path)  # cleanup backslashes (Note: bug when nesting abspath and join-- use seperately)
+            if os.path.isdir(path):
+                # log current working directory
+                logger.info('user_message', msg='Folder scan starting', path=path)
 
-                    # remove /paths/
-                    _basename = os.path.basename(path)
+                if os.path.isdir(path):
 
-                    # log the event
-                    logger.info(f"Event: File scan {path} {os.path.isdir(path)}")
+                    # iterate through and decode files
+                    for root, directory, files in os.walk(path):
 
-                    # create a new dict
-                    file_meta['file_path'] = path
+                        for f in files:
+                            # merge our strings
+                            path = os.path.join(root, f)
 
-                    # file_name
-                    file_meta["file_name"] = os.path.splitext(_basename)[0]
+                            self.decode_file(path)
 
-                    # .extension
-                    file_meta["extension"] = os.path.splitext(_basename)[1]
-
-                    # creation date
-                    file_meta["date_created"] = self.creation_date(path)
-
-                    # AV info
-                    av_meta = av_handler.pyav_decode(path)  # returns dict
-                    file_meta.update(av_meta)  # update dict
-
-                    # probe if AV fails
-                    if file_meta['succeeded'] is False:
-                        stdout, stderr = av_handler.ffprobe(path)
-                        ffprobe_meta = av_handler.parse_ffprobe(stdout, stderr)  # returns dictionary of parsed metadata
-                        file_meta.update(ffprobe_meta)
-
-                    # VIDEO TABLE
-                    if file_meta['v_stream'] is True:
-                        self.insert_video(file_meta)
-
-                    # AUDIO TABLE
-                    elif file_meta['v_stream'] is False and file_meta['a_stream'] is True:
-                        self.insert_audio(file_meta)
-
-                    # IMG TABLE
-                    elif file_meta['v_stream'] is False and file_meta['a_stream'] is False or file_meta['i_stream'] is True:
-
-                        """
-                            * Because of large temp files and inefficiencies in wand, avoid decoding 'other_files'
-                            * Because FFprobe may ignore some image formats, do not check for i_stream until wand checks the file
-                        """
-
-                        # IMG info
-                        img_meta = image_handler.decode_image(input=path)
-                        file_meta.update(img_meta)
-
-                        if file_meta['i_stream'] is True:
-                            self.insert_image(file_meta)
-
-                    # (ALL) FILES TABLE
-                    self.insert_other(file_meta)
-
-                    # write everything to database
-                    self.session.commit()
-
+        except Exception as e:
+            logger.warning('admin_message', msg='Could not change current working directory. Is path a file or exist?',
+                           path=path, exception=e)
 
     def decode_file(self, path):
 
         try:
-            os.chdir(path)
+            # create/clear dictionary
+            file_meta = {}
 
-        except Exception as e:
-            logger.warning('directory', exception=e)
+            # # merge our strings
+            # path = os.path.join(root, f)
 
-        # event log
-        logger.info(f"Event: Folder scan {path} {os.path.isdir(path)}")
+            # normalize backslashes
+            path = os.path.abspath(path)
 
-        for root, directory, files in os.walk(path):
+            # remove /paths/
+            _basename = os.path.basename(path)
 
-            for f in files:
-                # create/clear dictionary
-                file_meta = {}
+            # log the working file
+            logger.info('user_message', msg='Working file', path=path)
 
-                # merge our strings
-                path = os.path.join(root, f)
-                path = os.path.abspath(
-                    path)  # cleanup backslashes (Note: bug when nesting abspath and join-- use seperately)
+            # create a new dict
+            file_meta['file_path'] = path
 
-                # remove /paths/
-                _basename = os.path.basename(path)
+            # file_name
+            file_meta["file_name"] = os.path.splitext(_basename)[0]
 
-                # log the event
-                logger.info(f"Event: File scan {path} {os.path.isdir(path)}")
+            # .extension
+            file_meta["extension"] = os.path.splitext(_basename)[1]
 
-                # create a new dict
-                file_meta['file_path'] = path
+            # creation date
+            file_meta["date_created"] = self.creation_date(path)
 
-                # file_name
-                file_meta["file_name"] = os.path.splitext(_basename)[0]
+            # Decode Image (Pill)
+            logger.info('admin_message', msg='Dispatching to Pill')
 
-                # .extension
-                file_meta["extension"] = os.path.splitext(_basename)[1]
+            img_meta = image_handler.decode_image(input=path)
+            file_meta.update(img_meta)
 
-                # creation date
-                file_meta["date_created"] = self.creation_date(path)
+            # Insert to Table
+            if file_meta['i_stream'] is True:
+                self.insert_image(file_meta)
 
-                # AV info
-                av_meta = av_handler.pyav_decode(path)  # returns dict
-                file_meta.update(av_meta)  # update dict
+            else:
+                # Decode Audio (PyAV)
+                logger.info('admin_message', msg='Dispatching to PyAV')
 
-                # probe if AV fails
-                if file_meta['succeeded'] is False:
+                av_meta = av_handler.pyav_decode(path)
+                file_meta.update(av_meta)
+
+                # Decode Video (FFprobe)
+                if file_meta['succeeded'] is False:  # check for flag
+                    logger.info('admin_message', msg='Dispatching to FFprobe')
+
                     stdout, stderr = av_handler.ffprobe(path)
                     ffprobe_meta = av_handler.parse_ffprobe(stdout, stderr)  # returns dictionary of parsed metadata
                     file_meta.update(ffprobe_meta)
 
-                # VIDEO TABLE
+                # Insert to Table (video)
                 if file_meta['v_stream'] is True:
                     self.insert_video(file_meta)
 
-                # AUDIO TABLE
-                elif file_meta['v_stream'] is False and file_meta['a_stream'] is True:
+                # OR
+
+                # Insert to Table (audio)
+                if file_meta['v_stream'] is False and file_meta['a_stream'] is True:
                     self.insert_audio(file_meta)
 
-                # IMG TABLE
-                elif file_meta['v_stream'] is False and file_meta['a_stream'] is False or file_meta['i_stream'] is True:
+            # Insert to Table ('other', ie: Everything (all files) )
+            self.insert_other(file_meta)
 
-                    """
-                        * Because of large temp files and inefficiencies in wand, avoid decoding 'other_files'
-                        * Because FFprobe may ignore some image formats, do not check for i_stream until wand checks the file
-                    """
+            # Write everything to database
+            self.session.commit()
 
-                    # IMG info
-                    img_meta = image_handler.decode_image(input=path)
-                    file_meta.update(img_meta)
-
-                    if file_meta['i_stream'] is True:
-                        self.insert_image(file_meta)
-
-                # (ALL) FILES TABLE
-                self.insert_other(file_meta)
-
-                # write everything to database
-                self.session.commit()
-
+        except Exception as e:
+            logger.warning('admin_message', 'Could not change current working directory. Is path a file or exist?', path=path, exception=e)
 
     def sort_to_table(self, metadata: dict):
 
@@ -1038,7 +1078,6 @@ class NewHandler:
         # write everything to database
         self.session.commit()
 
-
     def monitor_mode(self):
 
         custom_monitoring = False
@@ -1059,8 +1098,6 @@ class NewHandler:
             if settings.monitor_all_inputs is False:
                 logger.info('user_message', msg="Monitor Inputs: None")
 
-
-
     def start_input_cache(self):
 
         # to avoid duplicates, completely rewrite cache each time
@@ -1068,13 +1105,14 @@ class NewHandler:
 
         for folder in self.session.query(InputDirectories):
 
-            for root, directory, files in os.walk(folder.folder_path):
+            if folder.monitor is True:
 
-                # fix backslash extension
-                r = os.path.abspath(root)
-                # then add
-                settings.input_cache.append(r)
+                for root, directory, files in os.walk(folder.folder_path):
 
+                    # fix backslash extension
+                    r = os.path.abspath(root)
+                    # then add
+                    settings.input_cache.append(r)
 
     def start_output_cache(self):
 
@@ -1093,7 +1131,6 @@ class NewHandler:
                     # then add to list cache
                     settings.output_cache.append(r)
 
-
     def insert_input_folder(self, path):
 
         entry = Files(file_path=path)
@@ -1101,18 +1138,33 @@ class NewHandler:
 
         self.session.commit()
 
-
     def remove_input_folder(self, path):
 
-        # filtering by the full path also allows us to also remove the children of the directory
-        for entry in self.session.query(Files.file_path).filter(Files.file_path.like(f'%{path}%')):
-            logger.info(f'Event: Folder deleted: {entry} True')
+        try:
+            # filtering by the full path also allows us to also remove the children of the directory
+            for entry in self.session.query(Files.file_path).filter(Files.file_path.like(f'%{path}%')):
+                logger.info('admin_message', msg='File deleted', path=path)
 
-        # synchronize self.session allows deletion OUTSIDE of the self.session cache
-        self.session.query(Files.file_path).filter(Files.file_path.like(f'%{path}%')).delete(synchronize_session=False)
+            # TODO:
+            #       Query all tables for the filepath instead of just the 'Files' Table.
 
-        self.session.commit()
+            # synchronize self.session allows deletion OUTSIDE of the self.session 'cache'
+            self.session.query(Files,
+                               FilesImage,
+                               FilesAudio,
+                               FilesVideo
+                               )\
+                        .filter(Files.file_path.like(f'%{path}%'))\
+                        .filter(FilesImage.file_path.like(f'%{path}%'))\
+                        .filter(FilesVideo.file_path.like(f'%{path}%'))\
+                        .filter(FilesAudio.file_path.like(f'%{path}%'))\
+                        .all()\
+                        .delete(synchronize_session=False)
 
+            self.session.commit()
+
+        except Exception as e:
+            logger.error('admin_message', msg='Folder deletion failed', exc_info=e)
 
     def insert_output_folder(self, path):
 

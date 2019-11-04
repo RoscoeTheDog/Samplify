@@ -16,7 +16,7 @@ from handlers import image_handler, file_handler
 logger = structlog.get_logger('samplify.log')
 number = 0
 
-
+# deprecated.
 def decode_file(path: str):
 
     # check if file was moved before decoding
@@ -78,11 +78,11 @@ def pyav_decode(path: str) -> dict:
         container = av.open(path)
 
         """
-        In this scope:
+            Note:
+            
+                Values that == 0 mean not known or is a False Positive.
         
-        *Values that == 0 mean not known or is a False Positive.
-        
-        *Decode audio channels first for efficiency (it has the highest probability to fail).
+                Decode audio channels first for efficiency (it has the highest probability to fail).
         """
 
         for frame in container.decode(audio=0):
@@ -176,11 +176,12 @@ def pyav_decode(path: str) -> dict:
         # check dict keys for missing entries or 0s -- minimize decoding false positives into database
         file_meta = validate_keys(file_meta)
 
+        logger.info('admin_message', msg='Decode succeeded with PyAV')
         file_meta['succeeded'] = True
 
     except Exception as e:
         file_meta['succeeded'] = False
-        logger.error(f'admin_message', msg='Decode failed using PyAV', exception=e)
+        logger.error(f'admin_message', msg='Decode failed with PyAV', exc_info=e)
 
         # if file_meta['i_stream'] is False:
         #     stdout, stderr = ffprobe(path)
@@ -476,8 +477,6 @@ def parse_ffmpeg(stdout, stderr):
 
 def ffprobe(input):
 
-    logger.info('admin_message', msg='Configuring FFprobe arguments', file=input)
-
     ff_args = ['ffprobe', '-v', 'quiet', '-show_entries', 'format=format_name,duration,bit_rate', '-sexagesimal', '-of', 'default=noprint_wrappers=1', '-print_format', 'json', input, '-show_streams']
 
     process = subprocess.Popen(ff_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, bufsize=9999999)
@@ -604,15 +603,24 @@ def parse_ffprobe(stdout, stderr):
                                 file_meta['channel_layout'] = value
 
     except Exception as e:
-        logger.warning(f'Warning: {e}')
+        logger.warning('admin_message', msg='Could not Parse FFprobe data', exc_info=e)
 
-    # turn off v_stream if file is classified as image.
+    # if Image was identified by checking 'format', flag v_stream False.
     if file_meta['i_stream'] is True:
         file_meta['v_stream'] = False
+
+        # note: audio files can still contain image artwork, so do not flag a_stream False.
 
     # validate video/audio dictionary values to minimize false positives
     else:
         file_meta = validate_keys(file_meta)
+
+    # log if decode was successful
+    if file_meta['i_stream'] or file_meta['a_stream'] or file_meta['v_stream'] is True:
+        logger.info('admin_message', msg='Decode succeeded with FFprobe')
+
+    else:
+        logger.info('admin_message', msg='Decode failed with FFprobe')
 
     return file_meta
 
@@ -623,6 +631,7 @@ def validate_keys(file_meta: dict):
         Note: we can reduce decoding false-positives by validating our dictionary entries
     """
 
+    # see if common keys are not Null to validate
     if settings.validate_audio is True:
         check_keys = ['a_sample_rate', 'a_sample_fmt', 'channels', 'channel_layout']
 
@@ -630,6 +639,7 @@ def validate_keys(file_meta: dict):
             if not key in file_meta:
                 file_meta['a_stream'] = False
 
+    # see if common keys are not Null to validate
     if settings.validate_video is True:
         check_keys = ['v_width', 'v_height', 'v_frame_rate', 'v_pix_fmt', 'v_duration']
 

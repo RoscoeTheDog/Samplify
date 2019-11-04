@@ -37,10 +37,12 @@ def decode_image(input):
             meta_dict["i_height"] = height
             meta_dict['i_mode'] = original.mode
 
+            logger.info('admin_message', msg='Decode succeeded')
+
             return meta_dict
 
     except Exception as e:
-        logger.error(f'admin_message', f'Could not probe image file type', exc_info=e)
+        logger.error(f'admin_message', msg='Decode failed with Pill', exc_info=e)
 
         return meta_dict
 
