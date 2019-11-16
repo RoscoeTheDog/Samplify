@@ -1,20 +1,15 @@
 from watchdog.observers import Observer
 from watchdog import events
-import time
-
-from handlers import av_handler, file_handler
 from app import settings
 import os
 from multiprocessing import Queue
-import threading
+import multiprocessing
 import inspect
-from enum import Enum
+import collections
 
 from database.database_setup import InputDirectories, InputMonitoringExclusions
 
 import structlog
-
-import threading
 
 # call our logger locally
 logger = structlog.get_logger('samplify.log')
@@ -23,16 +18,114 @@ logger = structlog.get_logger('samplify.log')
 signal_queue = Queue()
 
 
-# manages watchdog observer threads
+# Manages watchdog observer threads.
 class NewHandler():
 
     def __init__(self, database_handler):
-        self.db_manager = database_handler
+        self.db_manager = database_handler  # session object unpicklable
+        self.running_processes = []     # process objects unpicklable
+        self.decoder_channels = []
 
-    def start_db_threaded(self):
-        logger.info("admin_message", msg="Database task thread started")
+    # Pickling exclusions.
+    def __getstate__(self):
+        # Copy the object's state from self.__dict__ which contains
+        # all our instance attributes. Always use the dict.copy()
+        # method to avoid modifying the original state.
+        state = self.__dict__.copy()
 
-        while True:
+        # Remove the unpicklable entries
+        del state['running_processes']
+        del state['db_manager']
+        return state
+
+    def schedule_decoders(self):
+
+        num_cores = multiprocessing.cpu_count()
+
+        logger.info('admin_message', msg='Spawning decoder processes', info=f'Num Cores: {num_cores}')
+
+        for core in range(num_cores):
+
+            # declare process, set daemon.
+            p = multiprocessing.Process(target=self.decoder_listener, daemon=True)
+
+            # declare double-ended channel (dequeue) for each process.
+            q = collections.deque()
+
+            # bundle channel and process name into a tuple
+            channel_info = (p.name, q)
+
+            # add to lists
+            self.decoder_channels.append(channel_info)
+            self.running_processes.append(p)
+
+            # start process
+            p.start()
+
+    def decoder_listener(self):
+
+        # return active working process
+        p = multiprocessing.current_process()
+
+        # get name/channel from list of channels
+        for channel_info in self.decoder_channels:
+            name, queue = channel_info
+
+            # find the correct channel to work on
+            if name == p.name:
+                logger.info('admin_message', msg='Process started', info=f'Name: {name} PID: {p.pid} Queue: {queue}')
+
+                # start listening for signals
+                while queue:
+                    logger.info('admin_message', msg='Process started new task', info=f'Name: {name} PID: {p.pid} Task: {queue[0]}')
+                    queue.popleft()
+
+    # TODO: change algorithm to be more efficient at scheduling tasks
+    def add_task(self, task):
+
+        # Get process list.
+        for p in self.running_processes:
+            # Get channels list.
+            for p_tasker in self.decoder_channels:
+                name, queue = p_tasker
+
+                # Add task to whichever process is currently not active.
+                if not queue:
+                    logger.info('admin_message', msg='Adding task to running process', info=f'Name: {name} PID: {p.pid} Task: {task}')
+                    queue.appendleft(task)
+                    break
+
+    def schedule_all_watches(self):
+
+        # Filter out duplicate children paths to prevent re-occurring tasks from numerous threads
+        parent_list = self.db_manager.filter_children_directories()
+
+        # Query the InputDirectories Table.
+        for folder_entry in self.db_manager.session.query(InputDirectories):
+            # Check to see if folder-monitoring is enabled.
+            if folder_entry.monitor is True:
+                # Check if path is a parent, all child directories will be dropped (since monitoring recursively).
+                if folder_entry.folder_path in parent_list:
+                    self.schedule_watch(folder_entry.folder_path)
+
+    def schedule_watch(self, path):
+
+        # try to create a watch on the parent directory.
+        try:
+            observer = Observer()
+            observer.schedule(InputMonitoring(), path=path, recursive=True)
+            observer.setDaemon(True)
+            observer.start()
+            logger.info('user_message', msg=f'Started monitoring folder', path=path)
+
+        except Exception as e:
+            logger.error('admin_message', msg=f'Could not monitor input directory {path}',
+                         exc_info=e)
+
+    def watch_listener(self):
+        logger.info("admin_message", msg="Started watch listener")
+
+        while not signal_queue.empty():
 
             signal = signal_queue.get()
 
@@ -91,176 +184,7 @@ class NewHandler():
 
 
 
-            # if signal == Task.on_any_event:
-            #     pass
-            #
-            # if signal == Task.on_modified:
-            #     pass
-            #
-            # if signal == Task.on_created:
-
-                # if os.path.isdir(path):
-                #     logger.info(f'admin_message', msg='Folder created', path=path)
-                #
-                #     # update our cache by ONE item!
-                #     settings.input_cache.append(path)
-                #
-                # elif os.path.isfile(path):
-                #     logger.info(f'admin_message', msg='File created', path=path)
-                #
-                #     # TODO: optimize decode_file algarhythm.
-                #     metadata = av_handler.decode_file(path)
-                #     self.db_manager.sort_to_table(metadata)
-
-            # if signal == Task.on_deleted:
-            #     pass
-
-
-
-
-
-
-
-
-
-
-            # try:
-            #     #TODO: play with Enums instead of sending the tuple.
-            #     name, event = signal
-            #
-            #     # get path from event
-            #     path = os.path.abspath(event.src_path)
-            #
-            #     # drop events from child directories if in filter list
-            #     for exclusion in self.filter_paths:
-            #
-            #         if exclusion not in path:
-            #
-            #             if name == 'on_any_event':
-            #                 pass
-            #
-            #             if name == 'on_created':
-            #
-            #                 if os.path.isdir(path):
-            #                     logger.info(f'admin_message', msg='Folder created', path=path)
-            #
-            #                     # update our cache by ONE item!
-            #                     settings.input_cache.append(path)
-            #
-            #                 elif os.path.isfile(path):
-            #                     logger.info(f'admin_message', msg='File created', path=path)
-            #
-            #                     # TODO: optimize decode_file algarhythm.
-            #                     metadata = av_handler.decode_file(path)
-            #                     self.db_manager.sort_to_table(metadata)
-            #
-            #             if name == 'on_modified':
-            #                 pass
-            #
-            #             if name == 'on_deleted':
-            #
-            #                 # note: This essentially checks if path is dir. input_cache == a list of directories.
-            #                 if path in settings.input_cache:
-            #                     logger.info(f'admin_message', msg='File deleted', path=path)
-            #                     self.db_manager.remove_input_folder(path)
-            #
-            #                     # update our cache by ONE item!
-            #                     settings.input_cache.remove(path)
-            #
-            #                 else:
-            #                     try:
-            #                         self.db_manager.remove_file(event.src_path)
-            #                         logger.info(f'admin_message', msg=event.event_type, path=path)
-            #
-            #                     except Exception as e:
-            #                         logger.error(f'admin_message', msg='Entry not in database', path=path, exc_info=e)
-            #
-            # except Exception as e:
-            #     print("Task is not a tuple object", e)
-
-    def schedule_all_observers(self):
-
-        # filter out any duplicates to prevent duplicate recursion tasks on threads
-        parent_list = self.db_manager.filter_children_directories()
-
-        # query the InputDirectories Table
-        for folder_entry in self.db_manager.session.query(InputDirectories):
-            if folder_entry.monitor is True:
-
-                # check if path is a parent, other directories will be dropped when recursion is enabled.
-                if folder_entry.folder_path in parent_list:
-                    self.schedule_observer(folder_entry.folder_path)
-
-    def schedule_observer(self, path):
-
-        # try to create a watch on the parent directory.
-        try:
-            observer = Observer()
-            observer.schedule(InputMonitoring(), path=path, recursive=True)
-            observer.setDaemon(False)
-            # observer.isDaemon()
-            observer.start()
-            logger.info('user_message', msg=f'Started monitoring folder', path=path)
-
-        except Exception as e:
-            logger.error('admin_message', msg=f'Could not monitor input directory {path}',
-                         exc_info=e)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        # session = self.db_handler.return_current_session()
-        #
-        # # filter out children from hierarchy first.
-        # hierarchy = []
-        #
-        # # create a list of folder paths
-        # for folder_entry in session.query(InputDirectories):
-        #     hierarchy.append(folder_entry.folder_path)
-        #
-        # # call function to filter out child paths from parents.
-        # parent_list = file_handler.find_parents_in_hierarchy(hierarchy)
-        #
-        # # query Table again
-        # for folder_entry in session.query(InputDirectories):
-        #
-        #     # check if monitor is enabled
-        #     if folder_entry.monitor is True:
-        #
-        #         # check if path is in parent hierarchy
-        #         if folder_entry.folder_path in parent_list:
-        #
-        #             # try to create a watch on the parent directory.
-        #             try:
-        #                 observer = Observer()
-        #                 observer.schedule(InputMonitoring(), path=folder_entry.folder_path, recursive=True)
-        #                 observer.setDaemon(False)
-        #                 # observer.isDaemon()
-        #                 observer.start()
-        #                 logger.info('user_message', msg=f'Started monitoring folder', path=folder_entry.folder_path)
-        #
-        #             except Exception as e:
-        #                 logger.error('admin_message', msg=f'Could not monitor input directory {folder_entry.folder_path}', exc_info=e)
-
-
-# EVENT HANDLER
+# manages watchdog event handling & signaling to threads
 class InputMonitoring(events.PatternMatchingEventHandler):
     """"""
 

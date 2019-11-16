@@ -5,7 +5,6 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 from app import settings
 from datetime import datetime
-import os
 
 Base = declarative_base()
 
@@ -24,6 +23,7 @@ FilesOutputDirectories = Table('fileToFolder', Base.metadata,
                           Column('outputDirectories', Integer, ForeignKey('outputDirectories.id')),
                           Column('files', Integer, ForeignKey('files.id'))
                                )
+
 
 class OutputDirectories(Base):
     __tablename__ = 'outputDirectories'

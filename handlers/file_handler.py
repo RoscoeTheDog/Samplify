@@ -1,6 +1,26 @@
 import platform
 import os
 from datetime import datetime
+import mimetypes
+import structlog
+
+logger = structlog.getLogger('Samplify.log')
+
+
+def get_mtype(path):
+
+    if os.path.isfile(path):
+
+        _types = mimetypes.guess_type(path)
+
+        return _types
+
+        # print("file: ", path, "\n",
+        #       "type: ", t, "\n",
+        #       "encoding: ", e)
+
+    else:
+        logger.error("admin_message", msg="Cannot get mtype: path is not valid")
 
 
 def creation_date(path_to_file):
@@ -28,7 +48,7 @@ def creation_date(path_to_file):
             return stat.st_mtime
 
 
-def find_parents_in_hierarchy(hierarchy):
+def get_parents_in_hierarchy(hierarchy):
 
     new_hierarchy = hierarchy.copy()
 

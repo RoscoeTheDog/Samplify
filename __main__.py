@@ -1,15 +1,12 @@
 import argparse
 import os
-import logging
-import time
 import structlog
 from structlog.stdlib import *
 from structlog.processors import *
-from pythonjsonlogger import jsonlogger
-import sys
 
 from handlers import database_handler, filewatch_handler
-from app import input, output, settings, gpu, custom_processors
+from app import output, settings, gpu
+from app.logging import custom_processors
 
 logger = structlog.get_logger('samplify.log')
 
@@ -17,31 +14,37 @@ logger = structlog.get_logger('samplify.log')
 class Samplify():
 
     def __init__(self):
+        # Create our new handler types.
         self.db_manager = database_handler.NewHandler()
         self.filewatch_manager = filewatch_handler.NewHandler(self.db_manager)
 
-        # insert default template
+        # Insert a default template.
         self.db_manager.insert_template()
 
-        # initialize input/output cache (for watchdog)
+        # Initialize input/output cache (for watchdog).
         self.db_manager.start_input_cache()
         self.db_manager.start_output_cache()
 
     @staticmethod
     def logging_config():
 
+        # render_window = structlog.dev.ConsoleRenderer()
+        #
+        # render_window.__call__ = Samplify.test_call
+
+        from app.logging import CustomConsoleRenderer
+
         # declare a custom formatter for our dev stream log
         stream_formatter = structlog.stdlib.ProcessorFormatter(
-            #TODO: Create custom ConsoleRenderer that pops() in desired order
-            # and formats in corresponding colors.
-            processor=structlog.dev.ConsoleRenderer(
-            #     level_styles=
-            # {
-            #     'info:': '\033[31m',
-            #     # colorama ANSI sequences
-            #     # print(structlog.dev.ConsoleRenderer.get_default_level_styles()) for further example
-            # }
-            ),
+            processor=CustomConsoleRenderer.ConsoleRenderer(),
+            # structlog.dev.ConsoleRenderer(
+            # #     level_styles=
+            # # {
+            # #     'info:': '\033[31m',
+            # #     # colorama ANSI sequences
+            # #     # print(structlog.dev.ConsoleRenderer.get_default_level_styles()) for further example
+            # # }
+            # ),
             foreign_pre_chain=
             [
                 TimeStamper(fmt='iso'),
@@ -97,9 +100,10 @@ class Samplify():
             processors=[
                 TimeStamper(fmt='iso'),
                 # format_exc_info,
+                structlog.processors.StackInfoRenderer(),
                 custom_processors.add_structlog_level,
                 # order_keys,
-                custom_processors.OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'path', 'exc_info']),
+                custom_processors.OrderKeys(),
                 structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
             ],
             logger_factory=structlog.stdlib.LoggerFactory(),
@@ -150,74 +154,55 @@ class Samplify():
         output.validate_directories()
 
     def start_watchdog(self):
-        self.filewatch_manager.schedule_all_observers()
-        self.filewatch_manager.start_db_threaded()
-
-
-
+        self.filewatch_manager.schedule_all_watches()
+        self.filewatch_manager.watch_listener()
 
 
 def main():
 
-    # class instance
+    # App instance.
     samplify = Samplify()
 
-    # start logging
+    # Start logging.
     samplify.logging_config()
 
-    # configure args
+    # TODO: Configure args.
     # samplify.args_configure()
 
-    # configure hardware
+    # Configure hardware.
     gpu.hardware()
 
-    # validate output folders
+    # Validate output folders.
     samplify.validate_directories()
 
-    # run a manual scan on input directories.
-    samplify.db_manager.scan_files()
-
-    # start watchdog threading
-    samplify.start_watchdog()
-
-    # start benchmark (input)
+    # Start benchmark timer (input).
     timer = time.time()
 
-    # # run a manual scan on input directories.
-    # samplify.db_manager.scan_files()
+    # Run a manual scan on input directories.
+    samplify.db_manager.scan_files()
 
-    # end benchmark (output)
-    bench_input = time.time() - timer
+    # Start watchdog threading.
+    samplify.start_watchdog()
 
-    # print benchmark
-    print('input scan: ', bench_input)
+    # Spawn decoder processes.
+    samplify.filewatch_manager.schedule_decoders()
+
+    samplify.filewatch_manager.add_task(print('hello world'))
+
+    # End input benchmark timer
+    print(time.time() - timer)
 
 
-    # db_startup.start_input_cache()
 
-    # initialize file monitor cache
-    # database_handler.start_input_cache()
-    # database_handler.start_output_cache()
 
-    # # start benchmark (input)
-    # timer = time.time()
 
-    # # scan all input folders
-    # input.scan_files()
-    # time.sleep(2)
 
-    # stdout, stderr = av_handler.ffprobe('C:\\OpenCV 4.1.0\\opencv\\sources\\doc\\acircles_pattern.png')
-    # print(stdout)
-    # av_handler.parse_ffprobe(stdout, stderr)
 
-    # end benchmark (input)
-    # bench_input = time.time() - timer
 
-    # start benchmark (output)
-    # timer = time.time()
 
-    # SAMPLIFY!
-    # database_handler.samplify()
+
+
+
 
     # collect all files/folders from output
     # db_handler.get_root_output(App_Settings.output_path)

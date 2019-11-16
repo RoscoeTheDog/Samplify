@@ -1,6 +1,16 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData
 from database.database_setup import *
+
+# from sqlalchemy import Column, ForeignKey, Integer, String, Table, Boolean
+# from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy.orm import relationship, sessionmaker
+# from sqlalchemy import create_engine, event
+# from sqlalchemy.engine import Engine
+# from app import settings
+# from datetime import datetime
+
+
 import os
 import time
 import shutil
@@ -13,7 +23,7 @@ from app import settings
 from handlers import av_handler, image_handler, file_handler, filewatch_handler
 from app import output
 import structlog
-
+import sqlalchemy
 
 # call our logger locally
 logger = structlog.get_logger('samplify.log')
@@ -23,25 +33,175 @@ class NewHandler:
 
     def __init__(self):
 
-        # declare a new self.session maker and connect to database 'engine'
-        self.session = sessionmaker(bind=engine)
+        # # Base is the object which classes need to inheret to become Tables.
+        # Base = declarative_base()
+        # # Engine is the connection settings to our database file.
+        # engine = create_engine(settings.database_path)
+        # # for developer's sake, drop all table meta-data before starting
+        # Base.metadata.drop_all(engine)
+        # # creates all table meta-data info (columns, rows, keys, etc)
+        # Base.metadata.create_all(engine)
 
-        # you must also instantiate the self.session before querying
-        self.session = self.session()
+        # Create a new session.
+        self.session = sqlalchemy.orm.Session(bind=engine)
+
+        # # Override sqlite NonCase-Sensitive defaults
+        # @event.listens_for(Engine, "connect")
+        # def _set_sqlite_case_insensitive_pragma(dbapi_con, connection_record):
+        #     cursor = dbapi_con.cursor()
+        #     cursor.execute("PRAGMA case_sensitive_like=ON;")
+        #     cursor.close()
+        #
+        # class InputDirectories(Base):
+        #     __tablename__ = 'inputDirectories'
+        #
+        #     id = Column(Integer, primary_key=True)
+        #     folder_path = Column(String)
+        #     monitor = Column(Boolean, default=True)
+        #
+        # class InputMonitoringExclusions(Base):
+        #     __tablename__ = 'inputMonitoringExclusions'
+        #
+        #     id = Column(Integer, primary_key=True)
+        #     folder_path = Column(String)
+        #
+        # class OutputDirectories(Base):
+        #     __tablename__ = 'outputDirectories'
+        #
+        #     id = Column(Integer, primary_key=True)
+        #     folder_path = Column(String)
+        #     extension = Column(String)
+        #     video_only = Column(Boolean, default=False)
+        #     audio_only = Column(Boolean, default=False)
+        #     image_only = Column(Boolean, default=False)
+        #     a_sample_rate = Column(String)
+        #     a_bit_rate = Column(String)
+        #     a_sample_fmt = Column(String)
+        #     a_channels = Column(String, default='default')
+        #     a_normalize = Column(Boolean, default=False)
+        #     a_strip_silence = Column(Boolean, default=False)
+        #     a_silence_threshold = Column(String, default='-80')
+        #     reduce = Column(Boolean, default=True)
+        #     i_fmt = Column(String, default='default')
+        #
+        # class Files(Base):
+        #     __tablename__ = 'files'
+        #
+        #     id = Column(Integer, primary_key=True)
+        #     file_path = Column(String)
+        #     file_name = Column(String)
+        #     extension = Column(String)
+        #     creation_date = Column(String)
+        #     v_stream = Column(Boolean, default=False)
+        #     a_stream = Column(Boolean, default=False)
+        #     i_stream = Column(Boolean, default=False)
+        #
+        # class FilesVideo(Base):
+        #     __tablename__ = 'filesVideo'
+        #
+        #     id = Column(Integer, primary_key=True)
+        #
+        #     file_path = Column(String)
+        #     file_name = Column(String)
+        #     extension = Column(String)
+        #     creation_date = Column(String)
+        #
+        #     v_stream = Column(Boolean, default=False)
+        #     v_width = Column(String)
+        #     v_height = Column(String)
+        #     v_duration = Column(String)
+        #     nb_frames = Column(String)
+        #     v_frame_rate = Column(String)
+        #     v_pix_format = Column(String)
+        #
+        #     a_stream = Column(Boolean, default=False)
+        #     a_sample_rate = Column(String)
+        #     a_bit_depth = Column(String)
+        #     a_sample_fmt = Column(String)
+        #     a_bit_rate = Column(String)
+        #     a_channels = Column(String)
+        #     a_channel_layout = Column(String)
+        #
+        #     i_stream = Column(Boolean, default=False)
+        #
+        # class FilesAudio(Base):
+        #     __tablename__ = 'filesAudio'
+        #
+        #     id = Column(Integer, primary_key=True)
+        #     file_path = Column(String)
+        #     file_name = Column(String)
+        #     extension = Column(String)
+        #     creation_date = Column(String)
+        #     v_stream = Column(Boolean, default=False)
+        #     a_stream = Column(Boolean, default=False)
+        #     i_stream = Column(Boolean, default=False)
+        #     a_sample_rate = Column(String)
+        #     a_bit_depth = Column(String)
+        #     a_sample_fmt = Column(String)
+        #     a_bit_rate = Column(String)
+        #     a_channels = Column(String)
+        #     a_channel_layout = Column(String)
+        #
+        # class FilesImage(Base):
+        #     __tablename__ = 'filesImage'
+        #
+        #     id = Column(Integer, primary_key=True)
+        #     file_path = Column(String)
+        #     file_name = Column(String)
+        #     extension = Column(String)
+        #     creation_date = Column(String)
+        #     i_stream = Column(String)
+        #     i_fmt = Column(String)
+        #     i_frames = Column(String)
+        #     i_width = Column(String)
+        #     i_height = Column(String)
+        #     i_alpha = Column(Boolean)
+        #     i_mode = Column(String)
+        #
+        #     # frame_rate = Column(Integer)
+        #     # bit_depth = Column(String)
+        #     # sample_fmt = Column(String)
+        #     # bit_rate = Column(Integer)
+        #     # channel_layout = Column(Integer)
+        #
+        # class SupportedExtensions(Base):
+        #     __tablename__ = 'supportedExtensions'
+        #
+        #     id = Column(Integer, primary_key=True)
+        #     name = Column(String)
+        #     v_format = Column(String)
+        #     v_codec = Column(String)
+        #     a_format = Column(String)
+        #     a_codec = Column(String)
+        #     sample_rate = Column(Integer)
+        #     channel_size = Column(Integer)
+        #     bit_depth = Column(String)
+        #
+        # class UnsupportedExtensions(Base):
+        #     __tablename__ = 'unsupportedExtensions'
+        #
+        #     id = Column(Integer, primary_key=True)
+        #     name = Column(String)
+        #
+        # class SearchTerms(Base):
+        #     __tablename__ = 'searchTerms'
+        #
+        #     id = Column(Integer, primary_key=True)
+        #     folder_id = Column(Integer, foreign_key=('outputDirectories.id'))
+        #     name = Column(String)
+        #
+        # class SearchByDate(Base):
+        #     __tablename__ = 'searchByDate'
+        #
+        #     id = Column(Integer, primary_key=True)
+        #     folder_id = Column(Integer, foreign_key=('outputDirectories.id'))
+        #     start_by_date = Column(String, default=datetime.min)
+        #     end_by_date = Column(String, default=datetime.max)
 
     def return_current_session(self):
         return self.session
 
-
-    # def initialize_watches(self):
-    #
-    #     for folder_entry in self.session.query(InputDirectories):
-    #
-    #         if folder_entry.monitor is True:
-    #             filewatch_handler.InputMonitoring.schedule_watch(folder_entry.folder_path)
-
-
-    # temporary data to test behavior
+    # Insert temporary data for testing behavior
     def insert_template(self):
 
         # INPUT FOLDERS
@@ -62,7 +222,6 @@ class NewHandler:
         entry = InputMonitoringExclusions(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Dubstep')
         self.session.add(entry)
 
-
         # entry = InputDirectories(folder_path='C:/')
         # self.session.add(entry)
         # entry = InputDirectories(folder_path='D:/MOVIES & SHOWS')
@@ -77,31 +236,41 @@ class NewHandler:
         self.session.add(entry)
 
         # OUTPUT FOLDERS
-        entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/photos', extension='.png', i_fmt='PNG', a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
+        entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/photos', extension='.png', i_fmt='PNG',
+                                  a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
                                   image_only=True, a_normalize=False)
         self.session.add(entry)
 
-        entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/kick', extension='default', a_channels='1', audio_only=True, a_normalize=False, a_strip_silence=False, a_silence_threshold='-80', reduce=False)
+        entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/kick', extension='default', a_channels='1',
+                                  audio_only=True, a_normalize=False, a_strip_silence=False, a_silence_threshold='-80',
+                                  reduce=False)
         self.session.add(entry)
 
-        entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/hat', extension='default', a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='1',
-                                  audio_only=True, a_normalize=False, a_strip_silence=False, a_silence_threshold='-80', reduce=False)
+        entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/hat', extension='default',
+                                  a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='1',
+                                  audio_only=True, a_normalize=False, a_strip_silence=False, a_silence_threshold='-80',
+                                  reduce=False)
         self.session.add(entry)
 
-        entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/dragon ball', extension='.mp4', a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
+        entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/dragon ball', extension='.mp4',
+                                  a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
                                   video_only=True, reduce=False)
         self.session.add(entry)
 
         # laptop test outputs
-        entry = OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/photos', extension='.png', i_fmt='PNG', a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
+        entry = OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/photos', extension='.png', i_fmt='PNG',
+                                  a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
                                   image_only=True, a_normalize=False)
         self.session.add(entry)
 
-        entry = OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/hat', extension='default', a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='1',
-                                  audio_only=True, a_normalize=False, a_strip_silence=False, a_silence_threshold='-80', reduce=False)
+        entry = OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/hat', extension='default',
+                                  a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='1',
+                                  audio_only=True, a_normalize=False, a_strip_silence=False, a_silence_threshold='-80',
+                                  reduce=False)
         self.session.add(entry)
 
-        entry = OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/dragon ball', extension='.mp4', a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
+        entry = OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/dragon ball', extension='.mp4',
+                                  a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
                                   video_only=True, reduce=False)
         self.session.add(entry)
 
@@ -149,12 +318,6 @@ class NewHandler:
         # insert all preferences into database
         self.session.commit()
 
-
-# def query_output_column(c_name, *condition):
-#     for entry in self.session.query(OutputDirectories):
-#         return entry.c_name
-
-
     def create_directories(self):
 
         for directory_entry in self.session.query(OutputDirectories):
@@ -180,7 +343,7 @@ class NewHandler:
             hierarchy.append(folder_entry.folder_path)
 
         # call function to filter out child paths from parents.
-        parent_list = file_handler.find_parents_in_hierarchy(hierarchy)
+        parent_list = file_handler.get_parents_in_hierarchy(hierarchy)
 
         return parent_list
 
@@ -197,9 +360,7 @@ class NewHandler:
                 if folder_entry.folder_path in parent_directories:
                     handler = filewatch_handler.ThreadHandler()
 
-                    handler.schedule_observer(folder_entry.folder_path)
-
-
+                    handler.schedule_watch(folder_entry.folder_path)
 
     # def update_directory_search_by_name(self):
     #
@@ -226,14 +387,12 @@ class NewHandler:
     #
     #     self.session.commit()
 
-
     def start_program(self):
 
         t = threading.Thread(target=self.samplify())
         t.setDaemon(True)
         t.start()
         t.join()
-
 
         """
             Note: Keyboard Interrupt does not work *WITHIN* PyCharm!
@@ -246,11 +405,11 @@ class NewHandler:
         #     print('interrupt detected')
         #     t.join()
 
-
     def samplify(self):
 
         # FILTER BY SEARCH-TERMS
-        for directory_entry, search_terms in self.session.query(OutputDirectories, SearchTerms).filter(OutputDirectories.id == SearchTerms.folder_id).all():
+        for directory_entry, search_terms in self.session.query(OutputDirectories, SearchTerms).filter(
+                OutputDirectories.id == SearchTerms.folder_id).all():
 
             logger.info('user_message', msg=f"syncing folder",
                         path=directory_entry.folder_path,
@@ -274,7 +433,8 @@ class NewHandler:
 
                     if file_entry.v_stream is False and file_entry.a_stream is True:
 
-                        for audio_entry in self.session.query(FilesAudio).filter(FilesAudio.file_path == file_entry.file_path):
+                        for audio_entry in self.session.query(FilesAudio).filter(
+                                FilesAudio.file_path == file_entry.file_path):
 
                             pattern = re.compile(search_terms.name)
                             filename_search = pattern.finditer(audio_entry.file_name)
@@ -282,10 +442,13 @@ class NewHandler:
                             for match in filename_search:
 
                                 # IS BETWEEN DATES?
-                                for date_entry in self.session.query(SearchByDate).filter(SearchByDate.folder_id == directory_entry.id):
-                                    logger.info('admin_message', f'Checking file_date', file_date=audio_entry.creation_date)
+                                for date_entry in self.session.query(SearchByDate).filter(
+                                        SearchByDate.folder_id == directory_entry.id):
+                                    logger.info('admin_message', f'Checking file_date',
+                                                file_date=audio_entry.creation_date)
 
-                                    if self.check_date(audio_entry.creation_date, date_entry.start_by_date, date_entry.end_by_date) is True:
+                                    if self.check_date(audio_entry.creation_date, date_entry.start_by_date,
+                                                       date_entry.end_by_date) is True:
 
                                         """
                                             Local Variables
@@ -311,7 +474,8 @@ class NewHandler:
                                         # I/O
                                         file_name = audio_entry.file_name
                                         input = os.path.abspath(audio_entry.file_path)
-                                        output = os.path.abspath(f"{directory_entry.folder_path}/{file_name}{extension}")
+                                        output = os.path.abspath(
+                                            f"{directory_entry.folder_path}/{file_name}{extension}")
 
                                         # OTHER
                                         normalize = directory_entry.a_normalize
@@ -321,7 +485,9 @@ class NewHandler:
 
                                         # NO CHANGE; SIMPLE COPY
                                         if extension == audio_entry.extension and sample_rate == audio_entry.a_sample_rate and sample_fmt == audio_entry.a_sample_fmt and channels == audio_entry.a_channels and normalize is False and strip_silence is False:
-                                            logger.info('admin_message', msg='copy file', file_name=audio_entry.file_name, path=directory_entry.folder_path)
+                                            logger.info('admin_message', msg='copy file',
+                                                        file_name=audio_entry.file_name,
+                                                        path=directory_entry.folder_path)
                                             self.copy(audio_entry.file_path, directory_entry.folder_path)
 
                                         # NORMALIZATION or STRIP SILENCE (FFMPEG)
@@ -354,13 +520,14 @@ class NewHandler:
                                             av_handler.convert_ffmpeg(ff_args)
 
                                         # VANILLA TRANSCODING (PyAV [fastest])
-                                        elif bool(self.session.query(SupportedExtensions).filter(SupportedExtensions.name == extension).first()) is True:
+                                        elif bool(self.session.query(SupportedExtensions).filter(
+                                                SupportedExtensions.name == extension).first()) is True:
 
-                                            for config in self.session.query(SupportedExtensions).filter(SupportedExtensions.name == extension):
-
+                                            for config in self.session.query(SupportedExtensions).filter(
+                                                    SupportedExtensions.name == extension):
                                                 logger.info('admin_message', msg='vanilla transcoding, using PyAV')
                                                 logger.info('admin_message', msg='file output settings',
-                                                            file_name=audio_entry.file_name+audio_entry.extension,
+                                                            file_name=audio_entry.file_name + audio_entry.extension,
                                                             a_codec=config.a_codec,
                                                             sample_rate=config.sample_rate,
                                                             bit_depth=bit_depth,
@@ -404,10 +571,12 @@ class NewHandler:
                                             stdout, stderr = av_handler.convert_ffmpeg(ff_args)
 
                                             # parse FFmpeg output
-                                            v_format, v_codec, a_format, a_codec = av_handler.parse_ffmpeg(stdout, stderr)[1:]
+                                            v_format, v_codec, a_format, a_codec = av_handler.parse_ffmpeg(stdout,
+                                                                                                           stderr)[1:]
 
                                             # insert new metadata into database
-                                            self.store_codec_config(extension, v_format, v_codec, a_format, a_codec, sample_rate, channels)
+                                            self.store_codec_config(extension, v_format, v_codec, a_format, a_codec,
+                                                                    sample_rate, channels)
 
                                 break  # break search-pattern after processing
 
@@ -416,7 +585,8 @@ class NewHandler:
 
                     if file_entry.v_stream is True:
 
-                        for video_entry in self.session.query(FilesVideo).filter(FilesVideo.file_path == file_entry.file_path):
+                        for video_entry in self.session.query(FilesVideo).filter(
+                                FilesVideo.file_path == file_entry.file_path):
 
                             pattern = re.compile(search_terms.name)
                             filename_search = pattern.finditer(video_entry.file_name)
@@ -424,10 +594,13 @@ class NewHandler:
                             for match in filename_search:
 
                                 # IS BETWEEN DATES?
-                                for date_entry in self.session.query(SearchByDate).filter(SearchByDate.folder_id == directory_entry.id):
-                                    logger.info(f'Event: Check file creation date {video_entry.file_path} {video_entry.creation_date}')
+                                for date_entry in self.session.query(SearchByDate).filter(
+                                        SearchByDate.folder_id == directory_entry.id):
+                                    logger.info(
+                                        f'Event: Check file creation date {video_entry.file_path} {video_entry.creation_date}')
 
-                                    if self.check_date(video_entry.creation_date, date_entry.start_by_date, date_entry.end_by_date) is True:
+                                    if self.check_date(video_entry.creation_date, date_entry.start_by_date,
+                                                       date_entry.end_by_date) is True:
 
                                         # METADATA
                                         extension = directory_entry.extension
@@ -449,11 +622,11 @@ class NewHandler:
                                         # I/O
                                         file_name = video_entry.file_name
                                         input = os.path.abspath(video_entry.file_path)
-                                        output = os.path.abspath(f"{directory_entry.folder_path}/{file_name}{extension}")
+                                        output = os.path.abspath(
+                                            f"{directory_entry.folder_path}/{file_name}{extension}")
 
                                         # FFMPEG CONVERT (& STORE CODEC/EXTENSION INFO)
                                         # print('starting ffmpeg...')
-
 
                                         # TODO: CHANGE VIDEO ARGS SO IT CAN ACCEPT ADDITIONAL FILTERS
                                         normalize = False
@@ -543,7 +716,8 @@ class NewHandler:
                 # TODO: IMAGE CONVERSION
                 elif directory_entry.image_only is True:
 
-                    for image_entry in self.session.query(FilesImage).filter(FilesImage.file_path == file_entry.file_path):
+                    for image_entry in self.session.query(FilesImage).filter(
+                            FilesImage.file_path == file_entry.file_path):
 
                         pattern = re.compile(search_terms.name)
                         filename_search = pattern.finditer(image_entry.file_name)
@@ -551,12 +725,14 @@ class NewHandler:
                         for match in filename_search:
 
                             # IS BETWEEN DATES?
-                            for date_entry in self.session.query(SearchByDate).filter(SearchByDate.folder_id == directory_entry.id):
+                            for date_entry in self.session.query(SearchByDate).filter(
+                                    SearchByDate.folder_id == directory_entry.id):
 
-                                logger.info(f'Event: Checking file date {image_entry.file_path} {image_entry.creation_date}')
+                                logger.info(
+                                    f'Event: Checking file date {image_entry.file_path} {image_entry.creation_date}')
 
                                 if self.check_date(image_entry.creation_date, date_entry.start_by_date,
-                                              date_entry.end_by_date) is True:
+                                                   date_entry.end_by_date) is True:
 
                                     """
                                         Local Variables
@@ -588,7 +764,6 @@ class NewHandler:
 
                             break  # avoid re-iterations for multiple actions on same file
 
-
     def check_date(self, current, date_start, date_end):
 
         if date_start <= current <= date_end:
@@ -596,7 +771,6 @@ class NewHandler:
 
         else:
             return False
-
 
     def creation_date(self, path_to_file):
         """
@@ -622,11 +796,11 @@ class NewHandler:
                 # so we'll settle for when its content was last modified.
                 return stat.st_mtime
 
-
     def learn_extension(self, file):
         extension = os.path.splitext(file)[1]
 
-        process = subprocess.Popen(['ffprobe', '-i', file], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+        process = subprocess.Popen(['ffprobe', '-i', file], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                   universal_newlines=True)
         stdout, stderr = process.communicate()
         # print(stdout, stderr)
 
@@ -639,7 +813,6 @@ class NewHandler:
             print('Found stream', f'"{stderr[match.start():match.end()]}"')
             is_valid = True
 
-
         if is_valid is True:
             print(extension, 'is supported!')
 
@@ -650,36 +823,35 @@ class NewHandler:
                 self.session.add(entry)
                 self.session.commit()
 
-
         if is_valid is False:
             print(extension, 'is unsupported!')
 
-            entry = bool(self.session.query(UnsupportedExtensions).filter(UnsupportedExtensions.name == extension).first())
+            entry = bool(
+                self.session.query(UnsupportedExtensions).filter(UnsupportedExtensions.name == extension).first())
 
             if not entry is True:
                 entry = UnsupportedExtensions(name=extension)
                 self.session.add(entry)
                 self.session.commit()
 
-
     def store_codec_config(self, extension_type, v_format, v_codec, a_format, a_codec, sample_rate, channel_size):
 
         print(extension_type, v_format, v_codec, a_format, a_codec)
 
-        entry = SupportedExtensions(name=extension_type, v_format=v_format, v_codec=v_codec, a_format=a_format, a_codec=a_codec, sample_rate=sample_rate, channel_size=channel_size)
+        entry = SupportedExtensions(name=extension_type, v_format=v_format, v_codec=v_codec, a_format=a_format,
+                                    a_codec=a_codec, sample_rate=sample_rate, channel_size=channel_size)
 
         entry_exist = bool(self.session.query(SupportedExtensions).filter(SupportedExtensions.name == extension_type,
-                                                                SupportedExtensions.v_format == v_format,
-                                                                SupportedExtensions.v_codec == v_codec,
-                                                                SupportedExtensions.a_format == a_format,
-                                                                SupportedExtensions.a_codec == a_codec,
-                                                                SupportedExtensions.sample_rate,
-                                                                SupportedExtensions.channel_size).first())
+                                                                          SupportedExtensions.v_format == v_format,
+                                                                          SupportedExtensions.v_codec == v_codec,
+                                                                          SupportedExtensions.a_format == a_format,
+                                                                          SupportedExtensions.a_codec == a_codec,
+                                                                          SupportedExtensions.sample_rate,
+                                                                          SupportedExtensions.channel_size).first())
 
         if not entry_exist is True:
             self.session.add(entry)
             self.session.commit()
-
 
     def is_video_extension(self, extension: str):
         """
@@ -689,7 +861,6 @@ class NewHandler:
 
         return bool(self.session.query(FilesVideo).filter(FilesVideo.extension == extension).first())
 
-
     def is_image_extension(self, extension: str):
         """
         :param extension: checks existing image table to see if exists
@@ -697,7 +868,6 @@ class NewHandler:
         """
 
         return bool(self.session.query(FilesImage).filter(FilesImage.extension == extension).first())
-
 
     def copy(self, input, output):
 
@@ -713,7 +883,6 @@ class NewHandler:
 
         else:
             logger.info(f"Event: File already exists {output}")
-
 
     # def db_print():
     #
@@ -732,11 +901,9 @@ class NewHandler:
         time.sleep(2)
 
         for row in self.session.query(InputDirectories):
-
             path = row.folder_path
 
             self.decode_directory(path)
-
 
             #
             #
@@ -857,67 +1024,66 @@ class NewHandler:
     def decode_file(self, path):
 
         try:
-            # create/clear dictionary
-            file_meta = {}
 
-            # # merge our strings
-            # path = os.path.join(root, f)
+            # read file header
+            mtype = file_handler.get_mtype(path)
+            type, extension = mtype
 
-            # normalize backslashes
+            if type is not None:
+                type = type.split('/')[0]
+
+            # normalize any \to_path\ backslashes
             path = os.path.abspath(path)
 
-            # remove /paths/
+            # remove /dirs/to/file/name.txt
             _basename = os.path.basename(path)
 
             # log the working file
             logger.info('user_message', msg='Working file', path=path)
 
-            # create a new dict
-            file_meta['file_path'] = path
+            file_meta = \
+                {
+                    "file_path": path,
+                    "file_name": os.path.splitext(_basename)[0],
+                    "extension": os.path.splitext(_basename)[1],
+                    "date_created": self.creation_date(path),
+                    "i_stream": False,
+                    "v_stream": False,
+                    'a_stream': False,
+                }
 
-            # file_name
-            file_meta["file_name"] = os.path.splitext(_basename)[0]
+            if not type is None:
 
-            # .extension
-            file_meta["extension"] = os.path.splitext(_basename)[1]
+                if type == 'image':
+                    # Decode Image (Pill)
+                    img_meta = image_handler.decode_image(input=path)
+                    file_meta.update(img_meta)
 
-            # creation date
-            file_meta["date_created"] = self.creation_date(path)
+                    # Insert to Table
+                    if file_meta['i_stream'] is True:
+                        self.insert_image(file_meta)
 
-            # Decode Image (Pill)
-            logger.info('admin_message', msg='Dispatching to Pill')
+                if type == 'audio':
+                    # Decode Audio (PyAV)
+                    logger.info('admin_message', msg='Dispatching to PyAV')
 
-            img_meta = image_handler.decode_image(input=path)
-            file_meta.update(img_meta)
+                    av_meta = av_handler.pyav_decode(path)
+                    file_meta.update(av_meta)
 
-            # Insert to Table
-            if file_meta['i_stream'] is True:
-                self.insert_image(file_meta)
+                    if file_meta['v_stream'] is False and file_meta['a_stream'] is True:
+                        self.insert_audio(file_meta)
 
-            else:
-                # Decode Audio (PyAV)
-                logger.info('admin_message', msg='Dispatching to PyAV')
-
-                av_meta = av_handler.pyav_decode(path)
-                file_meta.update(av_meta)
-
-                # Decode Video (FFprobe)
-                if file_meta['succeeded'] is False:  # check for flag
+                if type == 'video':
+                    # Decode Video (FFprobe)
                     logger.info('admin_message', msg='Dispatching to FFprobe')
 
                     stdout, stderr = av_handler.ffprobe(path)
                     ffprobe_meta = av_handler.parse_ffprobe(stdout, stderr)  # returns dictionary of parsed metadata
                     file_meta.update(ffprobe_meta)
 
-                # Insert to Table (video)
-                if file_meta['v_stream'] is True:
-                    self.insert_video(file_meta)
-
-                # OR
-
-                # Insert to Table (audio)
-                if file_meta['v_stream'] is False and file_meta['a_stream'] is True:
-                    self.insert_audio(file_meta)
+                    # Insert to Table (video)
+                    if file_meta['v_stream'] is True:
+                        self.insert_video(file_meta)
 
             # Insert to Table ('other', ie: Everything (all files) )
             self.insert_other(file_meta)
@@ -925,8 +1091,77 @@ class NewHandler:
             # Write everything to database
             self.session.commit()
 
+            # # create/clear dictionary
+            # file_meta = {}
+            #
+            # # # merge our strings
+            # # path = os.path.join(root, f)
+            #
+            # # normalize backslashes
+            # path = os.path.abspath(path)
+            #
+            # # remove /paths/
+            # _basename = os.path.basename(path)
+            #
+            # # log the working file
+            # logger.info('user_message', msg='Working file', path=path)
+            #
+            # # create a new dict
+            # file_meta['file_path'] = path
+            #
+            # # file_name
+            # file_meta["file_name"] = os.path.splitext(_basename)[0]
+            #
+            # # .extension
+            # file_meta["extension"] = os.path.splitext(_basename)[1]
+            #
+            # # creation date
+            # file_meta["date_created"] = self.creation_date(path)
+            #
+            # # Decode Image (Pill)
+            # logger.info('admin_message', msg='Dispatching to Pill')
+            #
+            # img_meta = image_handler.decode_image(input=path)
+            # file_meta.update(img_meta)
+            #
+            # # Insert to Table
+            # if file_meta['i_stream'] is True:
+            #     self.insert_image(file_meta)
+            #
+            # else:
+            #     # Decode Audio (PyAV)
+            #     logger.info('admin_message', msg='Dispatching to PyAV')
+            #
+            #     av_meta = av_handler.pyav_decode(path)
+            #     file_meta.update(av_meta)
+            #
+            #     # Decode Video (FFprobe)
+            #     if file_meta['succeeded'] is False:  # check for flag
+            #         logger.info('admin_message', msg='Dispatching to FFprobe')
+            #
+            #         stdout, stderr = av_handler.ffprobe(path)
+            #         ffprobe_meta = av_handler.parse_ffprobe(stdout, stderr)  # returns dictionary of parsed metadata
+            #         file_meta.update(ffprobe_meta)
+            #
+            #     # Insert to Table (video)
+            #     if file_meta['v_stream'] is True:
+            #         self.insert_video(file_meta)
+            #
+            #     # OR
+            #
+            #     # Insert to Table (audio)
+            #     if file_meta['v_stream'] is False and file_meta['a_stream'] is True:
+            #         self.insert_audio(file_meta)
+            #
+            # # Insert to Table ('other', ie: Everything (all files) )
+            # self.insert_other(file_meta)
+            #
+            # # Write everything to database
+            # self.session.commit()
+
         except Exception as e:
-            logger.warning('admin_message', 'Could not change current working directory. Is path a file or exist?', path=path, exception=e)
+            logger.warning('admin_message', 'Could not change current working directory. Is path a file or exist?',
+                           path=path, exception=e)
 
     def sort_to_table(self, metadata: dict):
 
@@ -948,7 +1183,6 @@ class NewHandler:
         # write to db
         self.session.commit()
 
-
     def insert_other(self, metadata):
 
         # add entry with basic file information
@@ -962,7 +1196,6 @@ class NewHandler:
             i_stream=metadata['i_stream'],
         )
         self.session.add(entry)
-
 
     def insert_image(self, metadata):
 
@@ -981,7 +1214,6 @@ class NewHandler:
             i_mode=metadata['i_mode']
         )
         self.session.add(entry)
-
 
     def insert_audio(self, metadata):
 
@@ -1002,7 +1234,6 @@ class NewHandler:
             a_channel_layout=metadata['channel_layout']
         )
         self.session.add(entry)
-
 
     def insert_video(self, metadata):
 
@@ -1025,8 +1256,8 @@ class NewHandler:
         # then check if audio exists and update entry
         # - avoids exceptions for files with video only
         if metadata['a_stream'] is True:
-            self.session.query(FilesVideo).\
-                filter(FilesVideo.file_path == metadata['file_path']).\
+            self.session.query(FilesVideo). \
+                filter(FilesVideo.file_path == metadata['file_path']). \
                 update(
                 {
                     'a_stream': metadata['a_stream'],
@@ -1038,7 +1269,6 @@ class NewHandler:
                     'a_channel_layout': metadata['channel_layout']
                 }
             )
-
 
     def get_root_output(self, path):
 
@@ -1067,7 +1297,6 @@ class NewHandler:
 
                 # flush buffer to get primary id
                 self.session.flush()
-
 
                 # if settings.default_name_searchby_directory is True:
                 #
@@ -1108,7 +1337,6 @@ class NewHandler:
             if folder.monitor is True:
 
                 for root, directory, files in os.walk(folder.folder_path):
-
                     # fix backslash extension
                     r = os.path.abspath(root)
                     # then add
@@ -1124,7 +1352,6 @@ class NewHandler:
             if folder.monitor is True:
 
                 for root, directory, files in os.walk(folder.folder_path):
-
                     # fix backslash issue
                     r = os.path.abspath(root)
 
@@ -1153,13 +1380,13 @@ class NewHandler:
                                FilesImage,
                                FilesAudio,
                                FilesVideo
-                               )\
-                        .filter(Files.file_path.like(f'%{path}%'))\
-                        .filter(FilesImage.file_path.like(f'%{path}%'))\
-                        .filter(FilesVideo.file_path.like(f'%{path}%'))\
-                        .filter(FilesAudio.file_path.like(f'%{path}%'))\
-                        .all()\
-                        .delete(synchronize_session=False)
+                               ) \
+                .filter(Files.file_path.like(f'%{path}%')) \
+                .filter(FilesImage.file_path.like(f'%{path}%')) \
+                .filter(FilesVideo.file_path.like(f'%{path}%')) \
+                .filter(FilesAudio.file_path.like(f'%{path}%')) \
+                .all() \
+                .delete(synchronize_session=False)
 
             self.session.commit()
 
@@ -1171,8 +1398,6 @@ class NewHandler:
         entry = OutputDirectories(folder_path=path)
 
         self.session.add(entry)
-
-
 
         # # Do we need to add default folder search terms?
         # if settings.default_name_searchby_directory is True:
@@ -1186,19 +1411,16 @@ class NewHandler:
 
         self.session.commit()
 
-
     def remove_output_folder(self, path):
 
         # filtering by the full path also allows us to also remove the child results from the directory
         for entry in self.session.query(OutputDirectories).filter(OutputDirectories.folder_path.like(f'%{path}%')):
-
             logger.info(f'Event: Folder deleted: {entry.folder_path} True')
 
             self.session.query(SearchTerms).filter(entry.id == SearchTerms.folder_id).delete(synchronize_session=False)
 
-            self.session.query(OutputDirectories).filter(OutputDirectories.id == entry.id).delete(synchronize_session=False)
-
-
+            self.session.query(OutputDirectories).filter(OutputDirectories.id == entry.id).delete(
+                synchronize_session=False)
 
         """
             Because output_cache cannot update fast enough in-between dispatched events,
@@ -1211,10 +1433,7 @@ class NewHandler:
                 self.session.query(SearchTerms).filter(r.id == SearchTerms.folder_id).delete(synchronize_session=False)
                 self.session.query(OutputDirectories).filter(r.folder_path).delete(synchronize_session=False)
 
-
-
         self.session.commit()
-
 
     # deprecated
 
@@ -1225,7 +1444,6 @@ class NewHandler:
     #     self.session.add(entry)
     #
     #     self.session.commit()
-
 
     def remove_file(self, path):
 
