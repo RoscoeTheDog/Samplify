@@ -5,3 +5,8 @@ handlers/__pycache__/database_handler.cpython-37.pyc
 handlers/__pycache__/filewatch_handler.cpython-37.pyc
 handlers/__pycache__/image_handler.cpython-37.pyc
 samplify.log
+*.pyc
+app/__pycache__/settings.cpython-37.pyc
+database/__pycache__/database_setup.cpython-37.pyc
+handlers/__pycache__/database_handler.cpython-37.pyc
+handlers/__pycache__/filewatch_handler.cpython-37.pyc

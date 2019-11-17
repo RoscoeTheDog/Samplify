@@ -1,42 +1,82 @@
 import multiprocessing
-from handlers import database_handler
+import structlog
+import collections
+
+logger = structlog.getLogger('samplify.log')
 
 
-class NewHandler():
+class NewHandler:
 
     def __init__(self):
+        # self.db_manager = database_handler  # session object unpicklable
+        self.running_processes = []     # process objects unpicklable
+        self.decoder_channels = []
 
-        self.num_cores = multiprocessing.cpu_count()
-        self.processes = []
-        self.task_queues = []
+    # Pickling exclusions.
+    def __getstate__(self):
+        # Copy the object's state from self.__dict__ which contains
+        # all our instance attributes. Always use the dict.copy()
+        # method to avoid modifying the original state.
+        state = self.__dict__.copy()
 
-        self.db = database_handler.NewHandler()
+        # Remove the unpicklable entries
+        del state['running_processes']
+        # del state['db_manager']
+        return state
 
     def schedule_workers(self):
 
-        for core in range(self.num_cores):
+        num_cores = multiprocessing.cpu_count()
 
-            # declare process, set daemon, add to list.
-            p = multiprocessing.Process(target=self.consumer(),)
-            p.daemon = True
-            self.processes.append(p)
+        logger.info('admin_message', msg='Spawning decoder processes', info=f'Num Cores: {num_cores}')
 
-            # declare queue (listener) for process, add to list.
-            q = multiprocessing.Queue()
+        for core in range(num_cores):
 
-            tracker = (p.name, q)
-            self.task_queues.append(tracker)
+            # declare process, set daemon.
+            p = multiprocessing.Process(target=self.schedule_listener, daemon=True)
 
+            # declare double-ended channel (dequeue) for each process.
+            q = collections.deque()
+
+            # bundle channel and process name into a tuple
+            channel_info = (p.name, q)
+
+            # add to lists
+            self.decoder_channels.append(channel_info)
+            self.running_processes.append(p)
+
+            # start process
             p.start()
 
-    def consumer(self):
+    def schedule_listener(self):
 
+        # return active working process
         p = multiprocessing.current_process()
-        print(p.name)
 
+        # get name/channel from list of channels
+        for channel_info in self.decoder_channels:
+            name, queue = channel_info
 
-handler = NewHandler()
-handler.schedule_workers()
+            # find the correct channel to work on
+            if name == p.name:
+                logger.info('admin_message', msg='Process started', info=f'Name: {name} PID: {p.pid} Queue: {queue}')
 
-import time
-time.sleep(30)
+                # start listening for signals
+                while queue:
+                    logger.info('admin_message', msg='Process started new task', info=f'Name: {name} PID: {p.pid} Task: {queue[0]}')
+                    queue.popleft()
+
+    # TODO: change algorithm to be more efficient at scheduling tasks
+    def add_task(self, task):
+
+        # Get process list.
+        for p in self.running_processes:
+            # Get channels list.
+            for p_tasker in self.decoder_channels:
+                name, queue = p_tasker
+
+                # Add task to whichever process is currently not active.
+                if not queue:
+                    logger.info('admin_message', msg='Adding task to running process', info=f'Name: {name} PID: {p.pid} Task: {task}')
+                    queue.appendleft(task)
+                    break

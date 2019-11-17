@@ -1,16 +1,5 @@
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import MetaData
 from database.database_setup import *
-
-# from sqlalchemy import Column, ForeignKey, Integer, String, Table, Boolean
-# from sqlalchemy.ext.declarative import declarative_base
-# from sqlalchemy.orm import relationship, sessionmaker
-# from sqlalchemy import create_engine, event
-# from sqlalchemy.engine import Engine
-# from app import settings
-# from datetime import datetime
-
-
 import os
 import time
 import shutil
@@ -21,7 +10,6 @@ import platform
 from datetime import datetime
 from app import settings
 from handlers import av_handler, image_handler, file_handler, filewatch_handler
-from app import output
 import structlog
 import sqlalchemy
 
@@ -332,6 +320,24 @@ class NewHandler:
 
                 except Exception as e:
                     logger.error(f'admin_message', f'path is not a valid directory', path=path, exc_info=e)
+
+    def validate_outputs(self):
+
+        logger.info('user_message', msg=f'Validating output structure')
+
+        for directory_entry in self.session.query(OutputDirectories):
+
+            path = directory_entry.folder_path
+
+            if not os.path.exists(path):
+                logger.warning(f'admin_message', msg=f'output directory does not exist', path=path)
+
+                try:
+                    os.mkdir(path)
+                    logger.info(f'admin_message', msg=f'new output directory created', path=path)
+
+                except Exception as e:
+                    logger.error(f'admin_message', msg='path is not a valid directory location', exc_info=e)
 
     def filter_children_directories(self):
 
@@ -902,100 +908,7 @@ class NewHandler:
 
         for row in self.session.query(InputDirectories):
             path = row.folder_path
-
             self.decode_directory(path)
-
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            # # safely check if file was moved before attempting a decode
-            # try:
-            #     os.chdir(path)
-            #
-            # except Exception as e:
-            #     logger.warning('admin_message', exc_info=e)
-            #
-            # for root, directory, files in os.walk(path):
-            #
-            #     for f in files:
-            #
-            #         # create and/or clear dictionary
-            #         file_meta = {}
-            #
-            #         # merge our strings
-            #         path = os.path.join(root, f)
-            #         path = os.path.abspath(path)  # cleanup backslashes (Note: bug when nesting abspath and join-- use seperately)
-            #
-            #         # remove /paths/
-            #         _basename = os.path.basename(path)
-            #
-            #         # log the event
-            #         logger.info(f"Event: File scan {path} {os.path.isdir(path)}")
-            #
-            #         # create a new dict
-            #         file_meta['file_path'] = path
-            #
-            #         # file_name
-            #         file_meta["file_name"] = os.path.splitext(_basename)[0]
-            #
-            #         # .extension
-            #         file_meta["extension"] = os.path.splitext(_basename)[1]
-            #
-            #         # creation date
-            #         file_meta["date_created"] = self.creation_date(path)
-            #
-            #         # AV info
-            #         av_meta = av_handler.pyav_decode(path)  # returns dict
-            #         file_meta.update(av_meta)  # update dict
-            #
-            #         # probe if AV fails
-            #         if file_meta['succeeded'] is False:
-            #             stdout, stderr = av_handler.ffprobe(path)
-            #             ffprobe_meta = av_handler.parse_ffprobe(stdout, stderr)  # returns dictionary of parsed metadata
-            #             file_meta.update(ffprobe_meta)
-            #
-            #         # VIDEO TABLE
-            #         if file_meta['v_stream'] is True:
-            #             self.insert_video(file_meta)
-            #
-            #         # AUDIO TABLE
-            #         elif file_meta['v_stream'] is False and file_meta['a_stream'] is True:
-            #             self.insert_audio(file_meta)
-            #
-            #         # IMG TABLE
-            #         elif file_meta['v_stream'] is False and file_meta['a_stream'] is False or file_meta['i_stream'] is True:
-            #
-            #             """
-            #                 * Because of large temp files and inefficiencies in wand, avoid decoding 'other_files'
-            #                 * Because FFprobe may ignore some image formats, do not check for i_stream until wand checks the file
-            #             """
-            #
-            #             # IMG info
-            #             img_meta = image_handler.decode_image(input=path)
-            #             file_meta.update(img_meta)
-            #
-            #             if file_meta['i_stream'] is True:
-            #                 self.insert_image(file_meta)
-            #
-            #         # (ALL) FILES TABLE
-            #         self.insert_other(file_meta)
-            #
-            #         # write everything to database
-            #         self.session.commit()
 
     def decode_directory(self, path):
         # check if path is a valid directory
@@ -1018,8 +931,8 @@ class NewHandler:
                             self.decode_file(path)
 
         except Exception as e:
-            logger.warning('admin_message', msg='Could not change current working directory. Is path a file or exist?',
-                           path=path, exception=e)
+            logger.warning('admin_message', msg='Could not change the working directory. Does path exist?',
+                           path=path, exc_info=f'{e}')
 
     def decode_file(self, path):
 

@@ -3,19 +3,19 @@ import os
 import structlog
 from structlog.stdlib import *
 from structlog.processors import *
-
-from handlers import database_handler, filewatch_handler
-from app import output, settings, gpu
+from handlers import database_handler, filewatch_handler, process_handler
+from app import settings, gpu
 from app.logging import custom_processors
 
 logger = structlog.get_logger('samplify.log')
 
 
-class Samplify():
+class Samplify:
 
     def __init__(self):
         # Create our new handler types.
         self.db_manager = database_handler.NewHandler()
+        self.process_manager = process_handler.NewHandler()
         self.filewatch_manager = filewatch_handler.NewHandler(self.db_manager)
 
         # Insert a default template.
@@ -121,7 +121,7 @@ class Samplify():
         # print(structlog.dev.ConsoleRenderer.get_default_level_styles())
 
     @staticmethod
-    def args_configure():
+    def argument_config():
 
         # create a parser
         parser = argparse.ArgumentParser()
@@ -149,13 +149,9 @@ class Samplify():
         else:
             logger.info('destination: ' + args.destination)
 
-    @staticmethod
-    def validate_directories():
-        output.validate_directories()
-
-    def start_watchdog(self):
-        self.filewatch_manager.schedule_all_watches()
-        self.filewatch_manager.watch_listener()
+    def initialize_workers(self):
+        self.process_manager.schedule_workers()
+        self.process_manager.schedule_listener()
 
 
 def main():
@@ -166,14 +162,17 @@ def main():
     # Start logging.
     samplify.logging_config()
 
-    # TODO: Configure args.
+    # TODO: (Re)configure args.
     # samplify.args_configure()
 
-    # Configure hardware.
+    # Get hardware type/ID.
     gpu.hardware()
 
     # Validate output folders.
-    samplify.validate_directories()
+    samplify.db_manager.validate_outputs()
+
+    # Spawn multi-core worker processes.
+    samplify.initialize_workers()
 
     # Start benchmark timer (input).
     timer = time.time()
@@ -181,16 +180,24 @@ def main():
     # Run a manual scan on input directories.
     samplify.db_manager.scan_files()
 
-    # Start watchdog threading.
-    samplify.start_watchdog()
+    print('status completed')
+    time.sleep(30)
 
-    # Spawn decoder processes.
-    samplify.filewatch_manager.schedule_decoders()
 
-    samplify.filewatch_manager.add_task(print('hello world'))
 
-    # End input benchmark timer
-    print(time.time() - timer)
+
+
+
+
+
+
+    # # Start watchdog threading.
+    # samplify.initialize_filewatches()
+    #
+    # samplify.filewatch_manager.add_decoder_task(print('hello world'))
+    #
+    # # End input benchmark timer
+    # print(time.time() - timer)
 
 
 

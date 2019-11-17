@@ -47,7 +47,7 @@ class NewHandler():
         for core in range(num_cores):
 
             # declare process, set daemon.
-            p = multiprocessing.Process(target=self.decoder_listener, daemon=True)
+            p = multiprocessing.Process(target=self.schedule_decoder_listener, daemon=True)
 
             # declare double-ended channel (dequeue) for each process.
             q = collections.deque()
@@ -62,7 +62,7 @@ class NewHandler():
             # start process
             p.start()
 
-    def decoder_listener(self):
+    def schedule_decoder_listener(self):
 
         # return active working process
         p = multiprocessing.current_process()
@@ -81,7 +81,7 @@ class NewHandler():
                     queue.popleft()
 
     # TODO: change algorithm to be more efficient at scheduling tasks
-    def add_task(self, task):
+    def add_decoder_task(self, task):
 
         # Get process list.
         for p in self.running_processes:

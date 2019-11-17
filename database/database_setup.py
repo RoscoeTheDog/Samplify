@@ -18,7 +18,6 @@ def _set_sqlite_case_insensitive_pragma(dbapi_con, connection_record):
 
 engine = create_engine(settings.database_path)
 
-
 FilesOutputDirectories = Table('fileToFolder', Base.metadata,
                           Column('outputDirectories', Integer, ForeignKey('outputDirectories.id')),
                           Column('files', Integer, ForeignKey('files.id'))

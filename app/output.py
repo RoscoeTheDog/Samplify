@@ -5,6 +5,11 @@ from handlers import database_handler
 import os
 import structlog
 
+"""
+    Note:
+        This module is deprecated. Any output checking should be done via the database, as it should be
+        already inserted into a table and considered a database task to execute.
+"""
 
 # call our logger locally
 logger = structlog.get_logger('samplify.log')
