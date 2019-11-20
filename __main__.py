@@ -3,7 +3,7 @@ import os
 import structlog
 from structlog.stdlib import *
 from structlog.processors import *
-from handlers import database_handler, filewatch_handler, process_handler
+from handlers import database_handler, process_handler, filewatch_handler
 from app import settings, gpu
 from app.logging import custom_processors
 
@@ -16,7 +16,6 @@ class Samplify:
         # Create our new handler types.
         self.db_manager = database_handler.NewHandler()
         self.process_manager = process_handler.NewHandler()
-        self.filewatch_manager = filewatch_handler.NewHandler(self.db_manager)
 
         # Insert a default template.
         self.db_manager.insert_template()
@@ -24,6 +23,10 @@ class Samplify:
         # Initialize input/output cache (for watchdog).
         self.db_manager.start_input_cache()
         self.db_manager.start_output_cache()
+
+        # Here is where the exception is thrown.
+        self.filewatch_manager = filewatch_handler.NewHandler(self.db_manager)
+
 
     @staticmethod
     def logging_config():
@@ -53,7 +56,7 @@ class Samplify:
                 # add_structlog_level,
                 # order_keys,
                 # OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'exc_info']),
-                # structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+                structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
 
             ],
             # keep_exc_info=True,
@@ -180,7 +183,6 @@ def main():
     # Run a manual scan on input directories.
     samplify.db_manager.scan_files()
 
-    print('status completed')
     time.sleep(30)
 
 
@@ -252,7 +254,7 @@ def main():
     # except Exception as e:
     #     logger.exception(e)
 
-    print('number of skipped files: ', settings.exception_counter)
+    # print('number of skipped files: ', settings.exception_counter)
 
 
 if __name__ == '__main__':

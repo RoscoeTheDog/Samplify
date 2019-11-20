@@ -8,8 +8,7 @@ logger = structlog.getLogger('samplify.log')
 class NewHandler:
 
     def __init__(self):
-        # self.db_manager = database_handler  # session object unpicklable
-        self.running_processes = []     # process objects unpicklable
+        self.running_processes = []     # Note: 'process' objects are unpicklable
         self.decoder_channels = []
 
     # Pickling exclusions.
@@ -21,7 +20,6 @@ class NewHandler:
 
         # Remove the unpicklable entries
         del state['running_processes']
-        # del state['db_manager']
         return state
 
     def schedule_workers(self):

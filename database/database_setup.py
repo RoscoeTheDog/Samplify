@@ -1,14 +1,27 @@
+import sqlalchemy
 from sqlalchemy import Column, ForeignKey, Integer, String, Table, Boolean
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
-from app import settings
 from datetime import datetime
 
+# Base for Table/class inheritance.
 Base = declarative_base()
 
-# event override sqlite non-case sensitive defaults
+# Engine for connecting to db.
+engine = create_engine('sqlite:///C:/Users/Aspen/Documents/GitHub/Samplify/database/database.db')
+
+# For development, just drop all table meta.
+Base.metadata.drop_all(engine)
+
+# Create all table meta-data.
+Base.metadata.create_all(engine)
+
+# Create our session (Connection to db).
+session = sqlalchemy.orm.Session(bind=engine)
+
+# event override for sqlite default setting where 'like' comparison operator is non-case sensitive .
 @event.listens_for(Engine, "connect")
 def _set_sqlite_case_insensitive_pragma(dbapi_con, connection_record):
     cursor = dbapi_con.cursor()
@@ -16,20 +29,15 @@ def _set_sqlite_case_insensitive_pragma(dbapi_con, connection_record):
     cursor.close()
 
 
-engine = create_engine(settings.database_path)
+class SearchTerms(Base):
+    __tablename__ = 'searchTerms'
 
-FilesOutputDirectories = Table('fileToFolder', Base.metadata,
-                          Column('outputDirectories', Integer, ForeignKey('outputDirectories.id')),
-                          Column('files', Integer, ForeignKey('files.id'))
-                               )
-
+    id = Column(Integer, primary_key=True)
+    folder_id = Column(Integer)
+    name = Column(String)
 
 class OutputDirectories(Base):
     __tablename__ = 'outputDirectories'
-
-    # Association is to the ClassName, not the tableName
-    files = relationship("Files",
-                         secondary=FilesOutputDirectories)
 
     id = Column(Integer, primary_key=True)
     folder_path = Column(String)
@@ -74,16 +82,12 @@ class SearchTerms(Base):
     __tablename__ = 'searchTerms'
 
     id = Column(Integer, primary_key=True)
-    folder_id = Column(Integer, foreign_key=('outputDirectories.id'))
+    folder_id = Column(Integer)
     name = Column(String)
 
 
 class Files(Base):
     __tablename__ = 'files'
-
-    # Association is to the ClassName, not the tableName
-    outputDirectories = relationship('OutputDirectories',
-                                     secondary=FilesOutputDirectories)
 
     id = Column(Integer, primary_key=True)
     file_path = Column(String)
@@ -183,19 +187,6 @@ class SearchByDate(Base):
     __tablename__ = 'searchByDate'
 
     id = Column(Integer, primary_key=True)
-    folder_id = Column(Integer, foreign_key=('outputDirectories.id'))
+    folder_id = Column(Integer)
     start_by_date = Column(String, default=datetime.min)
     end_by_date = Column(String, default=datetime.max)
-
-
-# for developer's sake, drop all table meta-data before starting
-Base.metadata.drop_all(engine)
-
-# creates all table meta-data info (columns, rows, keys, etc)
-Base.metadata.create_all(engine)
-
-# # declare a new session maker and connect to database 'engine'
-# session = sessionmaker(bind=engine)
-#
-# # you must also instantiate the session before querying
-# session = session()

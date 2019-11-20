@@ -1,5 +1,4 @@
-from sqlalchemy.orm import sessionmaker
-from database.database_setup import *
+import database.database_setup as dbs
 import os
 import time
 import shutil
@@ -9,9 +8,8 @@ import re
 import platform
 from datetime import datetime
 from app import settings
-from handlers import av_handler, image_handler, file_handler, filewatch_handler
+from handlers import av_handler, image_handler, file_handler
 import structlog
-import sqlalchemy
 
 # call our logger locally
 logger = structlog.get_logger('samplify.log')
@@ -31,7 +29,7 @@ class NewHandler:
         # Base.metadata.create_all(engine)
 
         # Create a new session.
-        self.session = sqlalchemy.orm.Session(bind=engine)
+        self.session = dbs.session
 
         # # Override sqlite NonCase-Sensitive defaults
         # @event.listens_for(Engine, "connect")
@@ -40,20 +38,20 @@ class NewHandler:
         #     cursor.execute("PRAGMA case_sensitive_like=ON;")
         #     cursor.close()
         #
-        # class InputDirectories(Base):
+        # class dbs.InputDirectories(Base):
         #     __tablename__ = 'inputDirectories'
         #
         #     id = Column(Integer, primary_key=True)
         #     folder_path = Column(String)
         #     monitor = Column(Boolean, default=True)
         #
-        # class InputMonitoringExclusions(Base):
+        # class dbs.InputMonitoringExclusions(Base):
         #     __tablename__ = 'inputMonitoringExclusions'
         #
         #     id = Column(Integer, primary_key=True)
         #     folder_path = Column(String)
         #
-        # class OutputDirectories(Base):
+        # class dbs.OutputDirectories(Base):
         #     __tablename__ = 'outputDirectories'
         #
         #     id = Column(Integer, primary_key=True)
@@ -72,7 +70,7 @@ class NewHandler:
         #     reduce = Column(Boolean, default=True)
         #     i_fmt = Column(String, default='default')
         #
-        # class Files(Base):
+        # class dbs.Files(Base):
         #     __tablename__ = 'files'
         #
         #     id = Column(Integer, primary_key=True)
@@ -84,7 +82,7 @@ class NewHandler:
         #     a_stream = Column(Boolean, default=False)
         #     i_stream = Column(Boolean, default=False)
         #
-        # class FilesVideo(Base):
+        # class dbs.FilesVideo(Base):
         #     __tablename__ = 'filesVideo'
         #
         #     id = Column(Integer, primary_key=True)
@@ -112,7 +110,7 @@ class NewHandler:
         #
         #     i_stream = Column(Boolean, default=False)
         #
-        # class FilesAudio(Base):
+        # class dbs.FilesAudio(Base):
         #     __tablename__ = 'filesAudio'
         #
         #     id = Column(Integer, primary_key=True)
@@ -130,7 +128,7 @@ class NewHandler:
         #     a_channels = Column(String)
         #     a_channel_layout = Column(String)
         #
-        # class FilesImage(Base):
+        # class dbs.FilesImage(Base):
         #     __tablename__ = 'filesImage'
         #
         #     id = Column(Integer, primary_key=True)
@@ -152,7 +150,7 @@ class NewHandler:
         #     # bit_rate = Column(Integer)
         #     # channel_layout = Column(Integer)
         #
-        # class SupportedExtensions(Base):
+        # class dbs.SupportedExtensions(Base):
         #     __tablename__ = 'supportedExtensions'
         #
         #     id = Column(Integer, primary_key=True)
@@ -165,20 +163,20 @@ class NewHandler:
         #     channel_size = Column(Integer)
         #     bit_depth = Column(String)
         #
-        # class UnsupportedExtensions(Base):
+        # class dbs.UnsupportedExtensions(Base):
         #     __tablename__ = 'unsupportedExtensions'
         #
         #     id = Column(Integer, primary_key=True)
         #     name = Column(String)
         #
-        # class SearchTerms(Base):
+        # class dbs.SearchTerms(Base):
         #     __tablename__ = 'searchTerms'
         #
         #     id = Column(Integer, primary_key=True)
         #     folder_id = Column(Integer, foreign_key=('outputDirectories.id'))
         #     name = Column(String)
         #
-        # class SearchByDate(Base):
+        # class dbs.SearchByDate(Base):
         #     __tablename__ = 'searchByDate'
         #
         #     id = Column(Integer, primary_key=True)
@@ -193,122 +191,122 @@ class NewHandler:
     def insert_template(self):
 
         # INPUT FOLDERS
-        entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/4-HiHat')
+        entry = dbs.InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/4-HiHat')
         self.session.add(entry)
-        entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick')
+        entry = dbs.InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick')
         self.session.add(entry)
-        # entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Acoustic')
+        # entry = dbs.InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Acoustic')
         # self.session.add(entry)
-        # entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Basics')
+        # entry = dbs.InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Basics')
         # self.session.add(entry)
-        # entry = InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Dubstep')
+        # entry = dbs.InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Dubstep')
         # self.session.add(entry)
 
-        entry = InputDirectories(folder_path='C:/Users/Aspen/Pictures')
+        entry = dbs.InputDirectories(folder_path='C:/Users/Aspen/Pictures')
         self.session.add(entry)
 
-        entry = InputMonitoringExclusions(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Dubstep')
+        entry = dbs.InputMonitoringExclusions(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Dubstep')
         self.session.add(entry)
 
-        # entry = InputDirectories(folder_path='C:/')
+        # entry = dbs.InputDirectories(folder_path='C:/')
         # self.session.add(entry)
-        # entry = InputDirectories(folder_path='D:/MOVIES & SHOWS')
+        # entry = dbs.InputDirectories(folder_path='D:/MOVIES & SHOWS')
         # self.session.add(entry)
-        # entry = InputDirectories(folder_path='C:/Users/Aspen/Pictures')
+        # entry = dbs.InputDirectories(folder_path='C:/Users/Aspen/Pictures')
         # self.session.add(entry)
 
         # laptop test directories
-        entry = InputDirectories(folder_path='C:/Users/Admin/Desktop/Input/')
+        entry = dbs.InputDirectories(folder_path='C:/Users/Admin/Desktop/Input/')
         self.session.add(entry)
-        entry = InputDirectories(folder_path='C:/Users/Admin/Desktop/Input/Sample Videos')
+        entry = dbs.InputDirectories(folder_path='C:/Users/Admin/Desktop/Input/Sample Videos')
         self.session.add(entry)
 
         # OUTPUT FOLDERS
-        entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/photos', extension='.png', i_fmt='PNG',
+        entry = dbs.OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/photos', extension='.png', i_fmt='PNG',
                                   a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
                                   image_only=True, a_normalize=False)
         self.session.add(entry)
 
-        entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/kick', extension='default', a_channels='1',
+        entry = dbs.OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/kick', extension='default', a_channels='1',
                                   audio_only=True, a_normalize=False, a_strip_silence=False, a_silence_threshold='-80',
                                   reduce=False)
         self.session.add(entry)
 
-        entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/hat', extension='default',
+        entry = dbs.OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/hat', extension='default',
                                   a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='1',
                                   audio_only=True, a_normalize=False, a_strip_silence=False, a_silence_threshold='-80',
                                   reduce=False)
         self.session.add(entry)
 
-        entry = OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/dragon ball', extension='.mp4',
+        entry = dbs.OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/dragon ball', extension='.mp4',
                                   a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
                                   video_only=True, reduce=False)
         self.session.add(entry)
 
         # laptop test outputs
-        entry = OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/photos', extension='.png', i_fmt='PNG',
+        entry = dbs.OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/photos', extension='.png', i_fmt='PNG',
                                   a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
                                   image_only=True, a_normalize=False)
         self.session.add(entry)
 
-        entry = OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/hat', extension='default',
+        entry = dbs.OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/hat', extension='default',
                                   a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='1',
                                   audio_only=True, a_normalize=False, a_strip_silence=False, a_silence_threshold='-80',
                                   reduce=False)
         self.session.add(entry)
 
-        entry = OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/dragon ball', extension='.mp4',
+        entry = dbs.OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/dragon ball', extension='.mp4',
                                   a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
                                   video_only=True, reduce=False)
         self.session.add(entry)
 
         # FILTER BY SEARCH TERMS
-        entry = SearchTerms(folder_id=1, name=r'.')
+        entry = dbs.SearchTerms(folder_id=1, name=r'.')
         self.session.add(entry)
-        entry = SearchTerms(folder_id=2, name=r'(hat)(?i)')
+        entry = dbs.SearchTerms(folder_id=2, name=r'(hat)(?i)')
         self.session.add(entry)
-        entry = SearchTerms(folder_id=3, name=r'(dragon)(?i)')
+        entry = dbs.SearchTerms(folder_id=3, name=r'(dragon)(?i)')
         self.session.add(entry)
 
         # laptop filter by search terms
-        entry = SearchTerms(folder_id=4, name=r'.')
+        entry = dbs.SearchTerms(folder_id=4, name=r'.')
         self.session.add(entry)
-        entry = SearchTerms(folder_id=5, name=r'(hat)(?i)')
+        entry = dbs.SearchTerms(folder_id=5, name=r'(hat)(?i)')
         self.session.add(entry)
-        entry = SearchTerms(folder_id=6, name=r'(dragon)(?i)')
+        entry = dbs.SearchTerms(folder_id=6, name=r'(dragon)(?i)')
         self.session.add(entry)
 
         # DEFAULT TO MIN/MAX SEARCH-DATE VALUES UNLESS SPECIFIED
-        for directory_entry in self.session.query(OutputDirectories):
-            entry = SearchByDate(folder_id=directory_entry.id)
+        for directory_entry in self.session.query(dbs.OutputDirectories):
+            entry = dbs.SearchByDate(folder_id=directory_entry.id)
             self.session.add(entry)
 
         # # MANUALLY UPDATE SPECIFIC DATE IF DESIRED
-        # for search_entry in self.session.query(SearchByDate).filter(SearchByDate.folder_id == 3):
+        # for search_entry in self.session.query(dbs.SearchByDate).filter(dbs.SearchByDate.folder_id == 3):
         #
         #     if str(search_entry.start_by_date) == str(datetime.min) and str(search_entry.end_by_date) == str(datetime.max):
         #
-        #         self.session.query(SearchByDate).filter(SearchByDate.id == search_entry.id).update(
+        #         self.session.query(dbs.SearchByDate).filter(dbs.SearchByDate.id == search_entry.id).update(
         #         {'start_by_date': '2019-05-20'})
         #
-        #         self.session.query(SearchByDate).filter(SearchByDate.id == search_entry.id).update(
+        #         self.session.query(dbs.SearchByDate).filter(dbs.SearchByDate.id == search_entry.id).update(
         #         {'end_by_date': '2019-06-30'})
 
         # FILTER BY DATES CREATED
-        # entry = SearchByDate(folder_id=1)
+        # entry = dbs.SearchByDate(folder_id=1)
         # self.session.add(entry)
-        # entry = SearchByDate(folder_id=2)
+        # entry = dbs.SearchByDate(folder_id=2)
         # self.session.add(entry)
-        # entry = SearchByDate(folder_id=3, start_by_date='01/05/2019', end_by_date='06/27/2019')  # if nothing is specified, min/max used
+        # entry = dbs.SearchByDate(folder_id=3, start_by_date='01/05/2019', end_by_date='06/27/2019')  # if nothing is specified, min/max used
         # self.session.add(entry)
-        # entry = SearchByDate(folder_id=4)
+        # entry = dbs.SearchByDate(folder_id=4)
 
         # insert all preferences into database
         self.session.commit()
 
     def create_directories(self):
 
-        for directory_entry in self.session.query(OutputDirectories):
+        for directory_entry in self.session.query(dbs.OutputDirectories):
             path = directory_entry.folder_path
 
             if not os.path.exists(path):
@@ -325,7 +323,7 @@ class NewHandler:
 
         logger.info('user_message', msg=f'Validating output structure')
 
-        for directory_entry in self.session.query(OutputDirectories):
+        for directory_entry in self.session.query(dbs.OutputDirectories):
 
             path = directory_entry.folder_path
 
@@ -345,7 +343,7 @@ class NewHandler:
         hierarchy = []
 
         # create a list of folder paths
-        for folder_entry in self.session.query(InputDirectories):
+        for folder_entry in self.session.query(dbs.InputDirectories):
             hierarchy.append(folder_entry.folder_path)
 
         # call function to filter out child paths from parents.
@@ -353,42 +351,27 @@ class NewHandler:
 
         return parent_list
 
-    def start_threads(self):
-
-        parent_directories = self.filter_children_directories()
-
-        for folder_entry in self.session.query(InputDirectories):
-
-            # check if monitor is enabled
-            if folder_entry.monitor is True:
-
-                # check if path is in parent hierarchy
-                if folder_entry.folder_path in parent_directories:
-                    handler = filewatch_handler.ThreadHandler()
-
-                    handler.schedule_watch(folder_entry.folder_path)
-
     # def update_directory_search_by_name(self):
     #
     #     # default behavior for directory search by name
     #     if settings.default_name_searchby_directory is True:
     #
-    #         for d, s in self.session.query(OutputDirectories, SearchTerms):
+    #         for d, s in self.session.query(dbs.OutputDirectories, dbs.SearchTerms):
     #             print(d, s)
     #             dir_name = os.path.basename(d.folder_path)
     #
     #             print(dir_name, s.name)
     #
     #             if dir_name != s.name:
-    #                 entry = SearchTerms(folder_id=d.id, name=dir_name)
+    #                 entry = dbs.SearchTerms(folder_id=d.id, name=dir_name)
     #                 self.session.add(entry)
     #
     #     else:
-    #         for d, s in self.session.query(OutputDirectories, SearchTerms):
+    #         for d, s in self.session.query(dbs.OutputDirectories, dbs.SearchTerms):
     #             dir_name = os.path.basename(d.folder_path)
     #
     #             if dir_name == s.name:
-    #                 self.session.query(SearchTerms).filter(SearchTerms.name.like(f"&{dir_name}&")).delete(synchronize_self.session=False)
+    #                 self.session.query(dbs.SearchTerms).filter(dbs.SearchTerms.name.like(f"&{dir_name}&")).delete(synchronize_self.session=False)
     #                 logger.info(f"Event: Term removed {dir_name}")
     #
     #     self.session.commit()
@@ -414,8 +397,8 @@ class NewHandler:
     def samplify(self):
 
         # FILTER BY SEARCH-TERMS
-        for directory_entry, search_terms in self.session.query(OutputDirectories, SearchTerms).filter(
-                OutputDirectories.id == SearchTerms.folder_id).all():
+        for directory_entry, search_terms in self.session.query(dbs.OutputDirectories, dbs.SearchTerms).filter(
+                dbs.OutputDirectories.id == dbs.SearchTerms.folder_id).all():
 
             logger.info('user_message', msg=f"syncing folder",
                         path=directory_entry.folder_path,
@@ -431,7 +414,7 @@ class NewHandler:
 
             time.sleep(2)
 
-            for file_entry in self.session.query(Files):
+            for file_entry in self.session.query(dbs.Files):
                 logger.info(f'admin_message', f'working file path', path=file_entry.file_path)
 
                 # TODO: AUDIO CONVERSION
@@ -439,8 +422,8 @@ class NewHandler:
 
                     if file_entry.v_stream is False and file_entry.a_stream is True:
 
-                        for audio_entry in self.session.query(FilesAudio).filter(
-                                FilesAudio.file_path == file_entry.file_path):
+                        for audio_entry in self.session.query(dbs.FilesAudio).filter(
+                                dbs.FilesAudio.file_path == file_entry.file_path):
 
                             pattern = re.compile(search_terms.name)
                             filename_search = pattern.finditer(audio_entry.file_name)
@@ -448,8 +431,8 @@ class NewHandler:
                             for match in filename_search:
 
                                 # IS BETWEEN DATES?
-                                for date_entry in self.session.query(SearchByDate).filter(
-                                        SearchByDate.folder_id == directory_entry.id):
+                                for date_entry in self.session.query(dbs.SearchByDate).filter(
+                                        dbs.SearchByDate.folder_id == directory_entry.id):
                                     logger.info('admin_message', f'Checking file_date',
                                                 file_date=audio_entry.creation_date)
 
@@ -526,11 +509,11 @@ class NewHandler:
                                             av_handler.convert_ffmpeg(ff_args)
 
                                         # VANILLA TRANSCODING (PyAV [fastest])
-                                        elif bool(self.session.query(SupportedExtensions).filter(
-                                                SupportedExtensions.name == extension).first()) is True:
+                                        elif bool(self.session.query(dbs.SupportedExtensions).filter(
+                                                dbs.SupportedExtensions.name == extension).first()) is True:
 
-                                            for config in self.session.query(SupportedExtensions).filter(
-                                                    SupportedExtensions.name == extension):
+                                            for config in self.session.query(dbs.SupportedExtensions).filter(
+                                                    dbs.SupportedExtensions.name == extension):
                                                 logger.info('admin_message', msg='vanilla transcoding, using PyAV')
                                                 logger.info('admin_message', msg='file output settings',
                                                             file_name=audio_entry.file_name + audio_entry.extension,
@@ -591,8 +574,8 @@ class NewHandler:
 
                     if file_entry.v_stream is True:
 
-                        for video_entry in self.session.query(FilesVideo).filter(
-                                FilesVideo.file_path == file_entry.file_path):
+                        for video_entry in self.session.query(dbs.FilesVideo).filter(
+                                dbs.FilesVideo.file_path == file_entry.file_path):
 
                             pattern = re.compile(search_terms.name)
                             filename_search = pattern.finditer(video_entry.file_name)
@@ -600,8 +583,8 @@ class NewHandler:
                             for match in filename_search:
 
                                 # IS BETWEEN DATES?
-                                for date_entry in self.session.query(SearchByDate).filter(
-                                        SearchByDate.folder_id == directory_entry.id):
+                                for date_entry in self.session.query(dbs.SearchByDate).filter(
+                                        dbs.SearchByDate.folder_id == directory_entry.id):
                                     logger.info(
                                         f'Event: Check file creation date {video_entry.file_path} {video_entry.creation_date}')
 
@@ -722,8 +705,8 @@ class NewHandler:
                 # TODO: IMAGE CONVERSION
                 elif directory_entry.image_only is True:
 
-                    for image_entry in self.session.query(FilesImage).filter(
-                            FilesImage.file_path == file_entry.file_path):
+                    for image_entry in self.session.query(dbs.FilesImage).filter(
+                            dbs.FilesImage.file_path == file_entry.file_path):
 
                         pattern = re.compile(search_terms.name)
                         filename_search = pattern.finditer(image_entry.file_name)
@@ -731,8 +714,8 @@ class NewHandler:
                         for match in filename_search:
 
                             # IS BETWEEN DATES?
-                            for date_entry in self.session.query(SearchByDate).filter(
-                                    SearchByDate.folder_id == directory_entry.id):
+                            for date_entry in self.session.query(dbs.SearchByDate).filter(
+                                    dbs.SearchByDate.folder_id == directory_entry.id):
 
                                 logger.info(
                                     f'Event: Checking file date {image_entry.file_path} {image_entry.creation_date}')
@@ -822,10 +805,10 @@ class NewHandler:
         if is_valid is True:
             print(extension, 'is supported!')
 
-            entry = bool(self.session.query(SupportedExtensions).filter(SupportedExtensions.name == extension).first())
+            entry = bool(self.session.query(dbs.SupportedExtensions).filter(dbs.SupportedExtensions.name == extension).first())
 
             if not entry is True:
-                entry = SupportedExtensions(name=extension)
+                entry = dbs.SupportedExtensions(name=extension)
                 self.session.add(entry)
                 self.session.commit()
 
@@ -833,10 +816,10 @@ class NewHandler:
             print(extension, 'is unsupported!')
 
             entry = bool(
-                self.session.query(UnsupportedExtensions).filter(UnsupportedExtensions.name == extension).first())
+                self.session.query(dbs.UnsupportedExtensions).filter(dbs.UnsupportedExtensions.name == extension).first())
 
             if not entry is True:
-                entry = UnsupportedExtensions(name=extension)
+                entry = dbs.UnsupportedExtensions(name=extension)
                 self.session.add(entry)
                 self.session.commit()
 
@@ -844,16 +827,16 @@ class NewHandler:
 
         print(extension_type, v_format, v_codec, a_format, a_codec)
 
-        entry = SupportedExtensions(name=extension_type, v_format=v_format, v_codec=v_codec, a_format=a_format,
+        entry = dbs.SupportedExtensions(name=extension_type, v_format=v_format, v_codec=v_codec, a_format=a_format,
                                     a_codec=a_codec, sample_rate=sample_rate, channel_size=channel_size)
 
-        entry_exist = bool(self.session.query(SupportedExtensions).filter(SupportedExtensions.name == extension_type,
-                                                                          SupportedExtensions.v_format == v_format,
-                                                                          SupportedExtensions.v_codec == v_codec,
-                                                                          SupportedExtensions.a_format == a_format,
-                                                                          SupportedExtensions.a_codec == a_codec,
-                                                                          SupportedExtensions.sample_rate,
-                                                                          SupportedExtensions.channel_size).first())
+        entry_exist = bool(self.session.query(dbs.SupportedExtensions).filter(dbs.SupportedExtensions.name == extension_type,
+                                                                          dbs.SupportedExtensions.v_format == v_format,
+                                                                          dbs.SupportedExtensions.v_codec == v_codec,
+                                                                          dbs.SupportedExtensions.a_format == a_format,
+                                                                          dbs.SupportedExtensions.a_codec == a_codec,
+                                                                          dbs.SupportedExtensions.sample_rate,
+                                                                          dbs.SupportedExtensions.channel_size).first())
 
         if not entry_exist is True:
             self.session.add(entry)
@@ -865,7 +848,7 @@ class NewHandler:
         :return: boolean: True or False (exists or not)
         """
 
-        return bool(self.session.query(FilesVideo).filter(FilesVideo.extension == extension).first())
+        return bool(self.session.query(dbs.FilesVideo).filter(dbs.FilesVideo.extension == extension).first())
 
     def is_image_extension(self, extension: str):
         """
@@ -873,7 +856,7 @@ class NewHandler:
         :return: boolean: True or False (exists or not)
         """
 
-        return bool(self.session.query(FilesImage).filter(FilesImage.extension == extension).first())
+        return bool(self.session.query(dbs.FilesImage).filter(dbs.FilesImage.extension == extension).first())
 
     def copy(self, input, output):
 
@@ -906,7 +889,7 @@ class NewHandler:
         logger.info(f'user_message', msg="Starting Input Scan")
         time.sleep(2)
 
-        for row in self.session.query(InputDirectories):
+        for row in self.session.query(dbs.InputDirectories):
             path = row.folder_path
             self.decode_directory(path)
 
@@ -1099,7 +1082,7 @@ class NewHandler:
     def insert_other(self, metadata):
 
         # add entry with basic file information
-        entry = Files(
+        entry = dbs.Files(
             file_path=metadata['file_path'],
             file_name=metadata['file_name'],
             extension=metadata['extension'],
@@ -1113,7 +1096,7 @@ class NewHandler:
     def insert_image(self, metadata):
 
         # add entry with file image information
-        entry = FilesImage(
+        entry = dbs.FilesImage(
             file_path=metadata['file_path'],
             file_name=metadata['file_name'],
             extension=metadata['extension'],
@@ -1131,7 +1114,7 @@ class NewHandler:
     def insert_audio(self, metadata):
 
         # add entry with file audio information
-        entry = FilesAudio(
+        entry = dbs.FilesAudio(
             file_path=metadata['file_path'],
             file_name=metadata['file_name'],
             extension=metadata['extension'],
@@ -1151,7 +1134,7 @@ class NewHandler:
     def insert_video(self, metadata):
 
         # add entry with file video information
-        entry = FilesVideo(
+        entry = dbs.FilesVideo(
             file_path=metadata['file_path'],
             file_name=metadata['file_name'],
             extension=metadata['extension'],
@@ -1169,8 +1152,8 @@ class NewHandler:
         # then check if audio exists and update entry
         # - avoids exceptions for files with video only
         if metadata['a_stream'] is True:
-            self.session.query(FilesVideo). \
-                filter(FilesVideo.file_path == metadata['file_path']). \
+            self.session.query(dbs.FilesVideo). \
+                filter(dbs.FilesVideo.file_path == metadata['file_path']). \
                 update(
                 {
                     'a_stream': metadata['a_stream'],
@@ -1200,7 +1183,7 @@ class NewHandler:
                 logger.info(f"Event: Folder scan {path}")
 
                 # create our object
-                entry = OutputDirectories(folder_path=path)
+                entry = dbs.OutputDirectories(folder_path=path)
 
                 # add object to self.session
                 self.session.add(entry)
@@ -1214,7 +1197,7 @@ class NewHandler:
                 # if settings.default_name_searchby_directory is True:
                 #
                 #     # create new entry for default search terms.
-                #     entry = SearchTerms(folder_id=entry.id, name=name)
+                #     entry = dbs.SearchTerms(folder_id=entry.id, name=name)
                 #     self.session.add(entry)
 
         # write everything to database
@@ -1224,7 +1207,7 @@ class NewHandler:
 
         custom_monitoring = False
 
-        for folder in self.session.query(InputDirectories):
+        for folder in self.session.query(dbs.InputDirectories):
 
             if folder.monitor is False:
                 custom_monitoring = True
@@ -1245,7 +1228,7 @@ class NewHandler:
         # to avoid duplicates, completely rewrite cache each time
         settings.input_cache = []
 
-        for folder in self.session.query(InputDirectories):
+        for folder in self.session.query(dbs.InputDirectories):
 
             if folder.monitor is True:
 
@@ -1260,7 +1243,7 @@ class NewHandler:
         # to avoid duplicates, completely rewrite cache each time
         settings.output_cache = []
 
-        for folder in self.session.query(InputDirectories):
+        for folder in self.session.query(dbs.InputDirectories):
 
             if folder.monitor is True:
 
@@ -1273,7 +1256,7 @@ class NewHandler:
 
     def insert_input_folder(self, path):
 
-        entry = Files(file_path=path)
+        entry = dbs.Files(file_path=path)
         self.session.add(entry)
 
         self.session.commit()
@@ -1282,22 +1265,22 @@ class NewHandler:
 
         try:
             # filtering by the full path also allows us to also remove the children of the directory
-            for entry in self.session.query(Files.file_path).filter(Files.file_path.like(f'%{path}%')):
+            for entry in self.session.query(dbs.Files.file_path).filter(dbs.Files.file_path.like(f'%{path}%')):
                 logger.info('admin_message', msg='File deleted', path=path)
 
             # TODO:
-            #       Query all tables for the filepath instead of just the 'Files' Table.
+            #       Query all tables for the filepath instead of just the 'dbs.Files' Table.
 
             # synchronize self.session allows deletion OUTSIDE of the self.session 'cache'
-            self.session.query(Files,
-                               FilesImage,
-                               FilesAudio,
-                               FilesVideo
+            self.session.query(dbs.Files,
+                               dbs.FilesImage,
+                               dbs.FilesAudio,
+                               dbs.FilesVideo
                                ) \
-                .filter(Files.file_path.like(f'%{path}%')) \
-                .filter(FilesImage.file_path.like(f'%{path}%')) \
-                .filter(FilesVideo.file_path.like(f'%{path}%')) \
-                .filter(FilesAudio.file_path.like(f'%{path}%')) \
+                .filter(dbs.Files.file_path.like(f'%{path}%')) \
+                .filter(dbs.FilesImage.file_path.like(f'%{path}%')) \
+                .filter(dbs.FilesVideo.file_path.like(f'%{path}%')) \
+                .filter(dbs.FilesAudio.file_path.like(f'%{path}%')) \
                 .all() \
                 .delete(synchronize_session=False)
 
@@ -1308,7 +1291,7 @@ class NewHandler:
 
     def insert_output_folder(self, path):
 
-        entry = OutputDirectories(folder_path=path)
+        entry = dbs.OutputDirectories(folder_path=path)
 
         self.session.add(entry)
 
@@ -1318,7 +1301,7 @@ class NewHandler:
         #     # flush self.session to gain access to entry columns while in buffer
         #     self.session.flush()
         #
-        #     entry = SearchTerms(folder_id=entry.id, name=os.path.basename(path))
+        #     entry = dbs.SearchTerms(folder_id=entry.id, name=os.path.basename(path))
         #
         #     self.session.add(entry)
 
@@ -1327,12 +1310,12 @@ class NewHandler:
     def remove_output_folder(self, path):
 
         # filtering by the full path also allows us to also remove the child results from the directory
-        for entry in self.session.query(OutputDirectories).filter(OutputDirectories.folder_path.like(f'%{path}%')):
+        for entry in self.session.query(dbs.OutputDirectories).filter(dbs.OutputDirectories.folder_path.like(f'%{path}%')):
             logger.info(f'Event: Folder deleted: {entry.folder_path} True')
 
-            self.session.query(SearchTerms).filter(entry.id == SearchTerms.folder_id).delete(synchronize_session=False)
+            self.session.query(dbs.SearchTerms).filter(entry.id == dbs.SearchTerms.folder_id).delete(synchronize_session=False)
 
-            self.session.query(OutputDirectories).filter(OutputDirectories.id == entry.id).delete(
+            self.session.query(dbs.OutputDirectories).filter(dbs.OutputDirectories.id == entry.id).delete(
                 synchronize_session=False)
 
         """
@@ -1340,11 +1323,11 @@ class NewHandler:
             we need to check and delete the differences that are updated after the missed intervals
             
         """
-        for r in self.session.query(OutputDirectories).filter(OutputDirectories.folder_path):
+        for r in self.session.query(dbs.OutputDirectories).filter(dbs.OutputDirectories.folder_path):
             print(r.folder_path, settings.output_cache)
             if not r.folder_path in settings.output_cache:
-                self.session.query(SearchTerms).filter(r.id == SearchTerms.folder_id).delete(synchronize_session=False)
-                self.session.query(OutputDirectories).filter(r.folder_path).delete(synchronize_session=False)
+                self.session.query(dbs.SearchTerms).filter(r.id == dbs.SearchTerms.folder_id).delete(synchronize_session=False)
+                self.session.query(dbs.OutputDirectories).filter(r.folder_path).delete(synchronize_session=False)
 
         self.session.commit()
 
@@ -1352,7 +1335,7 @@ class NewHandler:
 
     # def insert_file(path, frame_rate, bit_depth, bit_rate):
     #
-    #     entry = Files(file_path = f"{path}", frame_rate = f'{frame_rate}', bit_depth = f"{bit_depth}", bit_rate = f"{bit_rate}")
+    #     entry = dbs.Files(file_path = f"{path}", frame_rate = f'{frame_rate}', bit_depth = f"{bit_depth}", bit_rate = f"{bit_rate}")
     #
     #     self.session.add(entry)
     #
@@ -1360,7 +1343,7 @@ class NewHandler:
 
     def remove_file(self, path):
 
-        self.session.query(Files).filter_by(file_path=path).delete()
+        self.session.query(dbs.Files).filter_by(file_path=path).delete()
 
         self.session.commit()
 

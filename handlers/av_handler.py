@@ -8,7 +8,6 @@ from app import settings
 import time
 import json
 import structlog
-import handlers.database_handler as database_handler
 from handlers import image_handler, file_handler
 
 

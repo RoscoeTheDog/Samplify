@@ -1,7 +1,4 @@
-import logging
-from logging import Logger
 from PIL import Image
-import time
 import structlog
 
 
