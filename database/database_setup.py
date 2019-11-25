@@ -31,6 +31,7 @@ def _set_sqlite_case_insensitive_pragma(dbapi_con, connection_record):
 
 class SearchTerms(Base):
     __tablename__ = 'searchTerms'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     folder_id = Column(Integer)

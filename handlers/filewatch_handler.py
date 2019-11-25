@@ -1,13 +1,12 @@
 from watchdog.observers import Observer
 from watchdog import events
-from app import settings
 import os
 from multiprocessing import Queue
 import inspect
-
-from database.database_setup import InputDirectories, InputMonitoringExclusions
-
 import structlog
+
+from app import settings
+from database.database_setup import InputDirectories, InputMonitoringExclusions
 
 # call our logger locally
 logger = structlog.get_logger('samplify.log')
@@ -23,15 +22,15 @@ class NewHandler():
         self.db_manager = db_manager  # session object unpicklable
 
     # Pickling exclusions.
-    def __getstate__(self):
-        # Copy the object's state from self.__dict__ which contains
-        # all our instance attributes. Always use the dict.copy()
-        # method to avoid modifying the original state.
-        state = self.__dict__.copy()
-
-        # Remove the unpicklable entries
-        del state['db_manager']
-        return state
+    # def __getstate__(self):
+    #     # Copy the object's state from self.__dict__ which contains
+    #     # all our instance attributes. Always use the dict.copy()
+    #     # method to avoid modifying the original state.
+    #     state = self.__dict__.copy()
+    #
+    #     # Remove the unpicklable entries
+    #     del state['db_manager']
+    #     return state
 
     def schedule_all_watches(self):
 

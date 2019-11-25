@@ -19,6 +19,7 @@ class Samplify:
 
         # Insert a default template.
         self.db_manager.insert_template()
+        self.db_manager.validate_outputs()
 
         # Initialize input/output cache (for watchdog).
         self.db_manager.start_input_cache()
@@ -152,7 +153,7 @@ class Samplify:
         else:
             logger.info('destination: ' + args.destination)
 
-    def initialize_workers(self):
+    def initialize_cores(self):
         self.process_manager.schedule_workers()
         self.process_manager.schedule_listener()
 
@@ -171,11 +172,8 @@ def main():
     # Get hardware type/ID.
     gpu.hardware()
 
-    # Validate output folders.
-    samplify.db_manager.validate_outputs()
-
-    # Spawn multi-core worker processes.
-    samplify.initialize_workers()
+    # Spawn multi-core processes.
+    samplify.initialize_cores()
 
     # Start benchmark timer (input).
     timer = time.time()
