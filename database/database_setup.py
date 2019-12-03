@@ -12,14 +12,21 @@ Base = declarative_base()
 # Engine for connecting to db.
 engine = create_engine('sqlite:///C:/Users/Aspen/Documents/GitHub/Samplify/database/database.db')
 
-# For development, just drop all table meta.
-Base.metadata.drop_all(engine)
 
-# Create all table meta-data.
-Base.metadata.create_all(engine)
+def drop_tables():
+    # For development, just drop all table meta.
+    Base.metadata.drop_all(bind=engine)
+
+
+def create_tables():
+    # Create all table meta-data.
+    Base.metadata.create_all(engine)
+
 
 # Create our session (Connection to db).
-session = sqlalchemy.orm.Session(bind=engine)
+session = sqlalchemy.orm.sessionmaker(bind=engine)
+
+session = session()
 
 # event override for sqlite default setting where 'like' comparison operator is non-case sensitive .
 @event.listens_for(Engine, "connect")
@@ -27,15 +34,6 @@ def _set_sqlite_case_insensitive_pragma(dbapi_con, connection_record):
     cursor = dbapi_con.cursor()
     cursor.execute("PRAGMA case_sensitive_like=ON;")
     cursor.close()
-
-
-class SearchTerms(Base):
-    __tablename__ = 'searchTerms'
-    __table_args__ = {'extend_existing': True}
-
-    id = Column(Integer, primary_key=True)
-    folder_id = Column(Integer)
-    name = Column(String)
 
 class OutputDirectories(Base):
     __tablename__ = 'outputDirectories'
@@ -191,3 +189,5 @@ class SearchByDate(Base):
     folder_id = Column(Integer)
     start_by_date = Column(String, default=datetime.min)
     end_by_date = Column(String, default=datetime.max)
+
+

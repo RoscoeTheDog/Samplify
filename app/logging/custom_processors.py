@@ -14,12 +14,12 @@ from structlog._frames import (
     _format_stack,
 )
 
+
 def add_structlog_level(logger, name, event_dict):
 
     event_dict['level'] = name.lower()
 
     return event_dict
-
 
 def order_keys(logger, name, event_dict):
     keys = ['timestamp', 'level', 'event', 'msg', 'path', 'exception', 'exc_info', 'path']
@@ -47,7 +47,7 @@ def order_keys(logger, name, event_dict):
 class OrderKeys(object):
 
     def __new__(cls, keys=None):
-        default = ['timestamp', 'level', 'event', 'msg', 'exc_info']
+        default = ['timestamp', 'level', 'event']
 
         if keys is None:
             keys = default
@@ -64,7 +64,6 @@ class OrderKeys(object):
                         event_dict[key] = _event_dict.pop(k)
             for k, v in list(_event_dict.items()):
                 event_dict[k] = v
-
 
             return event_dict
 

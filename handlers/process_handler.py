@@ -1,8 +1,9 @@
 import multiprocessing
 import structlog
+from app.logging import custom_processors
 import collections
 
-logger = structlog.getLogger('samplify.log')
+logger = structlog.get_logger('samplify.log')
 
 
 class NewHandler:
@@ -59,7 +60,7 @@ class NewHandler:
             if name == p.name:
                 logger.info('admin_message', msg='Process started', info=f'Name: {name} PID: {p.pid} Queue: {queue}')
 
-                # start listening for signals
+                # # start listening for signals
                 while queue:
                     logger.info('admin_message', msg='Process started new task', info=f'Name: {name} PID: {p.pid} Task: {queue[0]}')
                     queue.popleft()

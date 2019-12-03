@@ -14,175 +14,11 @@ import structlog
 # call our logger locally
 logger = structlog.get_logger('samplify.log')
 
-
 class NewHandler:
 
-    def __init__(self):
-
-        # # Base is the object which classes need to inheret to become Tables.
-        # Base = declarative_base()
-        # # Engine is the connection settings to our database file.
-        # engine = create_engine(settings.database_path)
-        # # for developer's sake, drop all table meta-data before starting
-        # Base.metadata.drop_all(engine)
-        # # creates all table meta-data info (columns, rows, keys, etc)
-        # Base.metadata.create_all(engine)
-
-        # Create a new session.
+    def __init__(self, mp):
         self.session = dbs.session
-
-        # # Override sqlite NonCase-Sensitive defaults
-        # @event.listens_for(Engine, "connect")
-        # def _set_sqlite_case_insensitive_pragma(dbapi_con, connection_record):
-        #     cursor = dbapi_con.cursor()
-        #     cursor.execute("PRAGMA case_sensitive_like=ON;")
-        #     cursor.close()
-        #
-        # class dbs.InputDirectories(Base):
-        #     __tablename__ = 'inputDirectories'
-        #
-        #     id = Column(Integer, primary_key=True)
-        #     folder_path = Column(String)
-        #     monitor = Column(Boolean, default=True)
-        #
-        # class dbs.InputMonitoringExclusions(Base):
-        #     __tablename__ = 'inputMonitoringExclusions'
-        #
-        #     id = Column(Integer, primary_key=True)
-        #     folder_path = Column(String)
-        #
-        # class dbs.OutputDirectories(Base):
-        #     __tablename__ = 'outputDirectories'
-        #
-        #     id = Column(Integer, primary_key=True)
-        #     folder_path = Column(String)
-        #     extension = Column(String)
-        #     video_only = Column(Boolean, default=False)
-        #     audio_only = Column(Boolean, default=False)
-        #     image_only = Column(Boolean, default=False)
-        #     a_sample_rate = Column(String)
-        #     a_bit_rate = Column(String)
-        #     a_sample_fmt = Column(String)
-        #     a_channels = Column(String, default='default')
-        #     a_normalize = Column(Boolean, default=False)
-        #     a_strip_silence = Column(Boolean, default=False)
-        #     a_silence_threshold = Column(String, default='-80')
-        #     reduce = Column(Boolean, default=True)
-        #     i_fmt = Column(String, default='default')
-        #
-        # class dbs.Files(Base):
-        #     __tablename__ = 'files'
-        #
-        #     id = Column(Integer, primary_key=True)
-        #     file_path = Column(String)
-        #     file_name = Column(String)
-        #     extension = Column(String)
-        #     creation_date = Column(String)
-        #     v_stream = Column(Boolean, default=False)
-        #     a_stream = Column(Boolean, default=False)
-        #     i_stream = Column(Boolean, default=False)
-        #
-        # class dbs.FilesVideo(Base):
-        #     __tablename__ = 'filesVideo'
-        #
-        #     id = Column(Integer, primary_key=True)
-        #
-        #     file_path = Column(String)
-        #     file_name = Column(String)
-        #     extension = Column(String)
-        #     creation_date = Column(String)
-        #
-        #     v_stream = Column(Boolean, default=False)
-        #     v_width = Column(String)
-        #     v_height = Column(String)
-        #     v_duration = Column(String)
-        #     nb_frames = Column(String)
-        #     v_frame_rate = Column(String)
-        #     v_pix_format = Column(String)
-        #
-        #     a_stream = Column(Boolean, default=False)
-        #     a_sample_rate = Column(String)
-        #     a_bit_depth = Column(String)
-        #     a_sample_fmt = Column(String)
-        #     a_bit_rate = Column(String)
-        #     a_channels = Column(String)
-        #     a_channel_layout = Column(String)
-        #
-        #     i_stream = Column(Boolean, default=False)
-        #
-        # class dbs.FilesAudio(Base):
-        #     __tablename__ = 'filesAudio'
-        #
-        #     id = Column(Integer, primary_key=True)
-        #     file_path = Column(String)
-        #     file_name = Column(String)
-        #     extension = Column(String)
-        #     creation_date = Column(String)
-        #     v_stream = Column(Boolean, default=False)
-        #     a_stream = Column(Boolean, default=False)
-        #     i_stream = Column(Boolean, default=False)
-        #     a_sample_rate = Column(String)
-        #     a_bit_depth = Column(String)
-        #     a_sample_fmt = Column(String)
-        #     a_bit_rate = Column(String)
-        #     a_channels = Column(String)
-        #     a_channel_layout = Column(String)
-        #
-        # class dbs.FilesImage(Base):
-        #     __tablename__ = 'filesImage'
-        #
-        #     id = Column(Integer, primary_key=True)
-        #     file_path = Column(String)
-        #     file_name = Column(String)
-        #     extension = Column(String)
-        #     creation_date = Column(String)
-        #     i_stream = Column(String)
-        #     i_fmt = Column(String)
-        #     i_frames = Column(String)
-        #     i_width = Column(String)
-        #     i_height = Column(String)
-        #     i_alpha = Column(Boolean)
-        #     i_mode = Column(String)
-        #
-        #     # frame_rate = Column(Integer)
-        #     # bit_depth = Column(String)
-        #     # sample_fmt = Column(String)
-        #     # bit_rate = Column(Integer)
-        #     # channel_layout = Column(Integer)
-        #
-        # class dbs.SupportedExtensions(Base):
-        #     __tablename__ = 'supportedExtensions'
-        #
-        #     id = Column(Integer, primary_key=True)
-        #     name = Column(String)
-        #     v_format = Column(String)
-        #     v_codec = Column(String)
-        #     a_format = Column(String)
-        #     a_codec = Column(String)
-        #     sample_rate = Column(Integer)
-        #     channel_size = Column(Integer)
-        #     bit_depth = Column(String)
-        #
-        # class dbs.UnsupportedExtensions(Base):
-        #     __tablename__ = 'unsupportedExtensions'
-        #
-        #     id = Column(Integer, primary_key=True)
-        #     name = Column(String)
-        #
-        # class dbs.SearchTerms(Base):
-        #     __tablename__ = 'searchTerms'
-        #
-        #     id = Column(Integer, primary_key=True)
-        #     folder_id = Column(Integer, foreign_key=('outputDirectories.id'))
-        #     name = Column(String)
-        #
-        # class dbs.SearchByDate(Base):
-        #     __tablename__ = 'searchByDate'
-        #
-        #     id = Column(Integer, primary_key=True)
-        #     folder_id = Column(Integer, foreign_key=('outputDirectories.id'))
-        #     start_by_date = Column(String, default=datetime.min)
-        #     end_by_date = Column(String, default=datetime.max)
+        self.process_manager = mp
 
     def return_current_session(self):
         return self.session
@@ -191,35 +27,33 @@ class NewHandler:
     def insert_template(self):
 
         # INPUT FOLDERS
-        entry = dbs.InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/4-HiHat')
-        self.session.add(entry)
-        entry = dbs.InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick')
-        self.session.add(entry)
+        # entry = dbs.InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/4-HiHat')
+        # self.session.add(entry)
+        # entry = dbs.InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick')
+        # self.session.add(entry)
         # entry = dbs.InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Acoustic')
         # self.session.add(entry)
         # entry = dbs.InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Basics')
         # self.session.add(entry)
-        # entry = dbs.InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Dubstep')
+
+        # entry = dbs.InputDirectories(folder_path='C:/Users/Aspen/Pictures')
         # self.session.add(entry)
-
-        entry = dbs.InputDirectories(folder_path='C:/Users/Aspen/Pictures')
-        self.session.add(entry)
-
-        entry = dbs.InputMonitoringExclusions(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Dubstep')
-        self.session.add(entry)
+        #
+        # entry = dbs.InputMonitoringExclusions(folder_path='C:/Users/Aspen/Desktop/Input/1-Kick/Dubstep')
+        # self.session.add(entry)
 
         # entry = dbs.InputDirectories(folder_path='C:/')
         # self.session.add(entry)
-        # entry = dbs.InputDirectories(folder_path='D:/MOVIES & SHOWS')
-        # self.session.add(entry)
+        entry = dbs.InputDirectories(folder_path='D:/MOVIES & SHOWS')
+        self.session.add(entry)
         # entry = dbs.InputDirectories(folder_path='C:/Users/Aspen/Pictures')
         # self.session.add(entry)
 
         # laptop test directories
         entry = dbs.InputDirectories(folder_path='C:/Users/Admin/Desktop/Input/')
         self.session.add(entry)
-        entry = dbs.InputDirectories(folder_path='C:/Users/Admin/Desktop/Input/Sample Videos')
-        self.session.add(entry)
+        # entry = dbs.InputDirectories(folder_path='C:/Users/Admin/Desktop/Input/Sample Videos')
+        # self.session.add(entry)
 
         # OUTPUT FOLDERS
         entry = dbs.OutputDirectories(folder_path='C:/Users/Aspen/Desktop/Output/photos', extension='.png', i_fmt='PNG',
@@ -394,286 +228,249 @@ class NewHandler:
         #     print('interrupt detected')
         #     t.join()
 
-    def samplify(self):
+    # TODO: break this function into smaller functions, perhaps into a separate script.
+    class Samplify:
 
-        # FILTER BY SEARCH-TERMS
-        for directory_entry, search_terms in self.session.query(dbs.OutputDirectories, dbs.SearchTerms).filter(
-                dbs.OutputDirectories.id == dbs.SearchTerms.folder_id).all():
+        def __init__(self, NewHandler):
+            self.handler = NewHandler
 
-            logger.info('user_message', msg=f"syncing folder",
-                        path=directory_entry.folder_path,
-                        folder_id=directory_entry.id,
-                        term_id=search_terms.id,
-                        term=search_terms.name)
+        def do_something(self):
 
-            # print(f"Directory Path: {directory_entry.folder_path}, "
-            #       f"Folder ID: {search_terms.folder_id}, "
-            #       f"Term ID: {search_terms.id}, "
-            #       f"Term: {search_terms.name} "
-            #       )
+            # FILTER BY SEARCH-TERMS
+            for directory_entry, search_terms in self.handler.session.query(dbs.OutputDirectories, dbs.SearchTerms).filter(
+                    dbs.OutputDirectories.id == dbs.SearchTerms.folder_id).all():
 
-            time.sleep(2)
+                logger.info('user_message', msg=f"syncing folder",
+                            path=directory_entry.folder_path,
+                            folder_id=directory_entry.id,
+                            term_id=search_terms.id,
+                            term=search_terms.name)
 
-            for file_entry in self.session.query(dbs.Files):
-                logger.info(f'admin_message', f'working file path', path=file_entry.file_path)
+                # print(f"Directory Path: {directory_entry.folder_path}, "
+                #       f"Folder ID: {search_terms.folder_id}, "
+                #       f"Term ID: {search_terms.id}, "
+                #       f"Term: {search_terms.name} "
+                #       )
 
-                # TODO: AUDIO CONVERSION
-                if directory_entry.audio_only is True:
+                for file_entry in self.session.query(dbs.Files):
+                    logger.info(f'admin_message', f'working file path', path=file_entry.file_path)
 
-                    if file_entry.v_stream is False and file_entry.a_stream is True:
+                    # TODO: AUDIO CONVERSION
+                    if directory_entry.audio_only is True:
 
-                        for audio_entry in self.session.query(dbs.FilesAudio).filter(
-                                dbs.FilesAudio.file_path == file_entry.file_path):
+                        if file_entry.v_stream is False and file_entry.a_stream is True:
 
-                            pattern = re.compile(search_terms.name)
-                            filename_search = pattern.finditer(audio_entry.file_name)
+                            for audio_entry in self.session.query(dbs.FilesAudio).filter(
+                                    dbs.FilesAudio.file_path == file_entry.file_path):
 
-                            for match in filename_search:
+                                pattern = re.compile(search_terms.name)
+                                name_search = pattern.finditer(audio_entry.file_name)
 
-                                # IS BETWEEN DATES?
-                                for date_entry in self.session.query(dbs.SearchByDate).filter(
-                                        dbs.SearchByDate.folder_id == directory_entry.id):
-                                    logger.info('admin_message', f'Checking file_date',
-                                                file_date=audio_entry.creation_date)
+                                for match in name_search:
 
-                                    if self.check_date(audio_entry.creation_date, date_entry.start_by_date,
-                                                       date_entry.end_by_date) is True:
+                                    # IS BETWEEN DATES?
+                                    for date_entry in self.session.query(dbs.SearchByDate).filter(
+                                            dbs.SearchByDate.folder_id == directory_entry.id):
+                                        logger.info('admin_message', f'Checking file_date',
+                                                    file_date=audio_entry.creation_date)
 
-                                        """
-                                            Local Variables
-                                        """
+                                        if self.check_date(audio_entry.creation_date, date_entry.start_by_date,
+                                                           date_entry.end_by_date) is True:
 
-                                        # METADATA
-                                        extension = directory_entry.extension
-                                        sample_rate = directory_entry.a_sample_rate
-                                        bit_depth = audio_entry.a_bit_depth
-                                        channels = directory_entry.a_channels
-                                        sample_fmt = directory_entry.a_sample_fmt
+                                            """
+                                                Local Variables
+                                            """
 
-                                        # check for term 'default'
-                                        if extension == 'default':
-                                            extension = audio_entry.extension
-                                        if sample_rate == 'default':
-                                            sample_rate = audio_entry.a_sample_rate
-                                        if sample_fmt == 'default':
-                                            sample_fmt = audio_entry.a_sample_fmt
-                                        if channels == 'default':
-                                            channels = audio_entry.a_channels
+                                            # METADATA
+                                            extension = directory_entry.extension
+                                            sample_rate = directory_entry.a_sample_rate
+                                            bit_depth = audio_entry.a_bit_depth
+                                            channels = directory_entry.a_channels
+                                            sample_fmt = directory_entry.a_sample_fmt
 
-                                        # I/O
-                                        file_name = audio_entry.file_name
-                                        input = os.path.abspath(audio_entry.file_path)
-                                        output = os.path.abspath(
-                                            f"{directory_entry.folder_path}/{file_name}{extension}")
+                                            # check for term 'default'
+                                            if extension == 'default':
+                                                extension = audio_entry.extension
+                                            if sample_rate == 'default':
+                                                sample_rate = audio_entry.a_sample_rate
+                                            if sample_fmt == 'default':
+                                                sample_fmt = audio_entry.a_sample_fmt
+                                            if channels == 'default':
+                                                channels = audio_entry.a_channels
 
-                                        # OTHER
-                                        normalize = directory_entry.a_normalize
-                                        strip_silence = directory_entry.a_strip_silence
-                                        silence_threshold = directory_entry.a_silence_threshold
-                                        reduce = directory_entry.reduce
+                                            # I/O
+                                            file_name = audio_entry.file_name
+                                            input = os.path.abspath(audio_entry.file_path)
+                                            output = os.path.abspath(
+                                                f"{directory_entry.folder_path}/{file_name}{extension}")
 
-                                        # NO CHANGE; SIMPLE COPY
-                                        if extension == audio_entry.extension and sample_rate == audio_entry.a_sample_rate and sample_fmt == audio_entry.a_sample_fmt and channels == audio_entry.a_channels and normalize is False and strip_silence is False:
-                                            logger.info('admin_message', msg='copy file',
-                                                        file_name=audio_entry.file_name,
-                                                        path=directory_entry.folder_path)
-                                            self.copy(audio_entry.file_path, directory_entry.folder_path)
+                                            # OTHER
+                                            normalize = directory_entry.a_normalize
+                                            strip_silence = directory_entry.a_strip_silence
+                                            silence_threshold = directory_entry.a_silence_threshold
+                                            reduce = directory_entry.reduce
 
-                                        # NORMALIZATION or STRIP SILENCE (FFMPEG)
-                                        elif normalize or strip_silence is True:
-                                            logger.info('admin_message', msg='filters required, using FFmpeg')
-                                            logger.info('admin_message', msg='file output settings',
-                                                        input=input,
-                                                        sample_rate=sample_rate,
-                                                        sample_fmt=sample_fmt,
-                                                        channels=channels,
-                                                        normalize=normalize,
-                                                        strip_silence=strip_silence)
+                                            # NO CHANGE; SIMPLE COPY
+                                            if extension == audio_entry.extension and sample_rate == audio_entry.a_sample_rate and sample_fmt == audio_entry.a_sample_fmt and channels == audio_entry.a_channels and normalize is False and strip_silence is False:
+                                                logger.info('admin_message', msg='copy file',
+                                                            file_name=audio_entry.file_name,
+                                                            path=directory_entry.folder_path)
+                                                self.copy(audio_entry.file_path, directory_entry.folder_path)
 
-                                            # TODO: convert configure_args to pass a dict instead?
-                                            ff_args = av_handler.configure_args(
-                                                input=input,
-                                                output=output,
-                                                gpu_vendor=settings.gpu_vendor,
-                                                v_stream=audio_entry.v_stream,
-                                                a_stream=audio_entry.a_stream,
-                                                sample_rate=sample_rate,
-                                                bit_depth=bit_depth,
-                                                channels=channels,
-                                                normalize=normalize,
-                                                strip_silence=strip_silence,
-                                                silence_threshold=silence_threshold,
-                                                reduce=reduce
-                                            )
-
-                                            av_handler.convert_ffmpeg(ff_args)
-
-                                        # VANILLA TRANSCODING (PyAV [fastest])
-                                        elif bool(self.session.query(dbs.SupportedExtensions).filter(
-                                                dbs.SupportedExtensions.name == extension).first()) is True:
-
-                                            for config in self.session.query(dbs.SupportedExtensions).filter(
-                                                    dbs.SupportedExtensions.name == extension):
-                                                logger.info('admin_message', msg='vanilla transcoding, using PyAV')
+                                            # NORMALIZATION or STRIP SILENCE (FFMPEG)
+                                            elif normalize or strip_silence is True:
+                                                logger.info('admin_message', msg='filters required, using FFmpeg')
                                                 logger.info('admin_message', msg='file output settings',
-                                                            file_name=audio_entry.file_name + audio_entry.extension,
-                                                            a_codec=config.a_codec,
-                                                            sample_rate=config.sample_rate,
-                                                            bit_depth=bit_depth,
+                                                            input=input,
+                                                            sample_rate=sample_rate,
                                                             sample_fmt=sample_fmt,
-                                                            channel_layout=channels)
+                                                            channels=channels,
+                                                            normalize=normalize,
+                                                            strip_silence=strip_silence)
 
-                                                av_handler.convert_pyav(input=input,
-                                                                        output=output,
-                                                                        file_name=file_name,
-                                                                        extension=extension,
-                                                                        a_codec=config.a_codec,
-                                                                        v_codec=config.v_codec,
-                                                                        channels=channels,
-                                                                        sample_rate=sample_rate,
-                                                                        sample_fmt=sample_fmt,
-                                                                        )
+                                                # TODO: convert configure_args to pass a dict instead?
+                                                ff_args = av_handler.configure_args(
+                                                    input=input,
+                                                    output=output,
+                                                    gpu_vendor=settings.gpu_vendor,
+                                                    v_stream=audio_entry.v_stream,
+                                                    a_stream=audio_entry.a_stream,
+                                                    sample_rate=sample_rate,
+                                                    bit_depth=bit_depth,
+                                                    channels=channels,
+                                                    normalize=normalize,
+                                                    strip_silence=strip_silence,
+                                                    silence_threshold=silence_threshold,
+                                                    reduce=reduce
+                                                )
 
-                                        # FFMPEG CONVERT (& STORE CODEC/EXTENSION INFO)
-                                        else:
-                                            logger.info('admin_message', msg='codec type not yet known, using FFmpeg')
+                                                av_handler.convert_ffmpeg(ff_args)
 
-                                            ff_args = av_handler.configure_args(
-                                                input=input,
-                                                output=output,
-                                                gpu_vendor=settings.gpu_vendor,
-                                                v_stream=audio_entry.v_stream,
-                                                a_stream=audio_entry.a_stream,
-                                                sample_rate=sample_rate,
-                                                bit_depth=bit_depth,
-                                                channels=channels,
-                                                normalize=normalize,
-                                                strip_silence=strip_silence,
-                                                silence_threshold=silence_threshold,
-                                                reduce=reduce
-                                            )
+                                            # VANILLA TRANSCODING (PyAV [fastest])
+                                            elif bool(self.session.query(dbs.SupportedExtensions).filter(
+                                                    dbs.SupportedExtensions.name == extension).first()) is True:
 
-                                            # show args
-                                            logger.info('admin_message', msg='ffmpeg args', ff_args=ff_args)
+                                                for config in self.session.query(dbs.SupportedExtensions).filter(
+                                                        dbs.SupportedExtensions.name == extension):
+                                                    logger.info('admin_message', msg='vanilla transcoding, using PyAV')
+                                                    logger.info('admin_message', msg='file output settings',
+                                                                file_name=audio_entry.file_name + audio_entry.extension,
+                                                                a_codec=config.a_codec,
+                                                                sample_rate=config.sample_rate,
+                                                                bit_depth=bit_depth,
+                                                                sample_fmt=sample_fmt,
+                                                                channel_layout=channels)
 
-                                            # dispatch to FFmpeg
-                                            stdout, stderr = av_handler.convert_ffmpeg(ff_args)
-
-                                            # parse FFmpeg output
-                                            v_format, v_codec, a_format, a_codec = av_handler.parse_ffmpeg(stdout,
-                                                                                                           stderr)[1:]
-
-                                            # insert new metadata into database
-                                            self.store_codec_config(extension, v_format, v_codec, a_format, a_codec,
-                                                                    sample_rate, channels)
-
-                                break  # break search-pattern after processing
-
-                # TODO: VIDEO CONVERSION
-                elif directory_entry.video_only is True:
-
-                    if file_entry.v_stream is True:
-
-                        for video_entry in self.session.query(dbs.FilesVideo).filter(
-                                dbs.FilesVideo.file_path == file_entry.file_path):
-
-                            pattern = re.compile(search_terms.name)
-                            filename_search = pattern.finditer(video_entry.file_name)
-
-                            for match in filename_search:
-
-                                # IS BETWEEN DATES?
-                                for date_entry in self.session.query(dbs.SearchByDate).filter(
-                                        dbs.SearchByDate.folder_id == directory_entry.id):
-                                    logger.info(
-                                        f'Event: Check file creation date {video_entry.file_path} {video_entry.creation_date}')
-
-                                    if self.check_date(video_entry.creation_date, date_entry.start_by_date,
-                                                       date_entry.end_by_date) is True:
-
-                                        # METADATA
-                                        extension = directory_entry.extension
-                                        sample_rate = directory_entry.a_sample_rate
-                                        channels = directory_entry.a_channels
-                                        sample_fmt = directory_entry.a_sample_fmt
-                                        bit_depth = ''
-
-                                        # check for default properties
-                                        if extension == 'default':
-                                            extension = video_entry.extension
-                                        if sample_rate == 'default':
-                                            sample_rate = video_entry.a_sample_rate
-                                        if sample_fmt == 'default':
-                                            sample_fmt = video_entry.a_sample_fmt
-                                        if channels == 'default':
-                                            channels = video_entry.a_channels
-
-                                        # I/O
-                                        file_name = video_entry.file_name
-                                        input = os.path.abspath(video_entry.file_path)
-                                        output = os.path.abspath(
-                                            f"{directory_entry.folder_path}/{file_name}{extension}")
-
-                                        # FFMPEG CONVERT (& STORE CODEC/EXTENSION INFO)
-                                        # print('starting ffmpeg...')
-
-                                        # TODO: CHANGE VIDEO ARGS SO IT CAN ACCEPT ADDITIONAL FILTERS
-                                        normalize = False
-                                        strip_silence = False
-                                        silence_threshold = -80
-                                        reduce = False
-
-                                        logger.info(f"Filename: {video_entry.file_name}{video_entry.extension}, "
-                                                    # f"a_codec: {config.a_codec}"
-                                                    f"sample_rate: {sample_rate}, "
-                                                    # f"bit_depth: {bit_depth}, "
-                                                    f"sample_fmt: {sample_fmt}, "
-                                                    f"channels: {channels}")
-
-                                        ff_args = av_handler.configure_args(input=input,
+                                                    av_handler.convert_pyav(input=input,
                                                                             output=output,
-                                                                            gpu_vendor=settings.gpu_vendor,
-                                                                            v_stream=video_entry.v_stream,
-                                                                            a_stream=video_entry.a_stream,
-                                                                            sample_rate=sample_rate,
-                                                                            bit_depth=bit_depth,
+                                                                            file_name=file_name,
+                                                                            extension=extension,
+                                                                            a_codec=config.a_codec,
+                                                                            v_codec=config.v_codec,
                                                                             channels=channels,
-                                                                            normalize=normalize,
-                                                                            strip_silence=strip_silence,
-                                                                            silence_threshold=silence_threshold,
-                                                                            reduce=reduce
+                                                                            sample_rate=sample_rate,
+                                                                            sample_fmt=sample_fmt,
                                                                             )
 
-                                        # show args
-                                        # print(ff_args)
+                                            # FFMPEG CONVERT (& STORE CODEC/EXTENSION INFO)
+                                            else:
+                                                logger.info('admin_message', msg='codec type not yet known, using FFmpeg')
 
-                                        # dispatch to FFmpeg
-                                        stdout, stderr = av_handler.convert_ffmpeg(ff_args)
+                                                ff_args = av_handler.configure_args(
+                                                    input=input,
+                                                    output=output,
+                                                    gpu_vendor=settings.gpu_vendor,
+                                                    v_stream=audio_entry.v_stream,
+                                                    a_stream=audio_entry.a_stream,
+                                                    sample_rate=sample_rate,
+                                                    bit_depth=bit_depth,
+                                                    channels=channels,
+                                                    normalize=normalize,
+                                                    strip_silence=strip_silence,
+                                                    silence_threshold=silence_threshold,
+                                                    reduce=reduce
+                                                )
 
-                                        # print(stderr)
+                                                # show args
+                                                logger.info('admin_message', msg='ffmpeg args', ff_args=ff_args)
 
-                                        """
-                                            Since ffmpeg prints to stderr instead of stdout, we cannot use a try/except.
-                                            Instead, manually check for status of export to ensure we aren't skipping files.
-                                        """
+                                                # dispatch to FFmpeg
+                                                stdout, stderr = av_handler.convert_ffmpeg(ff_args)
 
-                                        # check file status
-                                        export, *_ = av_handler.parse_ffmpeg(stdout, stderr)
+                                                # parse FFmpeg output
+                                                v_format, v_codec, a_format, a_codec = av_handler.parse_ffmpeg(stdout,
+                                                                                                               stderr)[1:]
 
-                                        # disable gpu_codecs if failed
-                                        if export is False:
-                                            logger.warning('Warning: Export failed! Disabling hardware acceleration')
+                                                # insert new metadata into database
+                                                self.store_codec_config(extension, v_format, v_codec, a_format, a_codec,
+                                                                        sample_rate, channels)
+
+                                    break  # break search-pattern after processing
+
+                    # TODO: VIDEO CONVERSION
+                    elif directory_entry.video_only is True:
+
+                        if file_entry.v_stream is True:
+
+                            for video_entry in self.session.query(dbs.FilesVideo).filter(
+                                    dbs.FilesVideo.file_path == file_entry.file_path):
+
+                                pattern = re.compile(search_terms.name)
+                                name_search = pattern.finditer(video_entry.file_name)
+
+                                for match in name_search:
+
+                                    # IS BETWEEN DATES?
+                                    for date_entry in self.session.query(dbs.SearchByDate).filter(
+                                            dbs.SearchByDate.folder_id == directory_entry.id):
+                                        logger.info(
+                                            f'Event: Check file creation date {video_entry.file_path} {video_entry.creation_date}')
+
+                                        if self.check_date(video_entry.creation_date, date_entry.start_by_date,
+                                                           date_entry.end_by_date) is True:
+
+                                            # METADATA
+                                            extension = directory_entry.extension
+                                            sample_rate = directory_entry.a_sample_rate
+                                            channels = directory_entry.a_channels
+                                            sample_fmt = directory_entry.a_sample_fmt
+                                            bit_depth = ''
+
+                                            # check for default properties
+                                            if extension == 'default':
+                                                extension = video_entry.extension
+                                            if sample_rate == 'default':
+                                                sample_rate = video_entry.a_sample_rate
+                                            if sample_fmt == 'default':
+                                                sample_fmt = video_entry.a_sample_fmt
+                                            if channels == 'default':
+                                                channels = video_entry.a_channels
+
+                                            # I/O
+                                            file_name = video_entry.file_name
+                                            input = os.path.abspath(video_entry.file_path)
+                                            output = os.path.abspath(
+                                                f"{directory_entry.folder_path}/{file_name}{extension}")
+
+                                            # FFMPEG CONVERT (& STORE CODEC/EXTENSION INFO)
+                                            # print('starting ffmpeg...')
+
+                                            # TODO: CHANGE VIDEO ARGS SO IT CAN ACCEPT ADDITIONAL FILTERS
+                                            normalize = False
+                                            strip_silence = False
+                                            silence_threshold = -80
+                                            reduce = False
 
                                             logger.info(f"Filename: {video_entry.file_name}{video_entry.extension}, "
                                                         # f"a_codec: {config.a_codec}"
                                                         f"sample_rate: {sample_rate}, "
                                                         # f"bit_depth: {bit_depth}, "
                                                         f"sample_fmt: {sample_fmt}, "
-                                                        f"channel_layout: {channels}")
+                                                        f"channels: {channels}")
 
                                             ff_args = av_handler.configure_args(input=input,
                                                                                 output=output,
-                                                                                gpu_vendor='',
+                                                                                gpu_vendor=settings.gpu_vendor,
                                                                                 v_stream=video_entry.v_stream,
                                                                                 a_stream=video_entry.a_stream,
                                                                                 sample_rate=sample_rate,
@@ -691,187 +488,228 @@ class NewHandler:
                                             # dispatch to FFmpeg
                                             stdout, stderr = av_handler.convert_ffmpeg(ff_args)
 
-                                            # print(stderr)  # verbose enable (debugging)
+                                            # print(stderr)
+
+                                            """
+                                                Since ffmpeg prints to stderr instead of stdout, we cannot use a try/except.
+                                                Instead, manually check for status of export to ensure we aren't skipping files.
+                                            """
+
+                                            # check file status
+                                            export, *_ = av_handler.parse_ffmpeg(stdout, stderr)
+
+                                            # disable gpu_codecs if failed
+                                            if export is False:
+                                                logger.warning('Warning: Export failed! Disabling hardware acceleration')
+
+                                                logger.info(f"Filename: {video_entry.file_name}{video_entry.extension}, "
+                                                            # f"a_codec: {config.a_codec}"
+                                                            f"sample_rate: {sample_rate}, "
+                                                            # f"bit_depth: {bit_depth}, "
+                                                            f"sample_fmt: {sample_fmt}, "
+                                                            f"channel_layout: {channels}")
+
+                                                ff_args = av_handler.configure_args(input=input,
+                                                                                    output=output,
+                                                                                    gpu_vendor='',
+                                                                                    v_stream=video_entry.v_stream,
+                                                                                    a_stream=video_entry.a_stream,
+                                                                                    sample_rate=sample_rate,
+                                                                                    bit_depth=bit_depth,
+                                                                                    channels=channels,
+                                                                                    normalize=normalize,
+                                                                                    strip_silence=strip_silence,
+                                                                                    silence_threshold=silence_threshold,
+                                                                                    reduce=reduce
+                                                                                    )
+
+                                                # show args
+                                                # print(ff_args)
+
+                                                # dispatch to FFmpeg
+                                                stdout, stderr = av_handler.convert_ffmpeg(ff_args)
+
+                                                # print(stderr)  # verbose enable (debugging)
+
+                                    break  # avoid re-iterations for multiple actions on same file
+
+
+
+                        # TODO: impliment some *other* file type handling
+                        else:
+                            logger.warning(f'Warning: {file_entry.extension} is not valid file')
+
+
+                    # TODO: IMAGE CONVERSION
+                    elif directory_entry.image_only is True:
+
+                        for image_entry in self.session.query(dbs.FilesImage).filter(
+                                dbs.FilesImage.file_path == file_entry.file_path):
+
+                            pattern = re.compile(search_terms.name)
+                            name_search = pattern.finditer(image_entry.file_name)
+
+                            for match in name_search:
+
+                                # IS BETWEEN DATES?
+                                for date_entry in self.session.query(dbs.SearchByDate).filter(
+                                        dbs.SearchByDate.folder_id == directory_entry.id):
+
+                                    logger.info(
+                                        f'Event: Checking file date {image_entry.file_path} {image_entry.creation_date}')
+
+                                    if self.check_date(image_entry.creation_date, date_entry.start_by_date,
+                                                       date_entry.end_by_date) is True:
+
+                                        """
+                                            Local Variables
+                                        """
+
+                                        # METADATA
+                                        extension = directory_entry.extension
+
+                                        # check for term 'default'
+                                        if extension == 'default':
+                                            extension = image_entry.extension
+
+                                        # I/O
+                                        file_name = image_entry.file_name
+                                        input = os.path.abspath(image_entry.file_path)
+                                        output = os.path.abspath(f"{directory_entry.folder_path}/{file_name}{extension}")
+
+                                        # OTHER
+
+                                        # NO CHANGE; SIMPLE COPY
+
+                                        if extension == image_entry.extension:
+                                            print('trying Copy Method...')
+                                            self.copy(input, directory_entry.folder_path)
+
+                                        else:
+                                            print('trying Pillow Method...')
+                                            image_handler.convert_image(input, output, directory_entry.i_fmt)
 
                                 break  # avoid re-iterations for multiple actions on same file
 
+        def check_date(self, current, date_start, date_end):
 
+            if date_start <= current <= date_end:
+                return True
 
-                    # TODO: impliment some *other* file type handling
-                    else:
-                        logger.warning(f'Warning: {file_entry.extension} is not valid file')
+            else:
+                return False
 
+        def creation_date(self, path_to_file):
+            """
+            Try to get the date that a file was created, falling back to when it was
+            last modified if that isn't possible.
+            See http://stackoverflow.com/a/39501288/1709587 for explanation.
+            """
 
-                # TODO: IMAGE CONVERSION
-                elif directory_entry.image_only is True:
+            # TODO: Test this code block on other platforms (OS X/Linux)
 
-                    for image_entry in self.session.query(dbs.FilesImage).filter(
-                            dbs.FilesImage.file_path == file_entry.file_path):
+            if platform.system() == 'Windows':
+                date = datetime.fromtimestamp(os.path.getctime(path_to_file)).strftime('%Y-%m-%d')
+                return date
 
-                        pattern = re.compile(search_terms.name)
-                        filename_search = pattern.finditer(image_entry.file_name)
+            else:
+                stat = os.stat(path_to_file)
 
-                        for match in filename_search:
+                try:
+                    return stat.st_birthtime
 
-                            # IS BETWEEN DATES?
-                            for date_entry in self.session.query(dbs.SearchByDate).filter(
-                                    dbs.SearchByDate.folder_id == directory_entry.id):
+                except AttributeError:
+                    # We're probably on Linux. No easy way to get creation dates here,
+                    # so we'll settle for when its content was last modified.
+                    return stat.st_mtime
 
-                                logger.info(
-                                    f'Event: Checking file date {image_entry.file_path} {image_entry.creation_date}')
+        def learn_extension(self, file):
+            extension = os.path.splitext(file)[1]
 
-                                if self.check_date(image_entry.creation_date, date_entry.start_by_date,
-                                                   date_entry.end_by_date) is True:
+            process = subprocess.Popen(['ffprobe', '-i', file], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                       universal_newlines=True)
+            stdout, stderr = process.communicate()
+            # print(stdout, stderr)
 
-                                    """
-                                        Local Variables
-                                    """
+            stream = re.compile(r'(Audio:\s|Video:\s)')
+            find_stream = stream.finditer(stderr)
 
-                                    # METADATA
-                                    extension = directory_entry.extension
+            is_valid = False
 
-                                    # check for term 'default'
-                                    if extension == 'default':
-                                        extension = image_entry.extension
+            for match in find_stream:
+                print('Found stream', f'"{stderr[match.start():match.end()]}"')
+                is_valid = True
 
-                                    # I/O
-                                    file_name = image_entry.file_name
-                                    input = os.path.abspath(image_entry.file_path)
-                                    output = os.path.abspath(f"{directory_entry.folder_path}/{file_name}{extension}")
+            if is_valid is True:
+                print(extension, 'is supported!')
 
-                                    # OTHER
+                entry = bool(self.session.query(dbs.SupportedExtensions).filter(dbs.SupportedExtensions.name == extension).first())
 
-                                    # NO CHANGE; SIMPLE COPY
+                if not entry is True:
+                    entry = dbs.SupportedExtensions(name=extension)
+                    self.session.add(entry)
+                    self.session.commit()
 
-                                    if extension == image_entry.extension:
-                                        print('trying Copy Method...')
-                                        self.copy(input, directory_entry.folder_path)
+            if is_valid is False:
+                print(extension, 'is unsupported!')
 
-                                    else:
-                                        print('trying Pillow Method...')
-                                        image_handler.convert_image(input, output, directory_entry.i_fmt)
+                entry = bool(
+                    self.session.query(dbs.UnsupportedExtensions).filter(dbs.UnsupportedExtensions.name == extension).first())
 
-                            break  # avoid re-iterations for multiple actions on same file
+                if not entry is True:
+                    entry = dbs.UnsupportedExtensions(name=extension)
+                    self.session.add(entry)
+                    self.session.commit()
 
-    def check_date(self, current, date_start, date_end):
+        def store_codec_config(self, extension_type, v_format, v_codec, a_format, a_codec, sample_rate, channel_size):
 
-        if date_start <= current <= date_end:
-            return True
+            print(extension_type, v_format, v_codec, a_format, a_codec)
 
-        else:
-            return False
+            entry = dbs.SupportedExtensions(name=extension_type, v_format=v_format, v_codec=v_codec, a_format=a_format,
+                                        a_codec=a_codec, sample_rate=sample_rate, channel_size=channel_size)
 
-    def creation_date(self, path_to_file):
-        """
-        Try to get the date that a file was created, falling back to when it was
-        last modified if that isn't possible.
-        See http://stackoverflow.com/a/39501288/1709587 for explanation.
-        """
+            entry_exist = bool(self.session.query(dbs.SupportedExtensions).filter(dbs.SupportedExtensions.name == extension_type,
+                                                                              dbs.SupportedExtensions.v_format == v_format,
+                                                                              dbs.SupportedExtensions.v_codec == v_codec,
+                                                                              dbs.SupportedExtensions.a_format == a_format,
+                                                                              dbs.SupportedExtensions.a_codec == a_codec,
+                                                                              dbs.SupportedExtensions.sample_rate,
+                                                                              dbs.SupportedExtensions.channel_size).first())
 
-        # TODO: Test this code block on other platforms (OS X/Linux)
-
-        if platform.system() == 'Windows':
-            date = datetime.fromtimestamp(os.path.getctime(path_to_file)).strftime('%Y-%m-%d')
-            return date
-
-        else:
-            stat = os.stat(path_to_file)
-
-            try:
-                return stat.st_birthtime
-
-            except AttributeError:
-                # We're probably on Linux. No easy way to get creation dates here,
-                # so we'll settle for when its content was last modified.
-                return stat.st_mtime
-
-    def learn_extension(self, file):
-        extension = os.path.splitext(file)[1]
-
-        process = subprocess.Popen(['ffprobe', '-i', file], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                   universal_newlines=True)
-        stdout, stderr = process.communicate()
-        # print(stdout, stderr)
-
-        stream = re.compile(r'(Audio:\s|Video:\s)')
-        find_stream = stream.finditer(stderr)
-
-        is_valid = False
-
-        for match in find_stream:
-            print('Found stream', f'"{stderr[match.start():match.end()]}"')
-            is_valid = True
-
-        if is_valid is True:
-            print(extension, 'is supported!')
-
-            entry = bool(self.session.query(dbs.SupportedExtensions).filter(dbs.SupportedExtensions.name == extension).first())
-
-            if not entry is True:
-                entry = dbs.SupportedExtensions(name=extension)
+            if not entry_exist is True:
                 self.session.add(entry)
                 self.session.commit()
 
-        if is_valid is False:
-            print(extension, 'is unsupported!')
+        def is_video_extension(self, extension: str):
+            """
+            :param extension: checks existing video table to see if exists
+            :return: boolean: True or False (exists or not)
+            """
 
-            entry = bool(
-                self.session.query(dbs.UnsupportedExtensions).filter(dbs.UnsupportedExtensions.name == extension).first())
+            return bool(self.session.query(dbs.FilesVideo).filter(dbs.FilesVideo.extension == extension).first())
 
-            if not entry is True:
-                entry = dbs.UnsupportedExtensions(name=extension)
-                self.session.add(entry)
-                self.session.commit()
+        def is_image_extension(self, extension: str):
+            """
+            :param extension: checks existing image table to see if exists
+            :return: boolean: True or False (exists or not)
+            """
 
-    def store_codec_config(self, extension_type, v_format, v_codec, a_format, a_codec, sample_rate, channel_size):
+            return bool(self.session.query(dbs.FilesImage).filter(dbs.FilesImage.extension == extension).first())
 
-        print(extension_type, v_format, v_codec, a_format, a_codec)
+        def copy(self, input, output):
 
-        entry = dbs.SupportedExtensions(name=extension_type, v_format=v_format, v_codec=v_codec, a_format=a_format,
-                                    a_codec=a_codec, sample_rate=sample_rate, channel_size=channel_size)
+            _basename = os.path.basename(input)
 
-        entry_exist = bool(self.session.query(dbs.SupportedExtensions).filter(dbs.SupportedExtensions.name == extension_type,
-                                                                          dbs.SupportedExtensions.v_format == v_format,
-                                                                          dbs.SupportedExtensions.v_codec == v_codec,
-                                                                          dbs.SupportedExtensions.a_format == a_format,
-                                                                          dbs.SupportedExtensions.a_codec == a_codec,
-                                                                          dbs.SupportedExtensions.sample_rate,
-                                                                          dbs.SupportedExtensions.channel_size).first())
+            output = os.path.join(output, _basename)
+            output = os.path.abspath(output)
 
-        if not entry_exist is True:
-            self.session.add(entry)
-            self.session.commit()
+            # check to see if copied already
+            if not os.path.exists(output):
+                logger.info(f"Event: File copied from {input} to {output}")
+                shutil.copy(input, output)
 
-    def is_video_extension(self, extension: str):
-        """
-        :param extension: checks existing video table to see if exists
-        :return: boolean: True or False (exists or not)
-        """
-
-        return bool(self.session.query(dbs.FilesVideo).filter(dbs.FilesVideo.extension == extension).first())
-
-    def is_image_extension(self, extension: str):
-        """
-        :param extension: checks existing image table to see if exists
-        :return: boolean: True or False (exists or not)
-        """
-
-        return bool(self.session.query(dbs.FilesImage).filter(dbs.FilesImage.extension == extension).first())
-
-    def copy(self, input, output):
-
-        _basename = os.path.basename(input)
-
-        output = os.path.join(output, _basename)
-        output = os.path.abspath(output)
-
-        # check to see if copied already
-        if not os.path.exists(output):
-            logger.info(f"Event: File copied from {input} to {output}")
-            shutil.copy(input, output)
-
-        else:
-            logger.info(f"Event: File already exists {output}")
+            else:
+                logger.info(f"Event: File already exists {output}")
 
     # def db_print():
     #
@@ -886,7 +724,7 @@ class NewHandler:
 
     def scan_files(self):
 
-        logger.info(f'user_message', msg="Starting Input Scan")
+        logger.info('scan_files')
         time.sleep(2)
 
         for row in self.session.query(dbs.InputDirectories):
@@ -894,13 +732,22 @@ class NewHandler:
             self.decode_directory(path)
 
     def decode_directory(self, path):
+        """
+
+            This helper function recursively checks for files in a root directory and attempts to decode each one.
+            When successful, it will insert the file metadata into a local SQLite database.
+
+        :param path: root to directory.
+        :return: void
+        """
+
         # check if path is a valid directory
         try:
             os.chdir(path)
 
             if os.path.isdir(path):
                 # log current working directory
-                logger.info('user_message', msg='Folder scan starting', path=path)
+                logger.info('decode_directory', msg='Scanning folder', path=path)
 
                 if os.path.isdir(path):
 
@@ -911,7 +758,11 @@ class NewHandler:
                             # merge our strings
                             path = os.path.join(root, f)
 
-                            self.decode_file(path)
+                            # multi-threading speed test.
+                            self.process_manager.add_task(self.decode_file(path))
+
+                            ## single threaded performance test.
+                            # self.decode_file(path)
 
         except Exception as e:
             logger.warning('admin_message', msg='Could not change the working directory. Does path exist?',
@@ -1263,33 +1114,36 @@ class NewHandler:
 
     def remove_input_folder(self, path):
 
-        try:
-            # filtering by the full path also allows us to also remove the children of the directory
-            for entry in self.session.query(dbs.Files.file_path).filter(dbs.Files.file_path.like(f'%{path}%')):
-                logger.info('admin_message', msg='File deleted', path=path)
-
-            # TODO:
-            #       Query all tables for the filepath instead of just the 'dbs.Files' Table.
-
-            # synchronize self.session allows deletion OUTSIDE of the self.session 'cache'
-            self.session.query(dbs.Files,
-                               dbs.FilesImage,
-                               dbs.FilesAudio,
-                               dbs.FilesVideo
-                               ) \
-                .filter(dbs.Files.file_path.like(f'%{path}%')) \
-                .filter(dbs.FilesImage.file_path.like(f'%{path}%')) \
-                .filter(dbs.FilesVideo.file_path.like(f'%{path}%')) \
-                .filter(dbs.FilesAudio.file_path.like(f'%{path}%')) \
-                .all() \
-                .delete(synchronize_session=False)
-
-            self.session.commit()
-
-        except Exception as e:
-            logger.error('admin_message', msg='Folder deletion failed', exc_info=e)
+        pass
+        # try:
+        #     # filtering by the full path also allows us to also remove the children of the directory
+        #     for entry in self.session.query(dbs.Files.file_path).filter(dbs.Files.file_path.like(f'%{path}%')):
+        #         logger.info('admin_message', msg='File deleted', path=path)
+        #
+        #     # TODO:
+        #     #       Query all tables for the filepath instead of just the 'dbs.Files' Table.
+        #
+        #     # synchronize self.session allows deletion OUTSIDE of the self.session 'cache'
+        #     self.session.query(dbs.Files,
+        #                        dbs.FilesImage,
+        #                        dbs.FilesAudio,
+        #                        dbs.FilesVideo
+        #                        ) \
+        #         .filter(dbs.Files.file_path.like(f'%{path}%')) \
+        #         .filter(dbs.FilesImage.file_path.like(f'%{path}%')) \
+        #         .filter(dbs.FilesVideo.file_path.like(f'%{path}%')) \
+        #         .filter(dbs.FilesAudio.file_path.like(f'%{path}%')) \
+        #         .all() \
+        #         .delete(synchronize_session=False)
+        #
+        #     self.session.commit()
+        #
+        # except Exception as e:
+        #     logger.error('admin_message', msg='Folder deletion failed', exc_info=e)
 
     def insert_output_folder(self, path):
+
+        pass
 
         entry = dbs.OutputDirectories(folder_path=path)
 
@@ -1309,37 +1163,40 @@ class NewHandler:
 
     def remove_output_folder(self, path):
 
-        # filtering by the full path also allows us to also remove the child results from the directory
-        for entry in self.session.query(dbs.OutputDirectories).filter(dbs.OutputDirectories.folder_path.like(f'%{path}%')):
-            logger.info(f'Event: Folder deleted: {entry.folder_path} True')
+        pass
 
-            self.session.query(dbs.SearchTerms).filter(entry.id == dbs.SearchTerms.folder_id).delete(synchronize_session=False)
 
-            self.session.query(dbs.OutputDirectories).filter(dbs.OutputDirectories.id == entry.id).delete(
-                synchronize_session=False)
-
-        """
-            Because output_cache cannot update fast enough in-between dispatched events,
-            we need to check and delete the differences that are updated after the missed intervals
-            
-        """
-        for r in self.session.query(dbs.OutputDirectories).filter(dbs.OutputDirectories.folder_path):
-            print(r.folder_path, settings.output_cache)
-            if not r.folder_path in settings.output_cache:
-                self.session.query(dbs.SearchTerms).filter(r.id == dbs.SearchTerms.folder_id).delete(synchronize_session=False)
-                self.session.query(dbs.OutputDirectories).filter(r.folder_path).delete(synchronize_session=False)
-
-        self.session.commit()
-
-    # deprecated
-
-    # def insert_file(path, frame_rate, bit_depth, bit_rate):
+    #     # filtering by the full path also allows us to also remove the child results from the directory
+    #     for entry in self.session.query(dbs.OutputDirectories).filter(dbs.OutputDirectories.folder_path.like(f'%{path}%')):
+    #         logger.info(f'Event: Folder deleted: {entry.folder_path} True')
     #
-    #     entry = dbs.Files(file_path = f"{path}", frame_rate = f'{frame_rate}', bit_depth = f"{bit_depth}", bit_rate = f"{bit_rate}")
+    #         self.session.query(dbs.SearchTerms).filter(entry.id == dbs.SearchTerms.folder_id).delete(synchronize_session=False)
     #
-    #     self.session.add(entry)
+    #         self.session.query(dbs.OutputDirectories).filter(dbs.OutputDirectories.id == entry.id).delete(
+    #             synchronize_session=False)
+    #
+    #     """
+    #         Because output_cache cannot update fast enough in-between dispatched events,
+    #         we need to check and delete the differences that are updated after the missed intervals
+    #
+    #     """
+    #     for r in self.session.query(dbs.OutputDirectories).filter(dbs.OutputDirectories.folder_path):
+    #         print(r.folder_path, settings.output_cache)
+    #         if not r.folder_path in settings.output_cache:
+    #             self.session.query(dbs.SearchTerms).filter(r.id == dbs.SearchTerms.folder_id).delete(synchronize_session=False)
+    #             self.session.query(dbs.OutputDirectories).filter(r.folder_path).delete(synchronize_session=False)
     #
     #     self.session.commit()
+    #
+    # # deprecated
+    #
+    # # def insert_file(path, frame_rate, bit_depth, bit_rate):
+    # #
+    # #     entry = dbs.Files(file_path = f"{path}", frame_rate = f'{frame_rate}', bit_depth = f"{bit_depth}", bit_rate = f"{bit_rate}")
+    # #
+    # #     self.session.add(entry)
+    # #
+    # #     self.session.commit()
 
     def remove_file(self, path):
 

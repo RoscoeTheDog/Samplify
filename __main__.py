@@ -1,42 +1,54 @@
+# sys modules
 import argparse
 import os
+
+# logging modules
+import logging
 import structlog
-from structlog.stdlib import *
-from structlog.processors import *
+import structlog.stdlib
+import structlog.processors
+from app.logging import custom_processors
+from app.logging import CustomConsoleRenderer
+
+# other modules
 from handlers import database_handler, process_handler, filewatch_handler
 from app import settings, gpu
-from app.logging import custom_processors
+from database import database_setup
+import time
 
 logger = structlog.get_logger('samplify.log')
-
 
 class Samplify:
 
     def __init__(self):
+        database_setup.drop_tables()
+        database_setup.create_tables()
+        # print(inspect.stack()[0])
+        # time.sleep(30)
+
+        # Setup logging config.
+        self.logging_config()
+
+        # Get Hardware Info/ID's.
+        gpu.hardware()
+
         # Create our new handler types.
-        self.db_manager = database_handler.NewHandler()
         self.process_manager = process_handler.NewHandler()
+        self.db_manager = database_handler.NewHandler(self.process_manager)
+        self.filewatch_manager = filewatch_handler.NewHandler(self.db_manager)
 
         # Insert a default template.
         self.db_manager.insert_template()
+        # Validate output directories.
         self.db_manager.validate_outputs()
 
-        # Initialize input/output cache (for watchdog).
+        # Initialize manual caching of input/output trees (for watchdog recursion events).
         self.db_manager.start_input_cache()
         self.db_manager.start_output_cache()
-
-        # Here is where the exception is thrown.
-        self.filewatch_manager = filewatch_handler.NewHandler(self.db_manager)
 
 
     @staticmethod
     def logging_config():
-
-        # render_window = structlog.dev.ConsoleRenderer()
-        #
-        # render_window.__call__ = Samplify.test_call
-
-        from app.logging import CustomConsoleRenderer
 
         # declare a custom formatter for our dev stream log
         stream_formatter = structlog.stdlib.ProcessorFormatter(
@@ -51,17 +63,18 @@ class Samplify:
             # ),
             foreign_pre_chain=
             [
-                TimeStamper(fmt='iso'),
+                # structlog.processors.TimeStamper(fmt='iso'),
                 # custom_processors.OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'path', 'exc_info']),
                 # format_exc_info,
-                # add_structlog_level,
+                # custom_processors.add_structlog_level,
+                # structlog.stdlib.add_log_level,
                 # order_keys,
                 # OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'exc_info']),
                 structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
 
             ],
             # keep_exc_info=True,
-            # keep_stack_info=True,
+            keep_stack_info=True,
         )
 
         # declare a custom formatter for our log file
@@ -69,8 +82,9 @@ class Samplify:
             processor=structlog.processors.JSONRenderer(sort_keys=False),
             foreign_pre_chain=
             [
-                TimeStamper(fmt='iso'),
+                structlog.processors.TimeStamper(fmt='iso'),
                 structlog.stdlib.add_log_level,
+                custom_processors.OrderKeys()
                 # custom_processors.OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'path', 'exc_info'])
             ],
         )
@@ -79,7 +93,7 @@ class Samplify:
         file_handler = logging.FileHandler('samplify.log')
 
         # set our custom formatter for the log file
-        file_handler.setFormatter(file_formatter)  # In theory, jsonlogger.JsonFormatter() could be used with custom override methods which may allow us to re-order keys
+        file_handler.setFormatter(file_formatter)
 
         # declare our stream handler
         stream_handler = logging.StreamHandler()
@@ -88,11 +102,11 @@ class Samplify:
 
         # get a standard logger
         root_logger = logging.getLogger()
-        # add handlers to standard logger
+        # add handlers to the standard logger
         root_logger.addHandler(stream_handler)
         root_logger.addHandler(file_handler)
 
-        # set global log level
+        # set the global log level
         root_logger.setLevel(logging.DEBUG)
         # set log level for stdout/stderr stream
         stream_handler.setLevel(logging.DEBUG)
@@ -102,7 +116,7 @@ class Samplify:
             context_class=dict,
             wrapper_class=structlog.stdlib.BoundLogger,
             processors=[
-                TimeStamper(fmt='iso'),
+                structlog.processors.TimeStamper(fmt='iso'),
                 # format_exc_info,
                 structlog.processors.StackInfoRenderer(),
                 custom_processors.add_structlog_level,
@@ -116,11 +130,11 @@ class Samplify:
         structlog.wrap_logger(
             root_logger,
             processors=[
-                TimeStamper(fmt='iso'),
+                structlog.processors.TimeStamper(fmt='iso'),
+                # custom_processors.add_structlog_level,
                 structlog.stdlib.add_log_level,
             ]
         )
-
 
         # print(structlog.dev.ConsoleRenderer.get_default_level_styles())
 
@@ -160,28 +174,34 @@ class Samplify:
 
 def main():
 
+    timer = time.time()
+
     # App instance.
     samplify = Samplify()
 
     # Start logging.
-    samplify.logging_config()
+    # samplify.logging_config()
 
     # TODO: (Re)configure args.
-    # samplify.args_configure()
-
-    # Get hardware type/ID.
-    gpu.hardware()
+    # samplify.args_configure(
 
     # Spawn multi-core processes.
     samplify.initialize_cores()
 
-    # Start benchmark timer (input).
+    samplify.db_manager.scan_files()
+    print(time.time() - timer)
     timer = time.time()
+    time.sleep(20)
+    samplify.db_manager.samplify()
+    print(time.time() - timer)
+
+    # Start benchmark timer (input).
+
 
     # Run a manual scan on input directories.
-    samplify.db_manager.scan_files()
+    # samplify.db_manager.scan_files()
 
-    time.sleep(30)
+    # time.sleep(30)
 
 
 
@@ -197,7 +217,7 @@ def main():
     # samplify.filewatch_manager.add_decoder_task(print('hello world'))
     #
     # # End input benchmark timer
-    # print(time.time() - timer)
+
 
 
 
@@ -254,6 +274,7 @@ def main():
 
     # print('number of skipped files: ', settings.exception_counter)
 
+    print(time.time() - timer)
 
 if __name__ == '__main__':
     main()
