@@ -2,15 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7a2533a1-0f44-4d17-9e98-388c1972b0ad" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/handlers/xml_handler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Samplify.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Samplify.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/__main__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/logging/custom_processors.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/logging/custom_processors.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/database.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/database_setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/database_setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handlers/database_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/database_handler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handlers/process_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/process_handler.py" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -74,35 +71,53 @@
     </option>
   </component>
   <component name="ProjectId" id="1TUB3aDT9ZsT0TY5Le2pifYAoPY" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="DatabaseDriversLRU" value="sqlite" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="database.data.extractors.current.id" value="Comma-separated (CSV)_id" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Color Scheme Font" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Admin\Documents\Github\Python\Samplify" />
+      <recent name="C:\Users\Admin\Documents\Github\Python\Samplify\app" />
       <recent name="C:\Users\Aspen\Documents\GitHub\Samplify\app" />
       <recent name="C:\Users\Aspen\Documents\GitHub\Samplify\logging" />
       <recent name="C:\Users\Aspen\Documents\GitHub\Samplify\tests" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
-  <component name="RunManager" selected="Python.__main__">
+  <component name="RunManager" selected="Python.xml_handler">
+    <configuration name="XML example" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Samplify" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tests/XML example.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="__main__" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Samplify" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -148,28 +163,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="filewatch_handler" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="Samplify" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/handlers" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/handlers/filewatch_handler.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="process_handler" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Samplify" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -192,7 +185,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test_mime_types" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="xml_handler" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Samplify" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -200,12 +193,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/handlers" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="C:\Users\Aspen\Documents\GitHub\Samplify\tests\test_mime_types.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/handlers/xml_handler.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -216,39 +209,31 @@
     </configuration>
     <list>
       <item itemvalue="Python.__main__" />
-      <item itemvalue="Python.filewatch_handler" />
       <item itemvalue="Python.process_handler" />
-      <item itemvalue="Python.test_mime_types" />
       <item itemvalue="Python.custom_processors" />
+      <item itemvalue="Python.XML example" />
+      <item itemvalue="Python.xml_handler" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.xml_handler" />
+        <item itemvalue="Python.XML example" />
         <item itemvalue="Python.__main__" />
         <item itemvalue="Python.process_handler" />
         <item itemvalue="Python.custom_processors" />
-        <item itemvalue="Python.test_mime_types" />
-        <item itemvalue="Python.filewatch_handler" />
       </list>
     </recent_temporary>
   </component>
   <component name="ServiceViewManager">
-    <option name="allServicesViewState">
-      <serviceView>
-        <treeState>
-          <expand>
-            <path>
-              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@6ad5aaef" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-            </path>
-            <path>
-              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@6ad5aaef" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@68e9439f" type="9fbbdea:ServiceModel$ServiceNode" />
-            </path>
-          </expand>
-          <select />
-        </treeState>
-      </serviceView>
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
     </option>
   </component>
   <component name="SvnConfiguration">
@@ -277,6 +262,10 @@
       <workItem from="1574757650984" duration="876000" />
       <workItem from="1574907047663" duration="11096000" />
       <workItem from="1574919495224" duration="16500000" />
+      <workItem from="1576006142067" duration="2220000" />
+      <workItem from="1576106497477" duration="356000" />
+      <workItem from="1576106864329" duration="4619000" />
+      <workItem from="1576745398003" duration="14494000" />
     </task>
     <servers />
   </component>
@@ -305,6 +294,84 @@
       </map>
     </option>
   </component>
+  <component name="WindowStateProjectService">
+    <state x="1170" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1576107453751">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1170" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576107453751" />
+    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog" timestamp="1576750227946">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576750227946" />
+    <state width="915" height="231" key="GridCell.Tab.0.bottom" timestamp="1576759198136">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="915" height="231" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1576759198136" />
+    <state width="915" height="231" key="GridCell.Tab.0.center" timestamp="1576759198136">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="915" height="231" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1576759198136" />
+    <state width="915" height="231" key="GridCell.Tab.0.left" timestamp="1576759198136">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="915" height="231" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1576759198136" />
+    <state width="915" height="231" key="GridCell.Tab.0.right" timestamp="1576759198136">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="915" height="231" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1576759198136" />
+    <state width="1876" height="326" key="GridCell.Tab.1.bottom" timestamp="1576751369434">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1876" height="326" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1576751369434" />
+    <state width="1876" height="326" key="GridCell.Tab.1.center" timestamp="1576751369434">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1876" height="326" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1576751369434" />
+    <state width="1876" height="326" key="GridCell.Tab.1.left" timestamp="1576751369433">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1876" height="326" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1576751369433" />
+    <state width="1876" height="326" key="GridCell.Tab.1.right" timestamp="1576751369434">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1876" height="326" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1576751369434" />
+    <state x="736" y="146" key="RollbackChangesDialog" timestamp="1576749911487">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="736" y="146" key="RollbackChangesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576749911487" />
+    <state x="425" y="131" width="1340" height="716" key="SettingsEditor" timestamp="1576203983881">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="425" y="131" width="1340" height="716" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1576203983881" />
+    <state width="498" height="446" key="SwitcherDM" timestamp="1576750158767">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="498" height="446" key="SwitcherDM/0.0.1920.1040@0.0.1920.1040" timestamp="1576750158767" />
+    <state x="409" y="14" width="1384" height="847" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1576750374697">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="409" y="14" width="1384" height="847" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576750374697" />
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.RecentChangeDialog" timestamp="1576750227946">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.RecentChangeDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576750227946" />
+    <state x="668" y="347" key="com.intellij.ide.util.TipDialog" timestamp="1576745398264">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="668" y="347" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576745398264" />
+    <state x="646" y="101" width="627" height="837" key="find.popup" timestamp="1576745661262">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="646" y="101" width="627" height="837" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1576745661262" />
+    <state x="679" y="293" key="git4idea.merge.GitPullDialog" timestamp="1576749935727">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="679" y="293" key="git4idea.merge.GitPullDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576749935727" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1576747769345">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1576747769345" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <default-breakpoints>
@@ -317,8 +384,10 @@
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Samplify$process_handler.coverage" NAME="process_handler Coverage Results" MODIFIED="1573949993756" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/handlers" />
-    <SUITE FILE_PATH="coverage/Samplify$__main__.coverage" NAME="__main__ Coverage Results" MODIFIED="1574922322705" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Samplify$custom_processors.coverage" NAME="custom_processors Coverage Results" MODIFIED="1573528425180" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
+    <SUITE FILE_PATH="coverage/Samplify$__main__.coverage" NAME="__main__ Coverage Results" MODIFIED="1574922322705" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Samplify$process_handler.coverage" NAME="process_handler Coverage Results" MODIFIED="1573949993756" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/handlers" />
+    <SUITE FILE_PATH="coverage/Samplify$xml_handler.coverage" NAME="xml_handler Coverage Results" MODIFIED="1576759198129" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/handlers" />
+    <SUITE FILE_PATH="coverage/Samplify$XML_example.coverage" NAME="XML example Coverage Results" MODIFIED="1576753802868" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
   </component>
 </project>

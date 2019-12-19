@@ -23,8 +23,6 @@ class Samplify:
     def __init__(self):
         database_setup.drop_tables()
         database_setup.create_tables()
-        # print(inspect.stack()[0])
-        # time.sleep(30)
 
         # Setup logging config.
         self.logging_config()
