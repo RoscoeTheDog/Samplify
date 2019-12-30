@@ -6,11 +6,13 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 from datetime import datetime
 
+import app.settings
+
 # Base for Table/class inheritance.
 Base = declarative_base()
 
 # Engine for connecting to db.
-engine = create_engine('sqlite:///C:/Users/Aspen/Documents/GitHub/Samplify/database/database.db')
+engine = create_engine(app.settings.database_path)
 
 
 def drop_tables():

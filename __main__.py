@@ -11,7 +11,7 @@ from app.logging import custom_processors
 from app.logging import CustomConsoleRenderer
 
 # other modules
-from handlers import database_handler, process_handler, filewatch_handler, xml_handler
+from handlers import database_handler, process_handler, filewatch_handler, xml_handler, file_handler, av_handler, image_handler
 from app import settings, gpu
 from database import database_setup
 import time
@@ -33,9 +33,10 @@ class Samplify:
 
         # Create our new handler types.
         self.process_manager = process_handler.NewHandler()
-        self.db_manager = database_handler.NewHandler(self.process_manager)
-        self.filewatch_manager = filewatch_handler.NewHandler(self.db_manager)
         self.template_manager = xml_handler.Parser()
+        self.db_manager = database_handler.NewHandler(self.process_manager)
+        self.watch_manager = filewatch_handler.NewHandler(self.db_manager)
+        self.file_manager = file_handler.NewHandler(self.template_manager, self.process_manager, self.db_manager)
 
         # Insert a default template.
         self.db_manager.insert_template()
@@ -63,20 +64,20 @@ class Samplify:
             # #     # print(structlog.dev.ConsoleRenderer.get_default_level_styles()) for further example
             # # }
             # ),
-            foreign_pre_chain=
-            [
-                # structlog.processors.TimeStamper(fmt='iso'),
-                # custom_processors.OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'path', 'exc_info']),
-                # format_exc_info,
-                # custom_processors.add_structlog_level,
-                # structlog.stdlib.add_log_level,
-                # order_keys,
-                # OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'exc_info']),
-                structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
-
-            ],
+            # foreign_pre_chain=
+            # [
+            #     # structlog.processors.TimeStamper(fmt='iso'),
+            #     # custom_processors.OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'path', 'exc_info']),
+            #     # format_exc_info,
+            #     # custom_processors.add_structlog_level,
+            #     # structlog.stdlib.add_log_level,
+            #     # order_keys,
+            #     # OrderKeys(keys=['timestamp', 'level', 'event', 'msg', 'exc_info']),
+            #     structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+            #
+            # ],
             # keep_exc_info=True,
-            keep_stack_info=True,
+            # keep_stack_info=True,
         )
 
         # declare a custom formatter for our log file
@@ -187,17 +188,17 @@ def main():
 
     # Parse template and return dictionary using template_manager.
     # If using default template, simply return dictionary.
-    samplify.template_manager.return_dict()
+    # samplify.template_manager.return_dict()
 
-    samplify.db_manager.scan_files()
+    samplify.file_manager.scan_libraries()
 
+    # samplify.db_manager.scan_files()
 
-
-    print(time.time() - timer)
-    timer = time.time()
-    time.sleep(20)
-    samplify.db_manager.samplify()
-    print(time.time() - timer)
+    print("runtime: ", time.time() - timer)
+    # timer = time.time()
+    # time.sleep(20)
+    # samplify.db_manager.samplify()
+    # print(time.time() - timer)
 
     # Start benchmark timer (input).
 

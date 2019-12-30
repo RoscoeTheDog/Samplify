@@ -23,8 +23,9 @@ def create_default_template():
     name.text = 'defaultTemplate'
 
     # TODO: Add Input Preferences (XML)
-    ET.SubElement(libraries, 'directory').set('path', "D:/MOVIES & SHOWS")
+    ET.SubElement(libraries, 'directory').set('path', 'D:/MOVIES & SHOWS')
     ET.SubElement(libraries, 'directory').set('path', 'C:/Users/Admin/Desktop/Input')
+    ET.SubElement(libraries, 'directory').set('path', 'F:\Music\Music')
 
     # TODO: Add output preferences (XML)
     entry = ET.SubElement(outputDirectories, 'directory')
@@ -92,13 +93,13 @@ class Parser:
                         k = utils.unescape(packed.get(k))   # Unescape any special characters from the string.
                         dict[k] = packed.get(k)     # add key:value terms back into a modified dictionary
                 except Exception as e:
-                    logger.error('getInputDirectories', msg='Could not parse InputDirectories from XML', exc_info=e)
+                    logger.error('libraries', msg='Could not parse libraries from XML', exc_info=e)
 
                 for rules in directory:
                     dict[rules.child] = rules.text  # Returns 'None' if no rules are found.
 
         # Update the dictionary.
-        self.dict['inputDirectories'] = dict
+        self.dict['libraries'] = dict
 
     def output_directories(self):
 

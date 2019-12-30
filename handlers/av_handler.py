@@ -8,6 +8,7 @@ from app import settings
 import time
 import json
 import structlog
+import logging
 from handlers import image_handler, file_handler
 
 

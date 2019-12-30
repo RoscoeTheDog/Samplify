@@ -1,8 +1,9 @@
 from PIL import Image
 import structlog
+import logging
 
 
-# logging.Logger.manager.loggerDict[__name__] = structlog.get_logger('samplify.log')
+logging.Logger.manager.loggerDict[__name__] = structlog.get_logger('samplify.log')
 
 # # call our logger locally
 logger = structlog.get_logger('samplify.log')

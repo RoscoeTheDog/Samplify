@@ -2,13 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7a2533a1-0f44-4d17-9e98-388c1972b0ad" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/e/5/e50cac403bbdbc168d76036787edcac37b1a0107" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/__main__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handlers/template.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/database/database.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/database_setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/database_setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/av_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/av_handler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/file_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/file_handler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/image_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/image_handler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/template.xml" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/template.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/xml_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/xml_handler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/template.xml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,7 +99,7 @@
       <recent name="C:\Users\Aspen\Documents\GitHub\Samplify\tests" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.xml_handler">
+  <component name="RunManager" selected="Python.__main__">
     <configuration name="XML example" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Samplify" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -218,9 +220,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.__main__" />
         <item itemvalue="Python.xml_handler" />
         <item itemvalue="Python.XML example" />
-        <item itemvalue="Python.__main__" />
         <item itemvalue="Python.process_handler" />
         <item itemvalue="Python.custom_processors" />
       </list>
@@ -268,7 +270,7 @@
       <workItem from="1576106497477" duration="356000" />
       <workItem from="1576106864329" duration="4619000" />
       <workItem from="1576745398003" duration="16460000" />
-      <workItem from="1577674284650" duration="5471000" />
+      <workItem from="1577674284650" duration="11155000" />
     </task>
     <servers />
   </component>
@@ -302,42 +304,46 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="1170" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576107453751" />
+    <state x="729" y="131" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog" timestamp="1577682617017">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="729" y="131" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1577682617017" />
     <state x="92" y="92" width="1736" height="856" key="DiffContextDialog" timestamp="1576750227946">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="92" y="92" width="1736" height="856" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576750227946" />
-    <state width="1876" height="233" key="GridCell.Tab.0.bottom" timestamp="1577678551790">
+    <state width="1876" height="175" key="GridCell.Tab.0.bottom" timestamp="1577685262303">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="233" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1577678551790" />
-    <state width="1876" height="233" key="GridCell.Tab.0.center" timestamp="1577678551790">
+    <state width="1876" height="175" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1577685262303" />
+    <state width="1876" height="175" key="GridCell.Tab.0.center" timestamp="1577685262302">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="233" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1577678551790" />
-    <state width="1876" height="233" key="GridCell.Tab.0.left" timestamp="1577678551790">
+    <state width="1876" height="175" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1577685262302" />
+    <state width="1876" height="175" key="GridCell.Tab.0.left" timestamp="1577685262302">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="233" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1577678551790" />
-    <state width="1876" height="233" key="GridCell.Tab.0.right" timestamp="1577678551790">
+    <state width="1876" height="175" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1577685262302" />
+    <state width="1876" height="175" key="GridCell.Tab.0.right" timestamp="1577685262303">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="233" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577678551790" />
-    <state width="1876" height="190" key="GridCell.Tab.1.bottom" timestamp="1577676632365">
+    <state width="1876" height="175" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577685262303" />
+    <state width="1876" height="308" key="GridCell.Tab.1.bottom" timestamp="1577684302381">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="190" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1577676632365" />
-    <state width="1876" height="190" key="GridCell.Tab.1.center" timestamp="1577676632365">
+    <state width="1876" height="308" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1577684302381" />
+    <state width="1876" height="308" key="GridCell.Tab.1.center" timestamp="1577684302381">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="190" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1577676632365" />
-    <state width="1876" height="190" key="GridCell.Tab.1.left" timestamp="1577676632365">
+    <state width="1876" height="308" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1577684302381" />
+    <state width="1876" height="308" key="GridCell.Tab.1.left" timestamp="1577684302381">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="190" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1577676632365" />
-    <state width="1876" height="190" key="GridCell.Tab.1.right" timestamp="1577676632365">
+    <state width="1876" height="308" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1577684302381" />
+    <state width="1876" height="308" key="GridCell.Tab.1.right" timestamp="1577684302381">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="190" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577676632365" />
+    <state width="1876" height="308" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577684302381" />
     <state x="736" y="146" key="RollbackChangesDialog" timestamp="1576749911487">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -370,6 +376,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="679" y="293" key="git4idea.merge.GitPullDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576749935727" />
+    <state x="701" y="163" key="refactoring.ChangeSignatureDialog" timestamp="1577682562146">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="701" y="163" key="refactoring.ChangeSignatureDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1577682562146" />
     <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1576747769345">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -377,6 +387,13 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/handlers/file_handler.py</url>
+          <line>32</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
@@ -388,7 +405,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Samplify$custom_processors.coverage" NAME="custom_processors Coverage Results" MODIFIED="1573528425180" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
-    <SUITE FILE_PATH="coverage/Samplify$__main__.coverage" NAME="__main__ Coverage Results" MODIFIED="1574922322705" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Samplify$__main__.coverage" NAME="__main__ Coverage Results" MODIFIED="1577685262294" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Samplify$process_handler.coverage" NAME="process_handler Coverage Results" MODIFIED="1573949993756" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/handlers" />
     <SUITE FILE_PATH="coverage/Samplify$xml_handler.coverage" NAME="xml_handler Coverage Results" MODIFIED="1577678551781" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/handlers" />
     <SUITE FILE_PATH="coverage/Samplify$XML_example.coverage" NAME="XML example Coverage Results" MODIFIED="1576753802868" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
