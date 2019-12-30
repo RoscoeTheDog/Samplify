@@ -10,3 +10,6 @@ app/__pycache__/settings.cpython-37.pyc
 database/__pycache__/database_setup.cpython-37.pyc
 handlers/__pycache__/database_handler.cpython-37.pyc
 handlers/__pycache__/filewatch_handler.cpython-37.pyc
+.idea/workspace.xml
+.idea/sonarlint/issuestore/index.pb
+.idea/sonarlint/issuestore/e/5/e50cac403bbdbc168d76036787edcac37b1a0107

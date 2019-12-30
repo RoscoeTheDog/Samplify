@@ -11,7 +11,7 @@ from app.logging import custom_processors
 from app.logging import CustomConsoleRenderer
 
 # other modules
-from handlers import database_handler, process_handler, filewatch_handler
+from handlers import database_handler, process_handler, filewatch_handler, xml_handler
 from app import settings, gpu
 from database import database_setup
 import time
@@ -21,19 +21,21 @@ logger = structlog.get_logger('samplify.log')
 class Samplify:
 
     def __init__(self):
+        # Reset database (for testing)
         database_setup.drop_tables()
         database_setup.create_tables()
 
         # Setup logging config.
         self.logging_config()
 
-        # Get Hardware Info/ID's.
+        # Gather Hardware Info/ID's.
         gpu.hardware()
 
         # Create our new handler types.
         self.process_manager = process_handler.NewHandler()
         self.db_manager = database_handler.NewHandler(self.process_manager)
         self.filewatch_manager = filewatch_handler.NewHandler(self.db_manager)
+        self.template_manager = xml_handler.Parser()
 
         # Insert a default template.
         self.db_manager.insert_template()
@@ -44,6 +46,8 @@ class Samplify:
         self.db_manager.start_input_cache()
         self.db_manager.start_output_cache()
 
+        # Initialize multiprocessing cores.
+        self.initialize_cores()
 
     @staticmethod
     def logging_config():
@@ -169,24 +173,26 @@ class Samplify:
         self.process_manager.schedule_workers()
         self.process_manager.schedule_listener()
 
+    def parse_template(self, path):
+        self.template_manager.from_path(path)
+
 
 def main():
 
+    # Start benchmark timer.
     timer = time.time()
 
-    # App instance.
+    # Initialize the application.
     samplify = Samplify()
 
-    # Start logging.
-    # samplify.logging_config()
-
-    # TODO: (Re)configure args.
-    # samplify.args_configure(
-
-    # Spawn multi-core processes.
-    samplify.initialize_cores()
+    # Parse template and return dictionary using template_manager.
+    # If using default template, simply return dictionary.
+    samplify.template_manager.return_dict()
 
     samplify.db_manager.scan_files()
+
+
+
     print(time.time() - timer)
     timer = time.time()
     time.sleep(20)
