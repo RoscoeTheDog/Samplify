@@ -38,10 +38,12 @@ class Samplify:
         self.watch_manager = filewatch_handler.NewHandler(self.db_manager)
         self.file_manager = file_handler.NewHandler(self.template_manager, self.process_manager, self.db_manager)
 
-        # Insert a default template.
-        self.db_manager.insert_template()
-        # Validate output directories.
-        self.db_manager.validate_outputs()
+        # validate output directories
+        self.file_manager.validate_output_tree()
+
+        # TODO: DEPRECATED: Insert a default template.
+        # self.db_manager.insert_template()
+        # self.db_manager.validate_outputs()
 
         # Initialize manual caching of input/output trees (for watchdog recursion events).
         self.db_manager.start_input_cache()

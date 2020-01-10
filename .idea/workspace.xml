@@ -2,15 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7a2533a1-0f44-4d17-9e98-388c1972b0ad" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/Samplify.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Samplify.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/__main__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/database/database.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/database_setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/database_setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handlers/av_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/av_handler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/file_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/file_handler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handlers/image_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/image_handler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/template.xml" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/template.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/xml_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/xml_handler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/template.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tests/template.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Scripts/Activate.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/Activate.ps1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Scripts/activate" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/activate" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Scripts/activate.bat" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/activate.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Scripts/python.exe" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/python.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Scripts/pythonw.exe" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/pythonw.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/pyvenv.cfg" beforeDir="false" afterPath="$PROJECT_DIR$/venv/pyvenv.cfg" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,25 +38,18 @@
     <expand>
       <path>
         <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="database.db" type="feb32156:DbDataSourceImpl" />
+        <item name="SQLite - database.db" type="feb32156:DbDataSourceImpl" />
       </path>
       <path>
         <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="database.db" type="feb32156:DbDataSourceImpl" />
+        <item name="SQLite - database.db" type="feb32156:DbDataSourceImpl" />
         <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
       </path>
       <path>
         <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="database.db" type="feb32156:DbDataSourceImpl" />
-        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
-        <item name="main: schema" type="981a47c2:SqliteImplModel$Schema" />
-      </path>
-      <path>
-        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="database.db" type="feb32156:DbDataSourceImpl" />
+        <item name="SQLite - database.db" type="feb32156:DbDataSourceImpl" />
         <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
         <item name="main: schema" type="981a47c2:SqliteImplModel$Schema" />
-        <item name="inputDirectories: table" type="3d80ac25:SqliteImplModel$Table" />
       </path>
     </expand>
     <select />
@@ -88,7 +88,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="database.data.extractors.current.id" value="Comma-separated (CSV)_id" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -233,7 +233,12 @@
       <list>
         <serviceView>
           <treeState>
-            <expand />
+            <expand>
+              <path>
+                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+                <item name="root:SQLite - database.db" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              </path>
+            </expand>
             <select />
           </treeState>
         </serviceView>
@@ -271,6 +276,12 @@
       <workItem from="1576106864329" duration="4619000" />
       <workItem from="1576745398003" duration="16460000" />
       <workItem from="1577674284650" duration="11155000" />
+      <workItem from="1578600606084" duration="522000" />
+      <workItem from="1578601159717" duration="1130000" />
+      <workItem from="1578603108136" duration="1863000" />
+      <workItem from="1578607119889" duration="172000" />
+      <workItem from="1578607348662" duration="448000" />
+      <workItem from="1578686192796" duration="5798000" />
     </task>
     <servers />
   </component>
@@ -300,6 +311,10 @@
     </option>
   </component>
   <component name="WindowStateProjectService">
+    <state x="233" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1578688589152">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="233" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.680@0.0.1280.680" timestamp="1578688589152" />
     <state x="1170" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1576107453751">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -312,45 +327,62 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="92" y="92" width="1736" height="856" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576750227946" />
-    <state width="1876" height="175" key="GridCell.Tab.0.bottom" timestamp="1577685262303">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="283" y="96" key="FileChooserDialogImpl" timestamp="1578688560253">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
+    <state x="283" y="96" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1578688560253" />
+    <state width="1237" height="281" key="GridCell.Tab.0.bottom" timestamp="1578692060975">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state width="1237" height="281" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1578692060975" />
     <state width="1876" height="175" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1577685262303" />
-    <state width="1876" height="175" key="GridCell.Tab.0.center" timestamp="1577685262302">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1237" height="281" key="GridCell.Tab.0.center" timestamp="1578692060974">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
+    <state width="1237" height="281" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1578692060974" />
     <state width="1876" height="175" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1577685262302" />
-    <state width="1876" height="175" key="GridCell.Tab.0.left" timestamp="1577685262302">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1237" height="281" key="GridCell.Tab.0.left" timestamp="1578692060974">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
+    <state width="1237" height="281" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1578692060974" />
     <state width="1876" height="175" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1577685262302" />
-    <state width="1876" height="175" key="GridCell.Tab.0.right" timestamp="1577685262303">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1237" height="281" key="GridCell.Tab.0.right" timestamp="1578692060975">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
+    <state width="1237" height="281" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1578692060975" />
     <state width="1876" height="175" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577685262303" />
-    <state width="1876" height="308" key="GridCell.Tab.1.bottom" timestamp="1577684302381">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1237" height="281" key="GridCell.Tab.1.bottom" timestamp="1578692060975">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
+    <state width="1237" height="281" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1578692060975" />
     <state width="1876" height="308" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1577684302381" />
-    <state width="1876" height="308" key="GridCell.Tab.1.center" timestamp="1577684302381">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1237" height="281" key="GridCell.Tab.1.center" timestamp="1578692060975">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
+    <state width="1237" height="281" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1578692060975" />
     <state width="1876" height="308" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1577684302381" />
-    <state width="1876" height="308" key="GridCell.Tab.1.left" timestamp="1577684302381">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1237" height="281" key="GridCell.Tab.1.left" timestamp="1578692060975">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
+    <state width="1237" height="281" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1578692060975" />
     <state width="1876" height="308" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1577684302381" />
-    <state width="1876" height="308" key="GridCell.Tab.1.right" timestamp="1577684302381">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1237" height="281" key="GridCell.Tab.1.right" timestamp="1578692060975">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
+    <state width="1237" height="281" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1578692060975" />
     <state width="1876" height="308" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577684302381" />
+    <state width="198" height="539" key="HiddenNamespacesPopup" timestamp="1578688505966">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state width="198" height="539" key="HiddenNamespacesPopup/0.0.1280.680@0.0.1280.680" timestamp="1578688505966" />
     <state x="736" y="146" key="RollbackChangesDialog" timestamp="1576749911487">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="736" y="146" key="RollbackChangesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576749911487" />
-    <state x="425" y="131" width="1340" height="716" key="SettingsEditor" timestamp="1576203983881">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="229" y="0" width="914" height="680" key="SettingsEditor" timestamp="1578607285455">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
+    <state x="229" y="0" width="914" height="680" key="SettingsEditor/0.0.1280.680@0.0.1280.680" timestamp="1578607285455" />
     <state x="425" y="131" width="1340" height="716" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1576203983881" />
     <state width="498" height="446" key="SwitcherDM" timestamp="1576750158767">
       <screen x="0" y="0" width="1920" height="1040" />
@@ -364,9 +396,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.RecentChangeDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576750227946" />
-    <state x="668" y="347" key="com.intellij.ide.util.TipDialog" timestamp="1577674284035">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="445" y="227" key="com.intellij.ide.util.TipDialog" timestamp="1578686250561">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
+    <state x="445" y="227" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1578686250561" />
     <state x="668" y="347" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1577674284035" />
     <state x="646" y="101" width="627" height="837" key="find.popup" timestamp="1576745661262">
       <screen x="0" y="0" width="1920" height="1040" />
@@ -389,9 +422,9 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/handlers/file_handler.py</url>
-          <line>32</line>
-          <option name="timeStamp" value="9" />
+          <url>file://$PROJECT_DIR$/handlers/xml_handler.py</url>
+          <line>109</line>
+          <option name="timeStamp" value="11" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -405,7 +438,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Samplify$custom_processors.coverage" NAME="custom_processors Coverage Results" MODIFIED="1573528425180" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
-    <SUITE FILE_PATH="coverage/Samplify$__main__.coverage" NAME="__main__ Coverage Results" MODIFIED="1577685262294" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Samplify$__main__.coverage" NAME="__main__ Coverage Results" MODIFIED="1578692060950" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Samplify$process_handler.coverage" NAME="process_handler Coverage Results" MODIFIED="1573949993756" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/handlers" />
     <SUITE FILE_PATH="coverage/Samplify$xml_handler.coverage" NAME="xml_handler Coverage Results" MODIFIED="1577678551781" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/handlers" />
     <SUITE FILE_PATH="coverage/Samplify$XML_example.coverage" NAME="XML example Coverage Results" MODIFIED="1576753802868" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />

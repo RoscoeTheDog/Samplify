@@ -70,7 +70,7 @@ class Parser:
         self.root = self.template.getroot()
 
         self.libraries()
-        self.output_directories()
+        self.output_tree()
         self.printDict()
 
     def from_path(self, path):
@@ -101,27 +101,28 @@ class Parser:
         # Update the dictionary.
         self.dict['libraries'] = dict
 
-    def output_directories(self):
+    def output_tree(self):
 
         dict = {}
 
         for parent in self.root.iter('outputDirectories'):
 
             for directory in parent:
-
+                dir = {}
                 # unpack the dictionary attributes
                 packed = directory.attrib
                 try:
-                    for k in packed.keys():
-                        k = utils.unescape(packed.get(k))  # Unescape any special characters from the string.
-                        dict[k] = packed.get(k)  # add key:value terms back into a modified dictionary
+                    for keys in packed.keys():
+                        value = utils.unescape(packed.get(keys))  # Unescape any special characters from the string.
+                        dir[keys] = value  # add key:value terms back into a modified dictionary
                 except Exception as e:
                     logger.error('getOutputDirectories', msg='Could not parse outputDirectories from XML', exc_info=e)
 
                 # add preferences to dictionary
                 for rules in directory:
                     for child in rules:
-                        dict[child.tag] = child.text
+                        dir[child.tag] = child.text
+
 
         # Update the dictionary
         self.dict['outputDirectories'] = dict

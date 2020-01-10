@@ -15,6 +15,21 @@ class NewHandler():
         self.process_manager = process_manager
         self.db_manager = db_manager
 
+        self.template = {}
+        self.template = self.template_manager.return_dict()
+
+    def validate_output_tree(self):
+
+        for keys in self.template.keys():
+            if keys == 'outputDirectories':
+                for directory in self.template.get('outputDirectories'):
+                    path = directory
+                    if not os.path.exists(path):
+                        try:
+                            os.mkdir(path)
+                        except Exception as e:
+                            logger.error('validate_output_tree', msg='Could not create new directory in output', exc_info=e)
+
     def get_mtype(self, path):
 
         # Validate if path is file.
