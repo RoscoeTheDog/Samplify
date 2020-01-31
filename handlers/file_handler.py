@@ -23,12 +23,17 @@ class NewHandler():
         for keys in self.template.keys():
             if keys == 'outputDirectories':
                 for directory in self.template.get('outputDirectories'):
-                    path = directory
-                    if not os.path.exists(path):
-                        try:
-                            os.mkdir(path)
-                        except Exception as e:
-                            logger.error('validate_output_tree', msg='Could not create new directory in output', exc_info=e)
+                    path = directory.get('path')
+
+                    try:
+                        if not os.path.exists(path):
+                            try:
+                                os.mkdir(path)
+                                logger.info('validate_output_tree', msg=f'Created new output directory {path}')
+                            except Exception as e:
+                                logger.error('validate_output_tree', msg='Could not create new directory in output', exc_info=e)
+                    except Exception as e:
+                        logger.error('validate_output_tree', msg=f'{path} is not a path', exc_info=e)
 
     def get_mtype(self, path):
 
@@ -92,9 +97,30 @@ class NewHandler():
                     "file_name": os.path.splitext(_basename)[0],
                     "extension": os.path.splitext(_basename)[1],
                     "date_created": self.creation_date(path),
-                    "i_stream": False,
-                    "v_stream": False,
+
+                    'v_stream': False,
+                    'v_width': '',
+                    'v_height': '',
+                    'v_duration': '',
+                    'nb_frames': '',
+                    'v_frame_rate': '',
+                    'v_pix_format': '',
+
                     'a_stream': False,
+                    'a_sample_rate': '',
+                    'a_bit_depth': '',
+                    'a_sample_fmt': '',
+                    'a_bit_rate': '',
+                    'a_channels': '',
+                    'a_channel_layout': '',
+
+                    'i_stream': False,
+                    'i_fmt': '',
+                    'i_frames': '',
+                    'i_width': '',
+                    'i_height': '',
+                    'i_alpha': '',
+                    'i_mode': '',
                 }
 
             if not type is None:

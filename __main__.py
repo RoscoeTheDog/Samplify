@@ -1,4 +1,5 @@
 # sys modules
+import threading
 import argparse
 import os
 
@@ -11,7 +12,7 @@ from app.logging import custom_processors
 from app.logging import CustomConsoleRenderer
 
 # other modules
-from handlers import database_handler, process_handler, filewatch_handler, xml_handler, file_handler, av_handler, image_handler
+from handlers import database_handler, process_handler, filewatch_handler, xml_handler, file_handler, av_handler, image_handler, thread_handler
 from app import settings, gpu
 from database import database_setup
 import time
@@ -32,11 +33,12 @@ class Samplify:
         gpu.hardware()
 
         # Create our new handler types.
+        self.xml_manager = xml_handler.NewHandler()
+        self.thread_manager = thread_handler.NewHandler(self.xml_manager)
         self.process_manager = process_handler.NewHandler()
-        self.template_manager = xml_handler.Parser()
         self.db_manager = database_handler.NewHandler(self.process_manager)
         self.watch_manager = filewatch_handler.NewHandler(self.db_manager)
-        self.file_manager = file_handler.NewHandler(self.template_manager, self.process_manager, self.db_manager)
+        self.file_manager = file_handler.NewHandler(self.xml_manager, self.process_manager, self.db_manager)
 
         # validate output directories
         self.file_manager.validate_output_tree()
@@ -177,8 +179,20 @@ class Samplify:
         self.process_manager.schedule_listener()
 
     def parse_template(self, path):
-        self.template_manager.from_path(path)
+        self.xml_manager.from_path(path)
 
+    def calculate_file_rules(self):
+
+        self.file_operation_schedule = {}
+
+        files = self.db_manager.get_entries_Files()
+
+        for file in files:
+            self.thread_manager.spawn_new_thread(file, self.file_operation_schedule)
+
+        # self.db_manager.samplify()
+        # self.db_manager.get_files_threaded()
+        # self.db_manager.get_audio_threaded()
 
 def main():
 
@@ -188,54 +202,32 @@ def main():
     # Initialize the application.
     samplify = Samplify()
 
-    # Parse template and return dictionary using template_manager.
-    # If using default template, simply return dictionary.
-    # samplify.template_manager.return_dict()
-
     samplify.file_manager.scan_libraries()
+    samplify.calculate_file_rules()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     # samplify.db_manager.scan_files()
 
-    print("runtime: ", time.time() - timer)
-    # timer = time.time()
-    # time.sleep(20)
     # samplify.db_manager.samplify()
-    # print(time.time() - timer)
-
-    # Start benchmark timer (input).
-
 
     # Run a manual scan on input directories.
     # samplify.db_manager.scan_files()
-
-    # time.sleep(30)
-
-
-
-
-
-
-
-
-
-    # # Start watchdog threading.
-    # samplify.initialize_filewatches()
-    #
-    # samplify.filewatch_manager.add_decoder_task(print('hello world'))
-    #
-    # # End input benchmark timer
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     # collect all files/folders from output
@@ -280,6 +272,8 @@ def main():
     #     logger.exception(e)
 
     # print('number of skipped files: ', settings.exception_counter)
+
+    print("runtime: ", time.time() - timer)
 
     print(time.time() - timer)
 

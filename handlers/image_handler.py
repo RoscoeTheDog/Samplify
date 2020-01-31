@@ -15,10 +15,10 @@ def decode_image(input):
         'v_stream': False,
         'a_stream': False,
         'i_stream': False,
-        'i_format': '',
+        'i_fmt': '',
         'i_width': '',
         'i_height': '',
-        'nb_frames': '',
+        'i_frames': '',
         'alpha_channel': False,
 
         'succeeded': False,
@@ -27,13 +27,30 @@ def decode_image(input):
     try:
         with Image.open(input) as original:
 
-            meta_dict["i_stream"] = True
-            meta_dict["i_format"] = original.format
+            meta_dict['i_stream'] = True
+            meta_dict['i_fmt'] = original.format
 
             width, height = original.size
-            meta_dict["i_width"] = width
-            meta_dict["i_height"] = height
+            meta_dict['i_width'] = width
+            meta_dict['i_height'] = height
             meta_dict['i_mode'] = original.mode
+
+            try:
+                meta_dict['i_alpha'] = original.getchannel("A")
+            except Exception as e:
+                # If failed, we know it has no alpha channel.
+                meta_dict['i_alpha'] = '0'
+
+            # Determine the number of frames for the file.
+            nb_frames = 0
+            try:
+                while True:
+                    original.seek(nb_frames)
+                    nb_frames += 1
+            except EOFError:
+                pass
+
+            meta_dict['i_frames'] = str(nb_frames)
 
             logger.info('admin_message', msg='Decode succeeded')
 

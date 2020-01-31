@@ -1,0 +1,7 @@
+
+6python:S125ˆ"Remove this commented out code.(ð¯í[
+kpython:S3776h"TRefactor this function to reduce its Cognitive Complexity from 16 to the 15 allowed.(äÙß,
+hpython:S100…"PRename method "printDict" to match the regular expression ^[a-z_][a-z0-9_]{2,}$.(×šà°
+Jpython:S1481"-Remove the unused local variable "searchFor".(‚‘›àüÿÿÿÿ
+ypython:S117"bRename this local variable "outputDirectories" to match the regular expression ^[_a-z][a-z0-9_]*$.(î‘Ýð
+vpython:S117"ZRename this local variable "searchFor" to match the regular expression ^[_a-z][a-z0-9_]*$.(‚‘›àüÿÿÿÿ

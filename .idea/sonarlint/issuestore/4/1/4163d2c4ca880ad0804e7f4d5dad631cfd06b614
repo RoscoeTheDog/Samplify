@@ -1,0 +1,56 @@
+
+ipython:S107Ò"QFunction "convert_pyav" has 9 parameters, which is greater than the 7 authorized.(§’ëÚ
+lpython:S107½"TFunction "configure_args" has 12 parameters, which is greater than the 7 authorized.(ƒ£ÉÀ
+<python:S125º"Remove this commented out code.(õîÔşÿÿÿÿÿ
+<python:S125İ"Remove this commented out code.(ü«²¥ùÿÿÿÿ
+7python:S125ë"Remove this commented out code.(à†ˆ£
+<python:S125š"Remove this commented out code.(‡‘ø¤øÿÿÿÿ
+7python:S125¶"Remove this commented out code.(œ©ëß
+6python:S125¸"Remove this commented out code.(Èµô&
+7python:S125æ"Remove this commented out code.(µ¡‰Ÿ
+<python:S125"Remove this commented out code.(‘ŸâØÿÿÿÿÿ
+<python:S125³"Remove this commented out code.(¬ĞŒäúÿÿÿÿ
+<python:S125È"Remove this commented out code.(‡‡ş¦úÿÿÿÿ
+7python:S125î"Remove this commented out code.(œ£ë¶
+7python:S125¤"Remove this commented out code.(œ£ë¶
+7python:S125´"Remove this commented out code.(°Šà
+7python:S125ò"Remove this commented out code.(ı˜¼Ñ
+7python:S125˜"Remove this commented out code.(Ñƒäü
+7python:S125Õ"Remove this commented out code.(…Óª
+<python:S125ü"Remove this commented out code.(÷‰¨óşÿÿÿÿ
+<python:S125µ"Remove this commented out code.( §äùÿÿÿÿ
+7python:S125»"Remove this commented out code.(Õ®µÔ
+<python:S125×"Remove this commented out code.(ØÍë™üÿÿÿÿ
+7python:S125í"Remove this commented out code.(²¼×
+7python:S125ğ"Remove this commented out code.(ëßëó
+<python:S125ó"Remove this commented out code.(æ¨µşÿÿÿÿ
+<python:S125ö"Remove this commented out code.(µ«¶±øÿÿÿÿ
+<python:S125›	"Remove this commented out code.(¯«ôÕıÿÿÿÿ
+<python:S125±	"Remove this commented out code.(ìÆÃışÿÿÿÿ
+<python:S125Ü	"Remove this commented out code.(Òáöøÿÿÿÿ
+7python:S125ß	"Remove this commented out code.(ÆÔœ¦
+7python:S125î	"Remove this commented out code.(ÿêíò
+6python:S125ñ	"Remove this commented out code.(˜Úœ0
+7python:S125÷	"Remove this commented out code.(§æ÷İ
+<python:S125û	"Remove this commented out code.(ÒÆ²¸úÿÿÿÿ
+<python:S125ƒ
+"Remove this commented out code.(ÂÅ¬şÿÿÿÿ
+<python:S125Š
+"Remove this commented out code.(øáİ‹ıÿÿÿÿ
+qpython:S3776="TRefactor this function to reduce its Cognitive Complexity from 45 to the 15 allowed.(Ô¥ÇÊùÿÿÿÿ
+rpython:S3776ö"TRefactor this function to reduce its Cognitive Complexity from 28 to the 15 allowed.(“°Àúÿÿÿÿ
+spython:S3776è"URefactor this function to reduce its Cognitive Complexity from 196 to the 15 allowed.(‡àßªúÿÿÿÿ
+mpython:S3776"TRefactor this function to reduce its Cognitive Complexity from 42 to the 15 allowed.(ËêñÁ
+>python:S1481["&Remove the unused local variable "ch".(ïÁêŒ
+Cpython:S1481×"%Remove the unused local variable "m".(ô½ñ˜şÿÿÿÿ
+Dpython:S1481Ñ",Remove the unused local variable "v_format".(«ÖÀ
+Dpython:S1481ß"+Remove the unused local variable "v_codec".(¨…—ê
+Dpython:S1481®"+Remove the unused local variable "a_codec".(…‰©
+Apython:S1481“	"(Remove the unused local variable "dict".(¶Šß˜
+Jpython:S1481ö	",Remove the unused local variable "metadata".(¡êöûÿÿÿÿ
+Mpython:S1066«"/Merge this if statement with the enclosing one.(ªŒ±úÿÿÿÿ
+Mpython:S1066¯"/Merge this if statement with the enclosing one.(ªŒ±úÿÿÿÿ
+Mpython:S1066Á"/Merge this if statement with the enclosing one.(ªŒ±úÿÿÿÿ
+Mpython:S1066Ì"/Merge this if statement with the enclosing one.(ªŒ±úÿÿÿÿ
+Mpython:S1066Ó"/Merge this if statement with the enclosing one.(ªŒ±úÿÿÿÿ
+Mpython:S1066×"/Merge this if statement with the enclosing one.(ªŒ±úÿÿÿÿ

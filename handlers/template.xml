@@ -1,1 +1,33 @@
-<samplify><name>defaultTemplate</name><libraries><directory path="D:/MOVIES &amp; SHOWS" /><directory path="C:/Users/Admin/Desktop/Input" /><directory path="F:\Music\Music" /></libraries><outputDirectories><directory path="C:/Users/admin/Desktop/Output/photos"><rules><exportType>.png</exportType><imageFormat>PNG</imageFormat><audioFormat>default</audioFormat><audioSampleRate>default</audioSampleRate><audioBitRate /><audioChannels>default</audioChannels><audioNormalize>False</audioNormalize><imageOnly>True</imageOnly></rules></directory><directory path="C:/Users/admin/Desktop/Output/kick"><rules><exportType>default</exportType><audioFormat>default</audioFormat><audioSampleRate>default</audioSampleRate><audioBitRate /><audioChannels>1</audioChannels><audioNormalize>True</audioNormalize><audioPreserve>True</audioPreserve></rules></directory></outputDirectories><searchFor /></samplify>
+<samplify>
+    <name>defaultTemplate</name>
+    <libraries>
+        <directory path="C:/Users/Admin/Desktop/Input"/>
+    </libraries>
+    <outputDirectories>
+        <directory path="C:/Users/admin/Desktop/Output/photos">
+            <rules>
+                <exportType>.png</exportType>
+                <imageFormat>PNG</imageFormat>
+                <audioFormat>default</audioFormat>
+                <audioSampleRate>default</audioSampleRate>
+                <audioBitRate/>
+                <audioChannels>default</audioChannels>
+                <audioNormalize>False</audioNormalize>
+                <imageOnly>True</imageOnly>
+            </rules>
+        </directory>
+        <directory path="C:/Users/admin/Desktop/Output/kick">
+            <rules>
+                <expression>Still</expression>
+                <hasAudio>True</hasAudio>
+                <exportType>default</exportType>
+                <audioFormat>default</audioFormat>
+                <audioSampleRate>default</audioSampleRate>
+                <audioBitRate/>
+                <audioChannels>1</audioChannels>
+                <audioNormalize>True</audioNormalize>
+                <audioPreserve>True</audioPreserve>
+            </rules>
+        </directory>
+    </outputDirectories>
+</samplify>
