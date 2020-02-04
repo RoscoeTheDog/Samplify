@@ -12,10 +12,14 @@ from app.logging import custom_processors
 from app.logging import CustomConsoleRenderer
 
 # other modules
-from handlers import database_handler, process_handler, filewatch_handler, xml_handler, file_handler, av_handler, image_handler, thread_handler
+from handlers import database_handler, process_handler, filewatch_handler, xml_handler, file_handler, av_handler, image_handler, thread_handler, rules
 from app import settings, gpu
 from database import database_setup
 import time
+import asyncio
+import inspect
+import pprint
+
 
 logger = structlog.get_logger('samplify.log')
 
@@ -181,14 +185,56 @@ class Samplify:
     def parse_template(self, path):
         self.xml_manager.from_path(path)
 
-    def calculate_file_rules(self):
+    def run_once(self):
 
-        self.file_operation_schedule = {}
+        file_operations = {}
+
+        output_libraries = self.xml_manager.return_dict()
 
         files = self.db_manager.get_entries_Files()
-
         for file in files:
-            self.thread_manager.spawn_new_thread(file, self.file_operation_schedule)
+            for directory in output_libraries.get('outputDirectories'):
+                # Init Class Rule container.
+                compute_rules = rules.ComputeRules(file, directory)
+                # Get all attributes.
+                attributes = (getattr(compute_rules, name) for name in dir(compute_rules) if not name.startswith('__'))
+                # Filter out any private methods.
+                class_methods = filter(inspect.ismethod, attributes)
+                # TODO: TRY ASYNCING EACH INDIVIDUAL RULE.
+                # Run all methods in ComputerRules class.
+                for rule in class_methods:
+                    rule()
+                # Cleanup instance attributes before reading dictionary variables.
+                compute_rules.__delattr__('file')
+                compute_rules.__delattr__('directory')
+                compute_rules.__delattr__('rules')
+
+
+                # task = asyncio.create_task(compute_rules.call_everything())
+                # # Wait for task to finish before accessing memory (master scheduler)
+                # asyncio.run(task)
+
+                if len(vars(compute_rules).get('output_directories')) > 0:
+                    file_operations[file.file_name] = vars(compute_rules)
+                print(vars(compute_rules))
+        print(file_operations)
+
+
+                # for function in dir(rules):
+                #     attributes = getattr(rules, function)
+                #     rules_callable = filter(inspect.isfunction(function), attributes)
+                #     for rule in rules_callable:
+                #         self.file_operations[file.file_name] = asyncio.run(gov_rule(file, directory))
+
+
+
+
+                        # self.thread_manager.spawn_new_thread(file, self.file_operations)
+                        # for rule in rules.Rules.return_all_methods():
+
+
+
+
 
         # self.db_manager.samplify()
         # self.db_manager.get_files_threaded()
@@ -203,7 +249,7 @@ def main():
     samplify = Samplify()
 
     samplify.file_manager.scan_libraries()
-    samplify.calculate_file_rules()
+    samplify.run_once()
 
 
 

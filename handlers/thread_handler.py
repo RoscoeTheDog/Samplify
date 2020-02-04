@@ -26,18 +26,18 @@ class NewHandler:
             # output_set = {}
             rules = {}
 
-            if self.xml_manager.compare_rule(file, directory, self.xml_manager.rule_has_expression):
+            if self.xml_manager.compute_rule(file, directory, self.xml_manager.rule_has_expression):
                 file_union['output_paths'] = directory.get('path')
-            if self.xml_manager.compare_rule(file, directory, self.xml_manager.rule_has_extension):
+            if self.xml_manager.compute_rule(file, directory, self.xml_manager.rule_has_extension):
                 file_union['output_paths'] = directory.get('path')
             #TODO: CHECK DATETIME
-            if self.xml_manager.compare_rule(file, directory, self.xml_manager.rule_has_dates):
+            if self.xml_manager.compute_rule(file, directory, self.xml_manager.rule_has_dates):
                 file_union['output_paths'] = directory.get('path')
-            if self.xml_manager.compare_rule(file, directory, self.xml_manager.rule_has_video):
+            if self.xml_manager.compute_rule(file, directory, self.xml_manager.rule_has_video):
                 file_union['output_paths'] = directory.get('path')
-            if self.xml_manager.compare_rule(file, directory, self.xml_manager.rule_has_audio):
+            if self.xml_manager.compute_rule(file, directory, self.xml_manager.rule_has_audio):
                 file_union['output_paths'] = directory.get('path')
-            if self.xml_manager.compare_rule(file, directory, self.xml_manager.rule_has_image):
+            if self.xml_manager.compute_rule(file, directory, self.xml_manager.rule_has_image):
                 file_union['output_paths'] = directory.get('path')
 
 
