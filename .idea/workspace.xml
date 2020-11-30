@@ -2,12 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7a2533a1-0f44-4d17-9e98-388c1972b0ad" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/handlers/rules.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/returning a dict from Class.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Samplify.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Samplify.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/__main__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/database/database.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handlers/template.xml" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/template.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/database_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/database_handler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/rules.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/rules.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/thread_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/thread_handler.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -39,9 +40,6 @@
     </expand>
     <select />
   </component>
-  <component name="FavoritesManager">
-    <favorites_list name="Samplify" />
-  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -52,17 +50,10 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="IgnoredFileRootStore">
-    <option name="generatedRoots">
-      <set>
-        <option value="C:\Users\Aspen\Documents\GitHub\Samplify\.idea" />
-      </set>
-    </option>
-  </component>
+  <component name="JupyterTrust" id="e915aad8-38b2-4dd4-bcfc-89ed98a56f53" />
   <component name="ProjectId" id="1TUB3aDT9ZsT0TY5Le2pifYAoPY" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
@@ -213,28 +204,7 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="ServiceViewManager">
-    <option name="viewStates">
-      <list>
-        <serviceView>
-          <treeState>
-            <expand>
-              <path>
-                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-                <item name="root:database.db" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              </path>
-              <path>
-                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-                <item name="root:database.db" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-                <item name="com.intellij.database.console.session.MessageBusSession@3f3f3430" type="9fbbdea:ServiceModel$ServiceNode" />
-              </path>
-            </expand>
-            <select />
-          </treeState>
-        </serviceView>
-      </list>
-    </option>
-  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="project-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -274,6 +244,7 @@
       <workItem from="1578686192796" duration="5798000" />
       <workItem from="1579516135898" duration="5000" />
       <workItem from="1580361949736" duration="49179000" />
+      <workItem from="1606703997549" duration="1797000" />
     </task>
     <servers />
   </component>
@@ -287,131 +258,57 @@
     </todo-panel>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
+    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="350" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1580446789338">
+    <state width="1876" height="2" key="GridCell.Tab.0.bottom" timestamp="1606705794444">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="233" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.680@0.0.1280.680" timestamp="1578688589152" />
-    <state x="350" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1580446789338" />
-    <state x="1170" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1576107453751">
+    <state width="1876" height="2" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1606705794444" />
+    <state width="1876" height="2" key="GridCell.Tab.0.center" timestamp="1606705794444">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="1170" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576107453751" />
-    <state x="729" y="131" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog" timestamp="1577682617017">
+    <state width="1876" height="2" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1606705794444" />
+    <state width="1876" height="2" key="GridCell.Tab.0.left" timestamp="1606705794444">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="729" y="131" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1577682617017" />
-    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog" timestamp="1576750227946">
+    <state width="1876" height="2" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1606705794444" />
+    <state width="1876" height="2" key="GridCell.Tab.0.right" timestamp="1606705794444">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576750227946" />
-    <state x="425" y="147" key="FileChooserDialogImpl" timestamp="1580446780229">
+    <state width="1876" height="2" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1606705794444" />
+    <state width="1876" height="2" key="GridCell.Tab.1.bottom" timestamp="1606705794444">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="283" y="96" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1578688560253" />
-    <state x="425" y="147" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1580446780229" />
-    <state width="1921" height="284" key="GridCell.Tab.0.bottom" timestamp="1580804116125">
+    <state width="1876" height="2" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1606705794444" />
+    <state width="1876" height="2" key="GridCell.Tab.1.center" timestamp="1606705794444">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1237" height="281" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1578692060975" />
-    <state width="1921" height="284" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1580804116125" />
-    <state width="1921" height="284" key="GridCell.Tab.0.center" timestamp="1580804116125">
+    <state width="1876" height="2" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1606705794444" />
+    <state width="1876" height="2" key="GridCell.Tab.1.left" timestamp="1606705794444">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1237" height="281" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1578692060974" />
-    <state width="1921" height="284" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1580804116125" />
-    <state width="1921" height="284" key="GridCell.Tab.0.left" timestamp="1580804116125">
+    <state width="1876" height="2" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1606705794444" />
+    <state width="1876" height="2" key="GridCell.Tab.1.right" timestamp="1606705794444">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1237" height="281" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1578692060974" />
-    <state width="1921" height="284" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1580804116125" />
-    <state width="1921" height="284" key="GridCell.Tab.0.right" timestamp="1580804116125">
+    <state width="1876" height="2" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1606705794444" />
+    <state x="623" y="225" key="search.everywhere.popup" timestamp="1606704041919">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1237" height="281" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1578692060975" />
-    <state width="1921" height="284" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1580804116125" />
-    <state width="1921" height="364" key="GridCell.Tab.1.bottom" timestamp="1580802758548">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1237" height="281" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1578692060975" />
-    <state width="1921" height="364" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1580802758548" />
-    <state width="1921" height="364" key="GridCell.Tab.1.center" timestamp="1580802758548">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1237" height="281" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1578692060975" />
-    <state width="1921" height="364" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1580802758548" />
-    <state width="1921" height="364" key="GridCell.Tab.1.left" timestamp="1580802758548">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1237" height="281" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1578692060975" />
-    <state width="1921" height="364" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1580802758548" />
-    <state width="1921" height="364" key="GridCell.Tab.1.right" timestamp="1580802758548">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1237" height="281" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1578692060975" />
-    <state width="1921" height="364" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1580802758548" />
-    <state width="297" height="825" key="HiddenNamespacesPopup" timestamp="1580446595022">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="198" height="539" key="HiddenNamespacesPopup/0.0.1280.680@0.0.1280.680" timestamp="1578688505966" />
-    <state width="297" height="825" key="HiddenNamespacesPopup/0.0.1920.1040@0.0.1920.1040" timestamp="1580446595022" />
-    <state x="736" y="146" key="RollbackChangesDialog" timestamp="1576749911487">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="736" y="146" key="RollbackChangesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576749911487" />
-    <state x="425" y="131" width="914" height="680" key="SettingsEditor" timestamp="1580786890619">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="229" y="0" width="914" height="680" key="SettingsEditor/0.0.1280.680@0.0.1280.680" timestamp="1578607285455" />
-    <state x="425" y="131" width="1340" height="716" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1580786890619" />
-    <state width="498" height="446" key="SwitcherDM" timestamp="1576750158767">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="498" height="446" key="SwitcherDM/0.0.1920.1040@0.0.1920.1040" timestamp="1576750158767" />
-    <state x="409" y="14" width="1384" height="847" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1576750374697">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="409" y="14" width="1384" height="847" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576750374697" />
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.RecentChangeDialog" timestamp="1576750227946">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.RecentChangeDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576750227946" />
-    <state x="668" y="347" key="com.intellij.ide.util.TipDialog" timestamp="1580361954515">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="445" y="227" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1578686250561" />
-    <state x="668" y="347" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1580361954515" />
-    <state x="646" y="101" width="627" height="837" key="find.popup" timestamp="1576745661262">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="646" y="101" width="627" height="837" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1576745661262" />
-    <state x="679" y="293" key="git4idea.merge.GitPullDialog" timestamp="1576749935727">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="679" y="293" key="git4idea.merge.GitPullDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576749935727" />
-    <state x="701" y="163" key="refactoring.ChangeSignatureDialog" timestamp="1577682562146">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="701" y="163" key="refactoring.ChangeSignatureDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1577682562146" />
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1580801169985">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1580801169985" />
+    <state x="623" y="225" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1606704041919" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -422,14 +319,9 @@
           <option name="timeStamp" value="32" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/handlers/rules.py</url>
-          <line>23</line>
-          <option name="timeStamp" value="45" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/__main__.py</url>
-          <line>199</line>
-          <option name="timeStamp" value="47" />
+          <line>198</line>
+          <option name="timeStamp" value="48" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -442,11 +334,11 @@
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Samplify$returning_a_dict_from_Class.coverage" NAME="returning a dict from Class Coverage Results" MODIFIED="1580801849796" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/Samplify$custom_processors.coverage" NAME="custom_processors Coverage Results" MODIFIED="1573528425180" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
-    <SUITE FILE_PATH="coverage/Samplify$__main__.coverage" NAME="__main__ Coverage Results" MODIFIED="1580804031518" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Samplify$returning_a_dict_from_Class.coverage" NAME="returning a dict from Class Coverage Results" MODIFIED="1580801849796" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
+    <SUITE FILE_PATH="coverage/Samplify$XML_example.coverage" NAME="XML example Coverage Results" MODIFIED="1576753802868" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
+    <SUITE FILE_PATH="coverage/Samplify$__main__.coverage" NAME="__main__ Coverage Results" MODIFIED="1606705698787" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Samplify$process_handler.coverage" NAME="process_handler Coverage Results" MODIFIED="1573949993756" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/handlers" />
     <SUITE FILE_PATH="coverage/Samplify$xml_handler.coverage" NAME="xml_handler Coverage Results" MODIFIED="1577678551781" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/handlers" />
-    <SUITE FILE_PATH="coverage/Samplify$XML_example.coverage" NAME="XML example Coverage Results" MODIFIED="1576753802868" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
   </component>
 </project>

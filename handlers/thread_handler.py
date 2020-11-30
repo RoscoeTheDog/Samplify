@@ -31,7 +31,7 @@ class NewHandler:
             if self.xml_manager.compute_rule(file, directory, self.xml_manager.rule_has_extension):
                 file_union['output_paths'] = directory.get('path')
             #TODO: CHECK DATETIME
-            if self.xml_manager.compute_rule(file, directory, self.xml_manager.rule_has_dates):
+            if self.xml_manager.compute_rule(file, directory, self.xml_manager.compare_datetime):
                 file_union['output_paths'] = directory.get('path')
             if self.xml_manager.compute_rule(file, directory, self.xml_manager.rule_has_video):
                 file_union['output_paths'] = directory.get('path')

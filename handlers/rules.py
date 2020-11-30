@@ -2,6 +2,83 @@ import re
 import inspect
 import itertools
 
+
+def compare_expressions(file, directory):
+    output_directories = {}     # indicates what files go where
+    exp = directory.get('expression')
+    if exp:
+        pattern = re.compile(exp)
+        search = pattern.finditer(file.file_name)   # Look for expressions in file name
+        for match in search:
+            output_directories[directory.get('path')] = file.file_path
+
+        return output_directories
+
+
+def compute_rule(file, directory, rule):
+    return rule(file, directory)
+
+
+def rule_has_expression(file, directory):
+    exp = directory.get('expression')
+
+    if exp:
+        pattern = re.compile(exp)
+        search = pattern.finditer(file.file_name)
+
+        for match in search:
+            return True
+
+    return False
+
+
+def compare_datetime(file, directory):
+    created_before = directory.get('createdBefore')
+    created_after = directory.get('createdAfter')
+
+    # TODO: check date-time and validate.
+    # if file.date
+
+
+def rule_has_extension(file, directory):
+    has_extension = directory.get('hasExtension')
+
+    for extension in has_extension.split(','):
+        if file.extension.lower() in extension.lower():
+            return True
+    return False
+
+
+def rule_has_video(file, directory):
+    has_video = directory.get('hasVideo')
+
+    if has_video == 'True':
+        if file.v_stream:
+            return True
+
+    return False
+
+
+def rule_has_audio(file, directory):
+    has_audio = directory.get('hasAudio')
+
+    if has_audio == 'True':
+        if file.a_stream:
+            return True
+
+    return False
+
+
+def rule_has_image(file, directory):
+    has_image = directory.get('hasImage')
+
+    if has_image == 'True':
+        if file.i_stream:
+            return True
+
+    return False
+
+
 class ComputeRules(object):
 
     def __init__(self, file, directory):
@@ -84,70 +161,3 @@ class ComputeRules(object):
 
 
 
-# def return_all_methods():
-#     attributes = (getattr(Rules, name) for name in dir(Rules))
-#     methods = filter(inspect.ismethod, attributes)
-#     return methods
-#
-#
-# def compute_rule(file, directory, rule):
-#     return rule(file, directory)
-#
-#
-# def rule_has_expression(file, directory):
-#     exp = directory.get('expression')
-#
-#     if exp:
-#         pattern = re.compile(exp)
-#         search = pattern.finditer(file.file_name)
-#
-#         for match in search:
-#             return True
-#
-#     return False
-#
-#
-# def rule_has_dates(file, directory):
-#     created_before = directory.get('createdBefore')
-#     created_after = directory.get('createdAfter')
-#
-#     # TODO: check date-time and validate.
-#
-#
-# def rule_has_extension(file, directory):
-#     has_extension = directory.get('hasExtension')
-#
-#     for extension in has_extension.split(','):
-#         if file.extension.lower() in extension.lower():
-#             return True
-#     return False
-#
-#
-# def rule_has_video(file, directory):
-#     has_video = directory.get('hasVideo')
-#
-#     if has_video == 'True':
-#         if file.v_stream:
-#             return True
-#
-#     return False
-#
-#
-# def rule_has_audio(file, directory):
-#     has_audio = directory.get('hasAudio')
-#
-#     if has_audio == 'True':
-#         if file.a_stream:
-#             return True
-#
-#     return False
-#
-#
-# def rule_has_image(file, directory):
-#     has_image = directory.get('hasImage')
-#
-#     if has_image == 'True':
-#         if file.i_stream:
-#             return True
-#
-#     return False

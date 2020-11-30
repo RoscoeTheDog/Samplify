@@ -66,7 +66,7 @@ class NewHandler:
         # self.session.add(entry)
 
         # laptop test directories
-        entry = dbs.InputDirectories(folder_path='C:/Users/Admin/Desktop/Input/')
+        entry = dbs.InputDirectories(folder_path='C:/Users/Aspen/Desktop/Input/')
         self.session.add(entry)
         # entry = dbs.InputDirectories(folder_path='C:/Users/Admin/Desktop/Input/Sample Videos')
         # self.session.add(entry)
@@ -93,22 +93,22 @@ class NewHandler:
                                   video_only=True, reduce=False)
         self.session.add(entry)
 
-        # laptop test outputs
-        entry = dbs.OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/photos', extension='.png', i_fmt='PNG',
-                                  a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
-                                  image_only=True, a_normalize=False)
-        self.session.add(entry)
-
-        entry = dbs.OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/hat', extension='default',
-                                  a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='1',
-                                  audio_only=True, a_normalize=False, a_strip_silence=False, a_silence_threshold='-80',
-                                  reduce=False)
-        self.session.add(entry)
-
-        entry = dbs.OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/dragon ball', extension='.mp4',
-                                  a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
-                                  video_only=True, reduce=False)
-        self.session.add(entry)
+        # # laptop test outputs
+        # entry = dbs.OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/photos', extension='.png', i_fmt='PNG',
+        #                           a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
+        #                           image_only=True, a_normalize=False)
+        # self.session.add(entry)
+        #
+        # entry = dbs.OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/hat', extension='default',
+        #                           a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='1',
+        #                           audio_only=True, a_normalize=False, a_strip_silence=False, a_silence_threshold='-80',
+        #                           reduce=False)
+        # self.session.add(entry)
+        #
+        # entry = dbs.OutputDirectories(folder_path='C:/Users/Admin/Desktop/Output/dragon ball', extension='.mp4',
+        #                           a_sample_rate='default', a_bit_rate='', a_sample_fmt='default', a_channels='default',
+        #                           video_only=True, reduce=False)
+        # self.session.add(entry)
 
         # FILTER BY SEARCH TERMS
         entry = dbs.SearchTerms(folder_id=1, name=r'.')
