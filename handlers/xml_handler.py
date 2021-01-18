@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 import xml.sax.saxutils as utils
+from xml.dom import minidom as minidom
 import xml
 import os
 import structlog
@@ -54,11 +55,14 @@ def create_default_template():
     ET.SubElement(rules, 'audioNormalize').text = 'True'
     ET.SubElement(rules, 'audioPreserve').text = 'True'
 
-    # create new XML file and write the contents to file.
-    path = os.path.dirname(__file__) + '/template.xml'
-    file = open(path, "w")
-    tree.write(file, encoding='unicode')
-    file.close()
+    # parse our Tree root to string and enforce pretty formatting
+    xmlstr = minidom.parseString(ET.tostring(template)).toprettyxml(indent="    ")
+
+    # write to it to new xml file.
+    with open(os.path.dirname(__file__) + "/template.xml", "w+") as f:
+        f.write(xmlstr)
+        f.close()
+
 
 class NewHandler:
 

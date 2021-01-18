@@ -27,7 +27,7 @@ logger = structlog.get_logger('samplify.log')
 class Application:
 
     def __init__(self):
-        # Reset database (for testing)
+        # Reset database (use for debug/development testing)
         database_setup.drop_tables()
         database_setup.create_tables()
 
