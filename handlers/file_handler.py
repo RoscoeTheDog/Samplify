@@ -8,17 +8,19 @@ from handlers import av_handler, image_handler
 
 logger = structlog.getLogger('Samplify.log')
 
-class NewHandler():
+
+class NewHandler:
 
     def __init__(self, template_manager, process_manager, db_manager):
+        # Required handlers for parsing/processing info.
         self.template_manager = template_manager
         self.process_manager = process_manager
         self.db_manager = db_manager
-
-        self.template = {}
+        # Active Template Dict.
         self.template = self.template_manager.return_dict()
 
-    def validate_output_tree(self):
+    # Method validates the output tree. Creates required folders if not exists.
+    def validate_output_directories(self):
 
         for keys in self.template.keys():
             if keys == 'outputDirectories':
@@ -29,34 +31,29 @@ class NewHandler():
                         if not os.path.exists(path):
                             try:
                                 os.mkdir(path)
-                                logger.info('validate_output_tree', msg=f'Created new output directory {path}')
+                                logger.info('user_message', msg=f'Created new output directory {path}')
                             except Exception as e:
-                                logger.error('validate_output_tree', msg='Could not create new directory in output', exc_info=e)
+                                logger.error('user_message', msg='Could not create new directory in output', exc_info=e)
                     except Exception as e:
-                        logger.error('validate_output_tree', msg=f'{path} is not a path', exc_info=e)
+                        logger.error('user_message', msg=f'{path} is not a valid path', exc_info=e)
 
-    def get_mtype(self, path):
-
-        # Validate if path is file.
-        if os.path.isfile(path):
-            _types = mimetypes.guess_type(path)     # Guess the file type.
-            return _types   # Returns tuple (type, extension).
-
-        else:
-            logger.error("get_mtype", msg="Cannot get mtype: path is not valid")
-
+    # Searches input directories, determines type, and inserts to corresponding DB Tables.
     def scan_libraries(self):
         root = self.template_manager.return_dict()
 
         for keys in root.keys():
+
             if keys == 'libraries':
+
                 for directory in root.get('libraries'):
                     path = directory
+
                     try:
                         os.chdir(path)
                         if os.path.isdir(path):
                             # log current working directory
-                            logger.info('decode_directory', msg='Scanning folder', path=path)
+                            logger.info('user_message', msg='Scanning folder', path=path)
+
                             if os.path.isdir(path):
                                 # iterate through and decode files
                                 for root, directory, files in os.walk(path):
@@ -64,21 +61,24 @@ class NewHandler():
                                         # merge our strings
                                         path = os.path.join(root, f)
 
-                                        # add task to process_manager for multi-core performance
+                                        # add the scan task to process_manager for parallel processing
                                         self.process_manager.add_task(self.scan_file(path))
                                         ## or run on main thread for single-thread performance.
                                         # self.decode_file(path)
+
                     except Exception as e:
-                        logger.warning('admin_message', msg='Could not change the working directory. Does path exist?',
+                        logger.warning('admin_message',
+                                       msg='Could not change the working directory. Does this path exist?',
                                        path=path, exc_info=f'{e}')
 
+    # Decodes file using various modules (PILL, FFmpeg, PyAV).
     def scan_file(self, path):
 
         try:
             # Read file header
-            mtype = self.get_mtype(path)
-            type, extension = mtype
+            type, extension = self.get_mtype(path)  # returns tuple of guessed file type and it's extension.
 
+            # Clean string of delimiters
             if type is not None:
                 type = type.split('/')[0]
 
@@ -88,9 +88,10 @@ class NewHandler():
             # Isolate name from path (/dirs/to/file/name.txt -> 'name')
             _basename = os.path.basename(path)
 
-            # log the working file
-            logger.info('scan_file', msg=f'Working file: {path}')
+            # log the working file for debugging
+            logger.debug('admin_message', msg=f'Working file: {path}')
 
+            # create a metadata dict to hold file info.
             file_meta = \
                 {
                     "file_path": path,
@@ -123,8 +124,10 @@ class NewHandler():
                     'i_mode': '',
                 }
 
+            # Enforce check that type is not Null from mtypes.
             if not type is None:
 
+                # IMAGES
                 if type == 'image':
                     # Decode Image (Pill)
                     img_meta = image_handler.decode_image(input=path)
@@ -134,6 +137,7 @@ class NewHandler():
                     if file_meta['i_stream'] is True:
                         self.db_manager.insert_image(file_meta)
 
+                # AUDIO
                 if type == 'audio':
                     # Decode Audio (PyAV)
                     logger.info('admin_message', msg='Dispatching to PyAV')
@@ -141,9 +145,11 @@ class NewHandler():
                     av_meta = av_handler.pyav_decode(path)
                     file_meta.update(av_meta)
 
+                    # validation to check that there is no video in the encoded file.
                     if file_meta['v_stream'] is False and file_meta['a_stream'] is True:
                         self.db_manager.insert_audio(file_meta)
 
+                # VIDEO
                 if type == 'video':
                     # Decode Video (FFprobe)
                     logger.info('admin_message', msg='Dispatching to FFprobe')
@@ -156,93 +162,36 @@ class NewHandler():
                     if file_meta['v_stream'] is True:
                         self.db_manager.insert_video(file_meta)
 
-            # Insert to Table ('other', ie: Everything (all files) )
+            # Insert all elements to 'Files' table.
             self.db_manager.insert_other(file_meta)
 
             # Write everything to database
             self.db_manager.session.commit()
 
-            # # create/clear dictionary
-            # file_meta = {}
-            #
-            # # # merge our strings
-            # # path = os.path.join(root, f)
-            #
-            # # normalize backslashes
-            # path = os.path.abspath(path)
-            #
-            # # remove /paths/
-            # _basename = os.path.basename(path)
-            #
-            # # log the working file
-            # logger.info('user_message', msg='Working file', path=path)
-            #
-            # # create a new dict
-            # file_meta['file_path'] = path
-            #
-            # # file_name
-            # file_meta["file_name"] = os.path.splitext(_basename)[0]
-            #
-            # # .extension
-            # file_meta["extension"] = os.path.splitext(_basename)[1]
-            #
-            # # creation date
-            # file_meta["date_created"] = self.creation_date(path)
-            #
-            # # Decode Image (Pill)
-            # logger.info('admin_message', msg='Dispatching to Pill')
-            #
-            # img_meta = image_handler.decode_image(input=path)
-            # file_meta.update(img_meta)
-            #
-            # # Insert to Table
-            # if file_meta['i_stream'] is True:
-            #     self.insert_image(file_meta)
-            #
-            # else:
-            #     # Decode Audio (PyAV)
-            #     logger.info('admin_message', msg='Dispatching to PyAV')
-            #
-            #     av_meta = av_handler.pyav_decode(path)
-            #     file_meta.update(av_meta)
-            #
-            #     # Decode Video (FFprobe)
-            #     if file_meta['succeeded'] is False:  # check for flag
-            #         logger.info('admin_message', msg='Dispatching to FFprobe')
-            #
-            #         stdout, stderr = av_handler.ffprobe(path)
-            #         ffprobe_meta = av_handler.parse_ffprobe(stdout, stderr)  # returns dictionary of parsed metadata
-            #         file_meta.update(ffprobe_meta)
-            #
-            #     # Insert to Table (video)
-            #     if file_meta['v_stream'] is True:
-            #         self.insert_video(file_meta)
-            #
-            #     # OR
-            #
-            #     # Insert to Table (audio)
-            #     if file_meta['v_stream'] is False and file_meta['a_stream'] is True:
-            #         self.insert_audio(file_meta)
-            #
-            # # Insert to Table ('other', ie: Everything (all files) )
-            # self.insert_other(file_meta)
-            #
-            # # Write everything to database
-            # self.session.commit()
-
         except Exception as e:
             logger.warning('admin_message', 'Could not change current working directory. Is path a file or exist?',
                            path=path, exception=e)
 
+    # Fast Method that returns the type of file (audio/video/image etc).
+    @staticmethod
+    def get_mtype(path):
+        # Validate if path is file.
+        if os.path.isfile(path):
+            _types = mimetypes.guess_type(path)  # Guess the file type.
+            return _types  # Returns tuple (type, extension).
+
+        else:
+            logger.error("admin_message", msg="Cannot get mtype: path is not valid")
+
     @staticmethod
     def creation_date(path_to_file):
         """
-        Try to get the date that a file was created, falling back to when it was
-        last modified if that isn't possible.
-        See http://stackoverflow.com/a/39501288/1709587 for explanation.
+        Try to get the date when a file was created, falling back to when it was
+        last modified if that unavailable.
+        http://stackoverflow.com/a/39501288/1709587 for further details.
         """
 
-        # TODO: Test this code block on other platforms (OS X/Linux)
+        # TODO: Test this code on other platforms (OS X/Linux)
 
         if platform.system() == 'Windows':
             date = datetime.fromtimestamp(os.path.getctime(path_to_file)).strftime('%Y-%m-%d')

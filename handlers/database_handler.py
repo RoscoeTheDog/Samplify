@@ -16,6 +16,7 @@ import multiprocessing
 # call our logger locally
 logger = structlog.get_logger('samplify.log')
 
+
 class NewHandler:
 
     def __init__(self, mp):
@@ -32,13 +33,10 @@ class NewHandler:
     #         if not self.file_queue.full():
     #             pass
 
-
-
-
-
     def return_current_session(self):
         return self.session
 
+    # TODO: cleanup deprecated method
     # Insert temporary data for testing behavior
     def insert_template(self):
 
@@ -312,10 +310,7 @@ class NewHandler:
             tasker.start()
             self.thread_list.append(tasker)
 
-        create_thread();
-
-
-
+        create_thread()
 
     def samplify(self):
 
@@ -1541,7 +1536,7 @@ class NewHandler:
             if settings.monitor_all_inputs is False:
                 logger.info('user_message', msg="Monitor Inputs: None")
 
-    def start_input_cache(self):
+    def initialize_input_cache(self):
 
         # to avoid duplicates, completely rewrite cache each time
         settings.input_cache = []
@@ -1556,7 +1551,7 @@ class NewHandler:
                     # then add
                     settings.input_cache.append(r)
 
-    def start_output_cache(self):
+    def initialize_output_cache(self):
 
         # to avoid duplicates, completely rewrite cache each time
         settings.output_cache = []

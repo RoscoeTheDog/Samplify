@@ -6,6 +6,8 @@
 Helpers that make development with ``structlog`` more pleasant.
 """
 
+# Custom iteration of ConsoleRenderer factored from the Structlog Library.
+
 from __future__ import absolute_import, division, print_function
 
 from six import StringIO

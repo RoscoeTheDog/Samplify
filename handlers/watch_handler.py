@@ -1,22 +1,33 @@
 from watchdog.observers import Observer
 from watchdog import events
-import os
 from multiprocessing import Queue
+import os
 import inspect
 import structlog
 
-from app import settings
 from database.database_setup import InputDirectories, InputMonitoringExclusions
 
-# call our logger locally
+"""
+    Watchdog handler module. Responsible for monitoring directories for changes.
+    
+    See https://pythonhosted.org/watchdog/ for more information.
+    
+"""
+
+# get the logger for local use
 logger = structlog.get_logger('samplify.log')
 
-
+# create a new queue
 signal_queue = Queue()
 
+# watchdog will only recursively track files, not folders.
+# We use a 'cache' list to keep track of changes within the directory tree to circumvent this.
+input_cache = []
+output_cache = []
 
-# Manages watchdog observer threads.
-class NewHandler():
+
+# Manages watchdog observers and consumers.
+class NewHandler:
 
     def __init__(self, db_manager):
         self.db_manager = db_manager  # session object unpicklable
@@ -33,7 +44,6 @@ class NewHandler():
     #     return state
 
     def schedule_all_watches(self):
-
         # Filter out duplicate children paths to prevent re-occurring tasks from numerous threads
         parent_list = self.db_manager.filter_children_directories()
 
@@ -46,8 +56,7 @@ class NewHandler():
                     self.schedule_watch(folder_entry.folder_path)
 
     def schedule_watch(self, path):
-
-        # try to create a watch on the parent directory.
+        # create a watch on the parent directory.
         try:
             observer = Observer()
             observer.schedule(InputMonitoring(), path=path, recursive=True)
@@ -76,6 +85,7 @@ class NewHandler():
 
             # check drop events
             for directory in drop_list:
+
                 if directory not in path:
 
                     if signal.event_type == 'created':
@@ -84,15 +94,13 @@ class NewHandler():
                             logger.info(f'admin_message', msg='Folder created', path=path)
 
                             # update our cache file-tree with the item
-                            settings.input_cache.append(path)
+                            input_cache.append(path)
 
                         elif os.path.isfile(path):
                             logger.info(f'admin_message', msg='File created', path=path)
                             self.db_manager.decode_file(path)
 
-                            # metadata = av_handler.decode_file(path)
-                            # self.db_manager.sort_to_table(metadata)
-
+                    # placeholders
                     if signal.event_type == 'modified':
                         pass
 
@@ -104,12 +112,12 @@ class NewHandler():
                         # Note: Check input_cache (list of directories) if path exists.
                         #       This checks to see if path is a folder
 
-                        if path in settings.input_cache:
+                        if path in input_cache:
                             logger.info(f'admin_message', msg='Folder deleted', path=path)
                             self.db_manager.remove_input_folder(path)
 
                             # update the list-cache by the one item that was changed.
-                            settings.input_cache.remove(path)
+                            input_cache.remove(path)
 
                         else:
                             try:
@@ -203,7 +211,7 @@ class InputMonitoring(events.PatternMatchingEventHandler):
         #     logger.info(f'admin_message', msg='Folder created', path=path)
         #
         #     # update our cache by ONE item!
-        #     settings.input_cache.append(path)
+        #     input_cache.append(path)
         #
         #
         #
@@ -255,12 +263,12 @@ class InputMonitoring(events.PatternMatchingEventHandler):
         # # if os.path.isdir(path):
         # # database_handler.remove_input_folder(path)
         #
-        # if path in settings.input_cache:
+        # if path in input_cache:
         #     logger.info(f'admin_message', msg='File deleted', path=path)
         #     self.db_handler.remove_input_folder(path)
         #
         #     # update our cache by ONE item!
-        #     settings.input_cache.remove(path)
+        #     input_cache.remove(path)
         #     logger.info(f"Event: File removed from input cache {path}")
         #
         # # elif os.path.isfile(path):
@@ -308,7 +316,7 @@ class InputMonitoring(events.PatternMatchingEventHandler):
 #             database_handler.insert_output_folder(path)
 #
 #             # update our cache by ONE item!
-#             settings.output_cache.append(path)
+#             output_cache.append(path)
 #             logger.info(f"Event: Folder added to output cache {path}")
 #
 #     def on_deleted(self, event):
@@ -316,12 +324,12 @@ class InputMonitoring(events.PatternMatchingEventHandler):
 #         # fix path formatting (backslashes)
 #         path = os.path.abspath(event.src_path)
 #
-#         if path in settings.output_cache:
+#         if path in output_cache:
 #             logger.info(f"Event: Folder {event.event_type} {path} True")
 #             database_handler.remove_output_folder(path)
 #
 #             # update our cache by ONE item!
-#             settings.output_cache.remove(path)
+#             output_cache.remove(path)
 #             logger.info(f"Event: Folder removed from output cache {path}")
 #
 #

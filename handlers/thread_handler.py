@@ -28,10 +28,10 @@ class NewHandler:
 
             if self.xml_manager.compute_rule(file, directory, self.xml_manager.rule_has_expression):
                 file_union['output_paths'] = directory.get('path')
-            if self.xml_manager.compute_rule(file, directory, self.xml_manager.rule_has_extension):
+            if self.xml_manager.compute_rule(file, directory, self.xml_manager.has_extensions):
                 file_union['output_paths'] = directory.get('path')
             #TODO: CHECK DATETIME
-            if self.xml_manager.compute_rule(file, directory, self.xml_manager.compare_datetime):
+            if self.xml_manager.compute_rule(file, directory, self.xml_manager.between_datetime):
                 file_union['output_paths'] = directory.get('path')
             if self.xml_manager.compute_rule(file, directory, self.xml_manager.rule_has_video):
                 file_union['output_paths'] = directory.get('path')

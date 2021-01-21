@@ -5,14 +5,15 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 from datetime import datetime
+import os
 
-import app.settings
+import app.environment
 
 # Base for Table/class inheritance.
 Base = declarative_base()
 
 # Engine for connecting to db.
-engine = create_engine(app.settings.database_path)
+engine = create_engine(app.environment.database_path)
 
 
 def drop_tables():
@@ -25,17 +26,19 @@ def create_tables():
     Base.metadata.create_all(engine)
 
 
-# Create our session (Connection to db).
+# instantiate a session (and connect to db).
 session = sqlalchemy.orm.sessionmaker(bind=engine)
 
+# initialize the session
 session = session()
 
-# event override for sqlite default setting where 'like' comparison operator is non-case sensitive .
+# event overload for sqlite default where 'like' comparison operator is non-case sensitive (enforce case-sensitivity).
 @event.listens_for(Engine, "connect")
 def _set_sqlite_case_insensitive_pragma(dbapi_con, connection_record):
     cursor = dbapi_con.cursor()
     cursor.execute("PRAGMA case_sensitive_like=ON;")
     cursor.close()
+
 
 class OutputDirectories(Base):
     __tablename__ = 'outputDirectories'
@@ -76,7 +79,6 @@ class UnsupportedExtensions(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-
 
 
 class SearchTerms(Base):
@@ -196,11 +198,13 @@ class InputDirectories(Base):
     folder_path = Column(String)
     monitor = Column(Boolean, default=True)
 
+
 class InputMonitoringExclusions(Base):
     __tablename__ = 'inputMonitoringExclusions'
 
     id = Column(Integer, primary_key=True)
     folder_path = Column(String)
+
 
 class SearchByDate(Base):
     __tablename__ = 'searchByDate'

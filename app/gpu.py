@@ -1,7 +1,7 @@
 import subprocess
 import re
 import platform
-from app import settings
+from app import environment
 import structlog
 
 
@@ -9,7 +9,7 @@ import structlog
 logger = structlog.get_logger('samplify.log')
 
 
-def hardware():
+def get_gpu():
 
     # TODO: test code on multiple platforms
 
@@ -34,10 +34,10 @@ def hardware():
         pass
 
     logger.info(f'user_message', msg=f'GPU type identified as {v_name}')
-    settings.gpu_vendor = v_name
+    environment.gpu_vendor = v_name
 
-    if settings.gpu_vendor.lower() == 'nvidia' or 'amd':
+    if environment.gpu_vendor.lower() == 'nvidia' or 'amd':
         logger.info(f'user_message', msg=f'Hardware acceleration enabled')
 
-    elif settings.gpu_vendor.lower() == 'intel':
+    elif environment.gpu_vendor.lower() == 'intel':
         logger.warning(f'user_message', msg=f'Hardware acceleration is not supported on this gpu')
