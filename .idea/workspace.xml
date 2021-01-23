@@ -2,24 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7a2533a1-0f44-4d17-9e98-388c1972b0ad" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/__main__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/gpu.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/gpu.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/logging/CustomConsoleRenderer.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/logging/custom_console_renderer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/system_platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/platform.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/database/database.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/database_setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/database_setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/av_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/av_handler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/database_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/database_handler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/file_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/file_handler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handlers/filewatch_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/watch_handler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/image_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/image_handler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/rules.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/rules.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handlers/template.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/thread_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/thread_handler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/xml_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/xml_handler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/template.xml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -344,7 +337,7 @@
       <workItem from="1579516135898" duration="5000" />
       <workItem from="1580361949736" duration="49179000" />
       <workItem from="1606703997549" duration="1797000" />
-      <workItem from="1611015391773" duration="21291000" />
+      <workItem from="1611015391773" duration="37063000" />
     </task>
     <servers />
   </component>
@@ -426,13 +419,19 @@
         </breakpoint>
       </default-breakpoints>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="dict_list" />
+        <watch expression="dict_list" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Samplify$returning_a_dict_from_Class.coverage" NAME="returning a dict from Class Coverage Results" MODIFIED="1580801849796" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/Samplify$XML_example.coverage" NAME="XML example Coverage Results" MODIFIED="1576753802868" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/Samplify$custom_processors.coverage" NAME="custom_processors Coverage Results" MODIFIED="1573528425180" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
     <SUITE FILE_PATH="coverage/Samplify$xml_handler.coverage" NAME="xml_handler Coverage Results" MODIFIED="1577678551781" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/handlers" />
-    <SUITE FILE_PATH="coverage/Samplify$__main__.coverage" NAME="__main__ Coverage Results" MODIFIED="1611219266233" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Samplify$__main__.coverage" NAME="__main__ Coverage Results" MODIFIED="1611398755000" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Samplify$process_handler.coverage" NAME="process_handler Coverage Results" MODIFIED="1573949993756" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/handlers" />
   </component>
   <component name="editorHistoryManager">

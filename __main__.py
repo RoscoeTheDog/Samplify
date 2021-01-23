@@ -185,7 +185,7 @@ class Application:
         root_logger.setLevel(logging.DEBUG)
 
         # set log level for stdout/stderr stream
-        stream_handler.setLevel(logging.DEBUG)
+        stream_handler.setLevel(logging.INFO)
 
         # wrap the standard logger from python lib for structlog lib use.
         structlog.wrap_logger(
@@ -225,38 +225,170 @@ class Application:
                     if directory.get('comparison') == 'AND':
 
                         """
-                            we assume that if the XML template has an ruleset option populated, then it needs to be computed
-                            otherwise, we can ignore that parameter entirely.
+                            Algorithm Notes:
+                        
+                            we assume that if the XML template only contains a rule if it needs to be computed for the output
+                            otherwise, we can ignore adding that parameter to the operations list entirely.
                             
-                            if an output parameter that is not specified is needed for output conversion, it will fallback to the input type.
+                            if an output parameter is not specified and is still needed for any conversion output, 
+                            it will fallback to the input files parameters.
                         """
-
-                        if file.file_path == 'C:\\Users\\Aspen\\Documents\\Samplify\\Input\\4-HiHat\\Basics\\BT-Hat Jx Kick.wav':
-                            print()
-                            pass
 
                         while True:  # Do not check for empty dict entry value! enforce all method calls
 
                             if directory.get('expression'):
-                                temp = rules.has_expression(file, directory)
+                                temp = rules.contains_expression(file, directory)
                                 if not temp:
                                     break
                                 else:
                                     entry.update(temp)
 
                             if directory.get('extensions'):
-                                temp = rules.has_extensions(file, directory)
+                                temp = rules.contains_extensions(file, directory)
                                 if not temp:
                                     break
                                 else:
-                                    entry.update()
+                                    entry.update(temp)
 
                             if directory.get('datetimeStart'):
                                 temp = rules.between_datetime(file, directory)
                                 if not temp:
                                     break
                                 else:
-                                    entry.update()
+                                    entry.update(temp)
+
+                            if directory.get('containsAudio'):
+                                temp = rules.contains_audio(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
+
+                            if directory.get('containsVideo'):
+                                temp = rules.contains_video(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
+
+                            if directory.get('containsImage'):
+                                temp = rules.contains_image(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
+
+                            if directory.get('audioSampleRate'):
+                                temp = rules.set_audio_sample_rate(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
+
+                            if directory.get('audioFormat'):
+                                temp = rules.set_audio_format(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
+
+                            if directory.get('audioBitrate'):
+                                temp = rules.set_audio_bit_rate(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
+
+                            if directory.get('audioChannels'):
+                                temp = rules.set_audio_channels(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
+
+                            if directory.get('audioNormalize'):
+                                temp = rules.set_audio_normalize(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
+
+                            if directory.get('audioBitDepth'):
+                                temp = rules.set_audio_bit_depth(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
+
+                            if directory.get('videoOutputContainer'):
+                                temp = rules.set_video_output_container(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
+
+                            if directory.get('videoHeight'):
+                                temp = rules.set_video_height(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
+
+                            if directory.get('videoWidth'):
+                                temp = rules.set_video_width(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
+
+                            if directory.get('videoDuration'):
+                                temp = rules.set_video_duration(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
+
+                            if directory.get('videoFrameRate'):
+                                temp = rules.set_video_frame_rate(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
+
+                            if directory.get('videoPixFormat'):
+                                temp = rules.set_video_frame_rate(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
+
+                            if directory.get('imageFormat'):
+                                temp = rules.set_image_format(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
+
+                            if directory.get('imageHeight'):
+                                temp = rules.set_image_height(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
+
+                            if directory.get('imageWidth'):
+                                temp = rules.set_image_width(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
+
+                            if directory.get('imageMode'):
+                                temp = rules.set_image_mode(file, directory)
+                                if not temp:
+                                    break
+                                else:
+                                    entry.update(temp)
 
                             # when done checking conditions, add the entry to the operations dictionary if not null
                             if entry:
@@ -267,56 +399,78 @@ class Application:
                     if directory.get('comparison') == 'OR':
 
                         if directory.get('expression'):
-                            entry.update(rules.has_expression(file, directory))
+                            entry.update(rules.contains_expression(file, directory))
 
                         if directory.get('extensions'):
-                            entry.update(rules.has_extensions(file, directory))
+                            entry.update(rules.contains_extensions(file, directory))
 
                         if directory.get('datetimeStart'):
                             entry.update(rules.between_datetime(file, directory))
+
+                        if directory.get('containsAudio'):
+                            entry.update(rules.contains_audio(file, directory))
+
+                        if directory.get('containsVideo'):
+                            entry.update(rules.contains_video(file, directory))
+
+                        if directory.get('containsImage'):
+                            entry.update(rules.contains_image(file, directory))
+
+                        if directory.get('audioSampleRate'):
+                            entry.update(rules.set_audio_sample_rate(file, directory))
+
+                        if directory.get('audioFormat'):
+                            entry.update(rules.set_audio_format(file, directory))
+
+                        if directory.get('audioBitRate'):
+                            entry.update(rules.set_audio_bit_depth(file, directory))
+
+                        if directory.get('audioChannels'):
+                            entry.update(rules.set_audio_channels(file, directory))
+
+                        if directory.get('audioNormalize'):
+                            entry.update(rules.set_audio_normalize(file, directory))
+
+                        if directory.get('audioBitDepth'):
+                            entry.update(rules.set_audio_bit_depth(file, directory))
+
+                        if directory.get('videoOutputContainer'):
+                            entry.update(rules.set_video_output_container(file, directory))
+
+                        if directory.get('videoHeight'):
+                            entry.update(rules.set_video_height(file, directory))
+
+                        if directory.get('videoWidth'):
+                            entry.update(rules.set_video_width(file, directory))
+
+                        if directory.get('videoDuration'):
+                            entry.update(rules.set_video_duration(file, directory))
+
+                        if directory.get('videoFrameRate'):
+                            entry.update(rules.set_video_frame_rate(file, directory))
+
+                        if directory.get('videoPixFormat'):
+                            entry.update(rules.set_video_pix_format(file, directory))
+
+                        if directory.get('imageFormat'):
+                            entry.update(rules.set_image_format(file, directory))
+
+                        if directory.get('imageHeight'):
+                            entry.update(rules.set_image_height(file, directory))
+
+                        if directory.get('imageWidth'):
+                            entry.update(rules.set_image_width(file, directory))
+
+                        if directory.get('imageMode'):
+                            entry.update(rules.set_image_mode(file, directory))
 
                         # when done checking conditions, add the entry to the operations dictionary if not null
                         if entry:
                             operations.append(entry)
 
-
-                # # Init Class Rule container.
-                # compute_rules = rules.ComputeRules(file, directory)
-                # # Get all attributes.
-                # attributes = (getattr(compute_rules, name) for name in dir(compute_rules) if not name.startswith('__'))
-                # # Filter out any private methods.
-                # class_methods = filter(inspect.ismethod, attributes)
-                # # TODO: TRY ASYNCING EACH INDIVIDUAL RULE.
-                # # Run all methods in ComputerRules class.
-                # for rule in class_methods:
-                #     rule()
-                # # Cleanup instance attributes before reading dictionary variables.
-                # compute_rules.__delattr__('file')
-                # compute_rules.__delattr__('directory')
-                # compute_rules.__delattr__('rules')
-                #
-                # task = asyncio.create_task(compute_rules.call_everything())
-                # # Wait for task to finish before accessing memory (master scheduler)
-                # asyncio.run(task)
-                #
-                # if len(vars(compute_rules).get('output_directories')) > 0:
-                #     operations[file.file_name] = vars(compute_rules)
-                # print(vars(compute_rules))
-
         print(pprint.pformat(operations, indent=4, width=200))
 
-        # for function in dir(rules):
-        #     attributes = getattr(rules, function)
-        #     rules_callable = filter(inspect.isfunction(function), attributes)
-        #     for rule in rules_callable:
-        #         self.file_operations[file.file_name] = asyncio.run(gov_rule(file, directory))
-
-        # self.thread_manager.spawn_new_thread(file, self.file_operations)
-        # for rule in rules.Rules.return_all_methods():
-
-        self.db_manager.samplify()
-        # self.db_manager.get_files_threaded()
-        # self.db_manager.get_audio_threaded()
+        # self.db_manager.samplify()
 
 
 def main():

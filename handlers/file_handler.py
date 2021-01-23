@@ -105,7 +105,7 @@ class NewHandler:
                     'v_duration': '',
                     'nb_frames': '',
                     'v_frame_rate': '',
-                    'v_pix_format': '',
+                    'v_pix_fmt': '',
 
                     'a_stream': False,
                     'a_sample_rate': '',
@@ -120,11 +120,11 @@ class NewHandler:
                     'i_frames': '',
                     'i_width': '',
                     'i_height': '',
-                    'i_alpha': '',
+                    'i_alpha': False,
                     'i_mode': '',
                 }
 
-            # Enforce check that type is not Null from mtypes.
+            # check that type is not Null from mtypes.
             if not type is None:
 
                 # IMAGES

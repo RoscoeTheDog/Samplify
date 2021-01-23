@@ -32,6 +32,7 @@ session = sqlalchemy.orm.sessionmaker(bind=engine)
 # initialize the session
 session = session()
 
+
 # event overload for sqlite default where 'like' comparison operator is non-case sensitive (enforce case-sensitivity).
 @event.listens_for(Engine, "connect")
 def _set_sqlite_case_insensitive_pragma(dbapi_con, connection_record):
@@ -182,7 +183,7 @@ class FilesImage(Base):
     i_width = Column(String)
     i_height = Column(String)
     i_alpha = Column(Boolean)
-    i_mode =  Column(String)
+    i_mode = Column(String)
 
     # frame_rate = Column(Integer)
     # bit_depth = Column(String)

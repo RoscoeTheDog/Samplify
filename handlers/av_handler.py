@@ -16,6 +16,7 @@ from handlers import image_handler, file_handler
 logger = structlog.get_logger('samplify.log')
 number = 0
 
+
 # deprecated.
 def decode_file(path: str):
 
@@ -91,13 +92,13 @@ def pyav_decode(path: str) -> dict:
             for ch in channels:
                 counter += 1
             if not counter == 0:
-                file_meta['channels'] = counter
-                file_meta['channel_layout'] = frame.layout.name
+                file_meta['a_channels'] = str(counter)
+                file_meta['a_channel_layout'] = str(frame.layout.name)
             break  # Do not decode all frames for audio channel info
 
         # decode file's bit-rate
         if not int(container.bit_rate / 1000) == 0:
-            file_meta['a_bit_rate'] = container.bit_rate / 1000
+            file_meta['a_bit_rate'] = str(container.bit_rate / 1000)
 
         # decode file's streams
         for s in container.streams:
@@ -124,7 +125,7 @@ def pyav_decode(path: str) -> dict:
                     - FFprobe is an alternative whenever v_duration is not returned.
                 """
 
-                file_meta['v_duration'] = s.metadata.get('DURATION', '')
+                file_meta['v_duration'] = str(s.metadata.get('DURATION', ''))
 
                 if file_meta['v_duration'] == '':
                     stdout, stderr = ffprobe(path)
@@ -134,20 +135,20 @@ def pyav_decode(path: str) -> dict:
 
                 # decode video container's resolution
                 if not s.width == 0:
-                    file_meta['v_width'] = s.width
+                    file_meta['v_width'] = str(s.width)
                 if not s.height == 0:
-                    file_meta['v_height'] = s.height
+                    file_meta['v_height'] = str(s.height)
 
                 # decode actual encoded resolution of video
                 if not s.coded_width == 0:
-                    file_meta['v_buffer_width'] = s.coded_width
+                    file_meta['v_buffer_width'] = str(s.coded_width)
                 if not s.coded_height == 0:
-                    file_meta['v_buffer_height'] = s.coded_height
+                    file_meta['v_buffer_height'] = str(s.coded_height)
 
-                file_meta['nb_frames'] = s.frames
+                file_meta['nb_frames'] = str(s.frames)
 
                 if s.frames == 0:
-                    file_meta['nb_frames'] = s.metadata.get('NUMBER_OF_FRAMES', '')
+                    file_meta['nb_frames'] = str(s.metadata.get('NUMBER_OF_FRAMES', ''))
 
                 # decode frame-rate (returned in fraction format)
                 if not int(s.rate) == 0:
@@ -155,7 +156,7 @@ def pyav_decode(path: str) -> dict:
 
                 # decode video format
                 if s.pix_fmt:
-                    file_meta['v_pix_fmt'] = s.pix_fmt
+                    file_meta['v_pix_fmt'] = str(s.pix_fmt)
 
             # AUDIO STREAMS
             elif s.type == 'audio':
@@ -163,17 +164,18 @@ def pyav_decode(path: str) -> dict:
 
                 # decode sample format
                 if s.format.name:
-                    file_meta['a_sample_fmt'] = s.format.name
+                    file_meta['a_sample_fmt'] = str(s.format.name)
 
                 # decode sample rate
                 if not int(s.sample_rate) == 0:
-                    file_meta['a_sample_rate'] = s.sample_rate
+                    file_meta['a_sample_rate'] = str(s.sample_rate)
 
                 # decode bit depth (note: 24 bit will show as 32 -- check sample_fmt for pcm_s24le instead)
                 if not int(s.format.bits) == 0:
-                    file_meta['a_bit_depth'] = s.format.bits
+                    file_meta['a_bit_depth'] = str(s.format.bits)
 
-        # check dict keys for missing entries or 0s -- minimize decoding false positives into database
+        # check dict keys for missing crucial metadata with values of 0
+        # this minimizes false positives into database
         file_meta = validate_keys(file_meta)
 
         logger.info('admin_message', msg='Decode succeeded with PyAV')
@@ -502,6 +504,7 @@ def parse_ffprobe(stdout, stderr):
 
         'succeeded': False,
 
+        # Note: Non-PCM codecs do not strictly have a 'bit-depth' so FFProbe cannot report this
         'a_bit_depth': '',  # have this declared until we correctly parse bits_per_sample
     }
 
@@ -523,10 +526,10 @@ def parse_ffprobe(stdout, stderr):
                         break
 
                     if key == 'duration':
-                        file_meta['v_duration'] = value
+                        file_meta['v_duration'] = str(value)
 
                     if key == 'bit_rate':
-                        file_meta['a_bit_rate'] = value
+                        file_meta['a_bit_rate'] = str(value)
 
             else:
                 # switches that avoid assigning wrong values to dict during multiple iterations
@@ -553,11 +556,11 @@ def parse_ffprobe(stdout, stderr):
 
                             if key == 'width':
                                 if not int(value) == 0:
-                                    file_meta['v_width'] = value
+                                    file_meta['v_width'] = str(value)
 
                             if key == 'height':
                                 if not int(value) == 0:
-                                    file_meta['v_height'] = value
+                                    file_meta['v_height'] = str(value)
 
                             if key == 'avg_frame_rate':
                                 # convert string then divide
@@ -567,40 +570,40 @@ def parse_ffprobe(stdout, stderr):
                                     value = float(int(num)/int(den))
 
                                     if not int(value) == 0:
-                                        file_meta['v_frame_rate'] = value
+                                        file_meta['v_frame_rate'] = str(value)
 
                             if key == 'pix_fmt':
-                                file_meta['v_pix_fmt'] = value
+                                file_meta['v_pix_fmt'] = str(value)
 
                             # two methods of finding frame count:
                             if key == 'nb_frames':
                                 if not int(value) == 0:
-                                    file_meta['nb_frames'] = value
+                                    file_meta['nb_frames'] = str(value)
 
                             if key == 'tags':
                                 for k, v in value.items():
                                     if k == 'NUMBER_OF_FRAMES':
-                                        file_meta['nb_frames'] = v
+                                        file_meta['nb_frames'] = str(v)
 
                         if is_audio is True:
 
                             if key == 'sample_rate':
                                 if not int(value) == 0:
-                                    file_meta['a_sample_rate'] = value
+                                    file_meta['a_sample_rate'] = str(value)
 
                             if key == 'sample_fmt':
-                                file_meta['a_sample_fmt'] = value
+                                file_meta['a_sample_fmt'] = str(value)
 
                             if key == 'bit_rate':
                                 if not int(value) == 0:
-                                    file_meta['a_bit_rate'] = value
+                                    file_meta['bit_rate'] = str(value)
 
                             if key == 'channels':
                                 if not int(value) == 0:
-                                    file_meta['channels'] = value
+                                    file_meta['a_channels'] = str(value)
 
                             if key == 'channel_layout':
-                                file_meta['channel_layout'] = value
+                                file_meta['a_channel_layout'] = str(value)
 
     except Exception as e:
         logger.warning('admin_message', msg='Could not Parse FFprobe data', exc_info=e)
@@ -633,7 +636,7 @@ def validate_keys(file_meta: dict):
 
     # see if common keys are not Null to validate
     if settings.validate_audio is True:
-        check_keys = ['a_sample_rate', 'a_sample_fmt', 'channels', 'channel_layout']
+        check_keys = ['a_sample_rate', 'a_sample_fmt', 'a_channels', 'a_channel_layout']
 
         for key in check_keys:
             if not key in file_meta:

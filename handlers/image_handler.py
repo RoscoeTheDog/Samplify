@@ -1,9 +1,7 @@
 from PIL import Image
 import structlog
-import logging
 
-
-logging.Logger.manager.loggerDict[__name__] = structlog.get_logger('samplify.log')
+# Note: The Image library will attempt to send some debug info the log occasionally. Set the logger config accordingly.
 
 # # call our logger locally
 logger = structlog.get_logger('samplify.log')
@@ -19,7 +17,7 @@ def decode_image(input):
         'i_width': '',
         'i_height': '',
         'i_frames': '',
-        'alpha_channel': False,
+        'i_alpha': False,
 
         'succeeded': False,
     }
@@ -28,18 +26,19 @@ def decode_image(input):
         with Image.open(input) as original:
 
             meta_dict['i_stream'] = True
-            meta_dict['i_fmt'] = original.format
+            meta_dict['i_fmt'] = str(original.format)
 
             width, height = original.size
-            meta_dict['i_width'] = width
-            meta_dict['i_height'] = height
-            meta_dict['i_mode'] = original.mode
+            meta_dict['i_width'] = str(width)
+            meta_dict['i_height'] = str(height)
+            meta_dict['i_mode'] = str(original.mode)
 
             try:
-                meta_dict['i_alpha'] = original.getchannel("A")
+                if original.getchannel("A"):
+                    meta_dict['i_alpha'] = True
             except Exception as e:
                 # If failed, we know it has no alpha channel.
-                meta_dict['i_alpha'] = '0'
+                meta_dict['i_alpha'] = False
 
             # Determine the number of frames for the file.
             nb_frames = 0

@@ -1386,7 +1386,7 @@ class NewHandler:
             v_duration=metadata['v_duration'],
             nb_frames=metadata['nb_frames'],
             v_frame_rate=metadata['v_frame_rate'],
-            v_pix_format=metadata['v_pix_format'],
+            v_pix_format=metadata['v_pix_fmt'],
 
             a_stream=metadata['a_stream'],
             a_sample_rate=metadata['a_sample_rate'],
@@ -1419,7 +1419,7 @@ class NewHandler:
             i_width=metadata['i_width'],
             i_height=metadata['i_height'],
             i_frames=metadata['nb_frames'],
-            i_alpha=metadata['alpha_channel'],
+            i_alpha=metadata['i_alpha'],
             i_mode=metadata['i_mode']
         )
         self.session.add(entry)
@@ -1439,8 +1439,8 @@ class NewHandler:
             a_bit_depth=metadata['a_bit_depth'],
             a_sample_fmt=metadata['a_sample_fmt'],
             a_bit_rate=metadata['a_bit_rate'],
-            a_channels=metadata['channels'],
-            a_channel_layout=metadata['channel_layout']
+            a_channels=metadata['a_channels'],
+            a_channel_layout=metadata['a_channel_layout']
         )
         self.session.add(entry)
 
@@ -1456,14 +1456,13 @@ class NewHandler:
             v_width=metadata['v_width'],
             v_height=metadata['v_height'],
             v_duration=metadata['v_duration'],
-            # nb_frames=metadata['nb_frames'],
+            nb_frames=metadata['nb_frames'],
             v_frame_rate=metadata['v_frame_rate'],
             v_pix_format=metadata['v_pix_fmt'],
         )
         self.session.add(entry)
 
-        # then check if audio exists and update entry
-        # - avoids exceptions for files with video only
+        # then update the entry if audio exists as well
         if metadata['a_stream'] is True:
             self.session.query(dbs.FilesVideo). \
                 filter(dbs.FilesVideo.file_path == metadata['file_path']). \
@@ -1474,8 +1473,8 @@ class NewHandler:
                     'a_bit_depth': metadata['a_bit_depth'],
                     'a_sample_fmt': metadata['a_sample_fmt'],
                     # 'a_bit_rate': metadata['a_bit_rate'],
-                    'a_channels': metadata['channels'],
-                    'a_channel_layout': metadata['channel_layout']
+                    'a_channels': metadata['a_channels'],
+                    'a_channel_layout': metadata['a_channel_layout']
                 }
             )
 

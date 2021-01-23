@@ -27,18 +27,29 @@ def create_default_template():
     name.text = 'defaultTemplate'
 
     # TODO: Add Input Preferences (XML)
-    # ET.SubElement(libraries, 'directory').set('path', 'D:/MOVIES & SHOWS')
+    # ET.SubElement(libraries, 'directory').set('path', 'H:\\Interstellar (2014) (2014) [1080p]')
     ET.SubElement(libraries, 'directory').set('path', app.environment.user_environment_input)
     # ET.SubElement(libraries, 'directory').set('path', 'F:\Music\Music')
+
+    # video filter test
+    entry = ET.SubElement(outputDirectories, 'directory')
+    entry.set('path', app.environment.user_environment_output + '\\Videos')
+    rules = ET.SubElement(entry, 'rules')
+    governor = ET.SubElement(entry, 'governor')
+    ET.SubElement(governor, 'comparison').text = 'AND'
+    ET.SubElement(rules, 'containsVideo').text = 'true'
+    ET.SubElement(rules, 'videoOutputContainer').text = '.mp4'
 
     # images filter test
     entry = ET.SubElement(outputDirectories, 'directory')
     entry.set('path', app.environment.user_environment_output + '\\Images')
     rules = ET.SubElement(entry, 'rules')
     governor = ET.SubElement(entry, 'governor')
-    ET.SubElement(governor, 'comparison').text = 'OR'
-    ET.SubElement(rules, 'datetimeStart').text = '2020-01-01'
-    ET.SubElement(rules, 'datetimeEnd').text = '2020-12-31'
+    ET.SubElement(governor, 'comparison').text = 'AND'
+    # ET.SubElement(rules, 'datetimeStart').text = '2020-01-01'
+    # ET.SubElement(rules, 'datetimeEnd').text = '2020-12-31'
+    # ET.SubElement(rules, 'extensions').text = '.png'
+    # ET.SubElement(rules, 'containsImage').text = 'true'
     # ET.SubElement(rules, 'exportType').text = '.png'
     # ET.SubElement(rules, 'imageFormat').text = 'PNG'
     # ET.SubElement(rules, 'audioFormat').text = 'default'
@@ -54,13 +65,13 @@ def create_default_template():
     rules = ET.SubElement(entry, 'rules')
     governor = ET.SubElement(entry, 'governor')
     ET.SubElement(governor, 'comparison').text = 'AND'
-    ET.SubElement(rules, 'expression').text = 'Kick'
-    ET.SubElement(rules, 'extensions').text = '.wav'
-    # ET.SubElement(rules, 'hasAudio').text = 'True'
+    # ET.SubElement(rules, 'expression').text = 'Kick'
+    # ET.SubElement(rules, 'extensions').text = '.wav'
+    # ET.SubElement(rules, 'containsAudio').text = 'true'
     # ET.SubElement(rules, 'exportType').text = 'default'
     # ET.SubElement(rules, 'audioFormat').text = 'default'
     # ET.SubElement(rules, 'audioSampleRate').text = 'default'
-    # ET.SubElement(rules, 'audioBitRate').text = ''
+    # ET.SubElement(rules, 'audioBitrate').text = ''
     # ET.SubElement(rules, 'audioChannels').text = '1'
     # ET.SubElement(rules, 'audioNormalize').text = 'True'
     # ET.SubElement(rules, 'audioPreserve').text = 'True'
@@ -71,7 +82,7 @@ def create_default_template():
     rules = ET.SubElement(entry, 'rules')
     governor = ET.SubElement(entry, 'governor')
     ET.SubElement(governor, 'comparison').text = 'OR'
-    ET.SubElement(rules, 'extensions').text = '.asd'
+    # ET.SubElement(rules, 'extensions').text = '.asd'
     # ET.SubElement(rules, 'exportType').text = 'default'
     # ET.SubElement(rules, 'audioFormat').text = 'default'
     # ET.SubElement(rules, 'audioSampleRate').text = 'default'
