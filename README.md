@@ -1,11 +1,11 @@
 # Samplify
 "Your sample library made simple."
 
-Samplify is multi-platform compatable software tool aimed to help content creators organize their media libraries in a simple & fully customizable fashion. Users can choose to process media assets to an output library of their choosing through use of a highly customizable XML template. Samplify is written in Python and has quite a few package dependencies. More information on setup and installation of these will be coming soon.
+Samplify is a tool aimed to help content creators organize their media libraries in an easily structured and customizable way through use of templated XML files. Users can choose to process media assets to various output directories by tagging folders with keywords, reg-ex patterns, or media metadata attributes. Samplify monitors specified folders for changes and will process them according to your configurations. FFmpeg is used for most audio/video processing but the PIL library is used for image processing. 
 
-Samplify is optimized for real-time conversion of your libraries so that your output media is automatically updated as your input libraries are expanded or modified using the Watchdog API.
+Samplify is written in Python and has a fair amount of package dependencies. More information on setup and installation of these will be coming soon.
 
-Samplify support multi-threaded processing and uses various frameworks for media conversion such as FFmpeg and Pill. Because of this, it has a wide veriety of file support and encoding/decoding options.
+Samplify supports multi-threaded processing and uses various frameworks for media conversion such as FFmpeg and Pill. Because of this, it has a wide veriety of file support and encoding/decoding options.
 
 **Some features include:**
 
@@ -15,14 +15,14 @@ Samplify support multi-threaded processing and uses various frameworks for media
 
 -Multi-processing support.
 
--GPU-Acceleration (If codec available).
+-GPU-Acceleration (If codec available for filetype).
 
--Regular Expression pattern-finding support for filenames/types.
+-Regular Expression pattern matching for filenames and/or types.
 
 -Wide file support through FFMpeg and other frameworks.
 
--End-User graphical interface (Coming soon).
+-End-User graphical interface (eventually).
 
 **THIS IS A WORK IN PROGRESS**
 
-Development is currently being performed in a windows enviroment. Although project dependencies are supported on other operating systems, I have not yet tested any code on them.
+Development is currently being performed in a windows enviroment. Although project dependencies are supported on other operating systems, I have not yet tested any code on them but the frameworks chosen do support both UNIX and macOS platforms as well. Eventually I will test on those platforms if and when I get down to it
