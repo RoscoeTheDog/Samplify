@@ -10,7 +10,7 @@ Samplify supports multi-threaded processing and uses various frameworks for medi
 
 -Real-time input file detection.
 
--Independant customization options for output directory trees.
+-Independant customization for input and output directory models.
 
 -Multi-processing support.
 
