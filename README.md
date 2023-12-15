@@ -1,4 +1,4 @@
-# Samplify
+# Samplify 
 
 Samplify is a tool aimed to help content creators organize their media libraries in an easily structured and customizable way through use of templated models. Users can choose to process different types of media to various output locations by tagging folders with keywords, reg-ex patterns, or media metadata attributes. Samplify monitors specified folders for changes and will process them according to your configurations. FFmpeg is used for most audio/video processing but the PIL library is used for image processing. 
 
