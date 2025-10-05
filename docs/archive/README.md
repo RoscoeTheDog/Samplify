@@ -96,6 +96,46 @@ These files are preserved for historical reference only. All active development 
 
 ---
 
+### 6. `DEVELOPMENT_SETUP.md` (13KB)
+**Superseded by**: Story 1.0 acceptance criteria
+
+**Why archived**: Redundant - setup instructions embedded in Story 1.0
+- Virtual environment creation steps
+- requirements.txt installation
+- Pre-commit hooks setup
+- All details in Story 1.0 acceptance criteria
+
+**Current reference**: `docs/stories/story-10-repository-environment-foundation.md`
+
+---
+
+### 7. `GIT_WORKFLOW.md` (20KB)
+**Superseded by**: PRD Development Workflow Requirements (DW1-DW5)
+
+**Why archived**: Redundant - git workflow specified in PRD
+- Branch strategy (DW1)
+- Feature sequencing (DW2)
+- Merge protocol (DW3)
+- Development propagation (DW4)
+- Dependency sequencing (DW5)
+
+**Current reference**: `docs/prd/requirements.md` (see DW1-DW5 section)
+
+---
+
+### 8. `IMPLEMENTATION_CHECKLISTS.md` (16KB)
+**Superseded by**: Story-level Definition of Done
+
+**Why archived**: Redundant - each story has complete DoD checklist
+- Acceptance criteria per story
+- Technical notes per story
+- Definition of Done per story
+- No need for separate checklist document
+
+**Current reference**: Each story file has complete checklist in DoD section
+
+---
+
 ## Archive Policy
 
 These files are retained for:

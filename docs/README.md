@@ -60,9 +60,11 @@ Individual story files for Epic 1 (Django Web UI Modernization):
 | Document | Purpose | Size |
 |----------|---------|------|
 | [`brief.md`](brief.md) | Project overview, problem statement, target users | 32KB |
-| [`DEVELOPMENT_SETUP.md`](DEVELOPMENT_SETUP.md) | Development environment setup instructions | 13KB |
-| [`GIT_WORKFLOW.md`](GIT_WORKFLOW.md) | Git branching strategy and workflow | 20KB |
-| [`IMPLEMENTATION_CHECKLISTS.md`](IMPLEMENTATION_CHECKLISTS.md) | Story-by-story development checklists | 16KB |
+
+**Note**: Setup instructions, git workflow, and implementation checklists are embedded in the PRD and story specifications:
+- **Setup**: See Story 1.0 acceptance criteria
+- **Git Workflow**: See PRD Development Workflow Requirements (DW1-DW5)
+- **Implementation Checklist**: Each story has Definition of Done
 
 ### Dependencies & Configuration
 
@@ -91,27 +93,19 @@ Contains superseded monolithic documentation files:
 
 ### 1. Read Core Documents (in order)
 1. [`brief.md`](brief.md) - Understand the project
-2. [`prd/index.md`](prd/index.md) - Read full requirements
+2. [`prd/index.md`](prd/index.md) - Read full requirements (includes DW1-DW5 git workflow)
 3. [`architecture/index.md`](architecture/index.md) - Understand technical design
 4. [`architecture/coding-standards.md`](architecture/coding-standards.md) - Review CS1-CS13 standards
 5. [`stories/index.md`](stories/index.md) - Review story details
 
-### 2. Set Up Environment
-Follow [`DEVELOPMENT_SETUP.md`](DEVELOPMENT_SETUP.md) for detailed instructions:
-```bash
-# Quick setup
-python3.10 -m venv venv
-source venv/bin/activate  # or venv\Scripts\activate on Windows
-pip install -r requirements.txt
-pip install -r requirements-dev.txt
-```
+### 2. Start with Story 1.0
+Story 1.0 contains **complete setup instructions** in its acceptance criteria:
+- Virtual environment creation
+- requirements.txt installation
+- Pre-commit hooks setup
+- Git workflow configuration
 
-### 3. Review Workflow
-- Git branching: [`GIT_WORKFLOW.md`](GIT_WORKFLOW.md)
-- Implementation checklists: [`IMPLEMENTATION_CHECKLISTS.md`](IMPLEMENTATION_CHECKLISTS.md)
-
-### 4. Start Development
-Begin with Story 1.0 in [`stories/story-10-repository-environment-foundation.md`](stories/story-10-repository-environment-foundation.md)
+Begin here: [`stories/story-10-repository-environment-foundation.md`](stories/story-10-repository-environment-foundation.md)
 
 ---
 
@@ -139,7 +133,7 @@ Begin with Story 1.0 in [`stories/story-10-repository-environment-foundation.md`
 | **Testing Strategy** | `/docs/architecture/testing-strategy.md` |
 | **Tech Stack** | `/docs/architecture/tech-stack.md` |
 | **FFmpeg Integration** | `/docs/architecture/ffmpeg-sources.md` |
-| **Git Workflow** | `/docs/GIT_WORKFLOW.md` |
+| **Git Workflow** | `/docs/prd/requirements.md` (DW1-DW5) |
 
 ### By Development Phase
 
@@ -147,8 +141,7 @@ Begin with Story 1.0 in [`stories/story-10-repository-environment-foundation.md`
 |-------|-----------|
 | **Planning** | `brief.md`, `prd/` directory |
 | **Architecture** | `architecture/` directory |
-| **Story Implementation** | `stories/` directory |
-| **Setup** | `DEVELOPMENT_SETUP.md` |
+| **Story Implementation** | `stories/` directory (each story has setup instructions) |
 | **Testing** | `architecture/testing-strategy.md` |
 
 ---
