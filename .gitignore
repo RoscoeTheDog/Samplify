@@ -1,30 +1,144 @@
-# Python cache
+# ================================================================
+# PYTHON
+# ================================================================
+# Byte-compiled / optimized / DLL files
 *.pyc
+*.pyo
+*.pyd
 __pycache__/
-app/__pycache__/
-database/__pycache__/
-handlers/__pycache__/
+*.py[cod]
+*$py.class
 
-# Logs
-samplify.log
+# C extensions
+*.so
 
-# IDE (exclude all IDE configs except project structure)
-.idea/
-!.idea/vcs.xml
-.idea/workspace.xml
-.vscode/
-*.swp
-*.swo
-*~
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Dependencies
-node_modules/
-
-# Virtual environments
+# ================================================================
+# VIRTUAL ENVIRONMENTS
+# ================================================================
 venv/
 env/
 .venv/
+ENV/
+env.bak/
+venv.bak/
 
+# ================================================================
+# DJANGO
+# ================================================================
+# SQLite databases
+*.db
+*.sqlite3
+db.sqlite3
+database/*.db
+database/*.sqlite3
+
+# Django static files
+/static/
+/staticfiles/
+
+# Django media files
+/media/
+
+# Django secret key and local settings
+.env
+.env.local
+local_settings.py
+
+# Django migrations (keep in git, but exclude if needed)
+# */migrations/*.py
+# !*/migrations/__init__.py
+
+# Django logs
+*.log
+samplify.log
+logs/*.log
+
+# ================================================================
+# BINARIES AND EXECUTABLES
+# ================================================================
+/bin/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# FFmpeg binaries (downloaded by setup script)
+bin/windows/
+bin/macos/
+bin/linux/
+
+# ================================================================
+# IDE AND EDITORS
+# ================================================================
+# PyCharm
+.idea/
+!.idea/vcs.xml
+.idea/workspace.xml
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+.*.swp
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ================================================================
+# TESTING
+# ================================================================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# ================================================================
+# TEMPORARY FILES
+# ================================================================
+*.tmp
+*.temp
+*.bak
+*.old
+.DS_Store
+Thumbs.db
+
+# ================================================================
+# DEPENDENCIES
+# ================================================================
+node_modules/
+
+# ================================================================
+# PROJECT-SPECIFIC
+# ================================================================
 # Media test files (local only - too large for git)
 # Allow directory structure but exclude all contents except README and .gitkeep
 media/*
