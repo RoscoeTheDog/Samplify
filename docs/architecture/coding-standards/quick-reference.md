@@ -67,6 +67,39 @@ for index, item in enumerate(items):
     process(item, position=index)
 ```
 
+### Git Workflow Quick Reference
+
+**Individual Story** (e.g., 1.0, 1.1, 1.3):
+```bash
+git checkout dev && git pull
+git checkout -b feature/story-1.0
+# Implement, test, commit
+git checkout dev && git merge --no-ff feature/story-1.0
+```
+
+**Story Series** (e.g., 1.2A/B/C - letter suffix):
+```bash
+# Create parent first
+git checkout dev && git pull
+git checkout -b feature/story-1.2
+git push -u origin feature/story-1.2
+
+# For each sub-story
+git checkout feature/story-1.2 && git pull
+git checkout -b feature/story-1.2a
+# Implement, test, commit
+git checkout feature/story-1.2
+git merge --no-ff feature/story-1.2a
+git push origin feature/story-1.2
+
+# When all sub-stories complete
+git checkout dev && git pull
+git merge --no-ff feature/story-1.2
+git push origin dev
+```
+
+**Detection**: Letter suffix = series (requires parent branch)
+
 ---
 
 **Version History**:

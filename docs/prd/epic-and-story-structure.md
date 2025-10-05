@@ -84,11 +84,17 @@
 - Integration testing (1.17) validates complete system
 
 **Git Workflow** (per DW1-DW6 requirements):
-- Each story = feature branch (naming: `feature/story-X.X` or `feature/story-X.Xa`)
-- Development agent creates feature branch from `dev`
-- Development agent merges to `dev` when story complete using `--no-ff` flag (creates merge checkpoint)
+- **Individual stories** (1.0, 1.1, 1.3): Create `feature/story-X.X` from `dev`, merge back to `dev` when complete
+- **Story series** (1.2A/B/C - identified by letter suffix): **MUST use hierarchical branching**:
+  - Create parent branch `feature/story-1.2` from `dev` first
+  - Create sub-branches `feature/story-1.2a`, `feature/story-1.2b`, `feature/story-1.2c` from parent
+  - Merge sub-branches to parent incrementally
+  - Merge parent to `dev` only when ALL sub-stories complete
+- Development agent auto-detects series pattern and enforces hierarchical branching
+- All merges use `--no-ff` flag (creates explicit merge checkpoints)
 - Sequential merging ensures each story has access to all previous story dependencies
 - Human oversight merges `dev` → `master` when epic complete and all tests pass
+- **Reference**: See `docs/architecture/coding-standards/git-version-control.md` for complete workflow details and Git Branch Guard implementation
 
 **Parallel Implementation Note** (future optimization):
 If using multiple development agents simultaneously, these work streams can execute in parallel:

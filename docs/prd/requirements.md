@@ -92,11 +92,17 @@
 - **dev branch**: Integration branch where all completed story features merge sequentially
 - **feature branches**: Individual story implementation branches (e.g., `feature/story-1.0`, `feature/story-1.1`) created by development agent, isolated for story work
 
-**DW2: Sequential Story Implementation**
+**DW2: Sequential Story Implementation with Hierarchical Branching**
 - Stories must be implemented sequentially in dependency order (Story 1.0 → 1.1 → 1.2a → etc.)
-- Each feature branch is created from `dev` and merged back to `dev` when story is complete
+- **For individual stories** (e.g., 1.0, 1.1, 1.3): Create feature branch from `dev`, merge back to `dev` when complete
+- **For story series with sub-components** (e.g., 1.2A, 1.2B, 1.2C - identified by letter suffix):
+  - **MUST** create parent branch first (e.g., `feature/story-1.2` from `dev`)
+  - Create sub-story branches from parent (e.g., `feature/story-1.2a` from `feature/story-1.2`)
+  - Merge completed sub-stories to parent branch (e.g., `feature/story-1.2a` → `feature/story-1.2`)
+  - Only merge parent to `dev` when ALL sub-stories complete (e.g., `feature/story-1.2` → `dev`)
 - Sequential merging ensures each story has access to all previously completed story dependencies
 - Feature branches follow naming convention: `feature/story-X.X` or `feature/story-X.Xa` for sub-stories
+- Development agent **MUST** detect story series pattern and enforce hierarchical branching automatically
 
 **DW3: Merge and Test Protocol**
 - Development agent merges completed stories to `dev` using `--no-ff` flag (creates explicit merge commits as checkpoints)

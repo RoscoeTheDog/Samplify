@@ -63,7 +63,7 @@ Individual story files for Epic 1 (Django Web UI Modernization):
 
 **Note**: Setup instructions, git workflow, and implementation checklists are embedded in the PRD and story specifications:
 - **Setup**: See Story 1.0 acceptance criteria
-- **Git Workflow**: See PRD Development Workflow Requirements (DW1-DW6)
+- **Git Workflow**: See `architecture/coding-standards/git-version-control.md` or PRD DW1-DW6
 - **Implementation Checklist**: Each story has Definition of Done
 
 ### Dependencies & Configuration
@@ -133,7 +133,7 @@ Begin here: [`stories/story-10-repository-environment-foundation.md`](stories/st
 | **Testing Strategy** | `/docs/architecture/testing-strategy.md` |
 | **Tech Stack** | `/docs/architecture/tech-stack.md` |
 | **FFmpeg Integration** | `/docs/architecture/ffmpeg-sources.md` |
-| **Git Workflow** | `/docs/prd/requirements.md` (DW1-DW6) |
+| **Git Workflow** | `architecture/coding-standards/git-version-control.md` (or PRD DW1-DW6) |
 
 ### By Development Phase
 

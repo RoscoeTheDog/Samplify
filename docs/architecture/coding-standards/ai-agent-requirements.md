@@ -67,10 +67,12 @@ def process_audio_batch(files: list[Path]) -> list[AudioResult]:
 
 **What It Does**:
 1. Extracts story number from story filename
-2. Verifies current git branch matches expected feature branch
-3. Creates feature branch if it doesn't exist
-4. Switches to correct feature branch if on wrong branch
-5. Halts if unable to manage branches
+2. **Detects if story is part of a series** (has letter suffix like 1.2a, 1.2b)
+3. **For series**: Creates parent branch first (e.g., `feature/story-1.2`), then sub-branch
+4. **For individual stories**: Creates feature branch directly from dev
+5. Verifies current git branch matches expected feature branch
+6. Switches to correct feature branch if on wrong branch
+7. Halts if unable to manage branches
 
 **Why It Matters**:
 - Ensures DW1-DW6 git workflow compliance
@@ -80,9 +82,17 @@ def process_audio_batch(files: list[Path]) -> list[AudioResult]:
 
 **Failure to Execute**:
 - ❌ Work may be committed to dev instead of feature branch
+- ❌ **Story series missing parent branches** (sub-stories branch directly from dev)
 - ❌ Git history becomes polluted
 - ❌ Story isolation is broken
+- ❌ Hierarchical workflow violated (DW2 requirement)
 - ❌ Manual cleanup required
+
+**Series Detection Pattern**:
+- Story filename pattern: `story-{number}{letter}-{description}.md`
+- Examples: `story-12a-*.md` → series (needs parent `feature/story-1.2`)
+- Examples: `story-10-*.md` → individual (direct to dev)
+- Detection: Presence of letter suffix after story number
 
 ---
 
