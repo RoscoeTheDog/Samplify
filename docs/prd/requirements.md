@@ -36,6 +36,8 @@
 
 **FR17**: The system shall maintain a clean git repository with `.gitignore` configured to exclude all binaries, downloaded files, virtual environments, and temporary artifacts generated during installation or runtime
 
+**FR18**: The system shall provide XML template import/export functionality allowing users to import existing XML configuration templates or export current schema configurations as XML files, enabling template sharing and migration between systems with Import/Export buttons in the input and output file browser table headers respectively
+
 ### Non-Functional Requirements
 
 **NFR1**: The system shall utilize the existing optimized multiprocessing worker pool pattern (one worker per CPU core, deque-based distribution) to achieve 50-70% CPU utilization during batch operations, preserving proven performance characteristics
@@ -63,6 +65,8 @@
 **NFR12**: The system shall use single-table inheritance (one File model with media_type discriminator) to eliminate redundant table creation and improve ORM maintainability
 
 **NFR13**: The system shall disable Django's authentication middleware and user management entirely, operating as an open local web interface without login features, while maintaining CSRF protection
+
+**NFR14**: The system shall store imported XML templates in the database alongside web-created schemas, maintaining the XML format structure for export while allowing database-backed indexing and querying for efficient template management and retrieval
 
 ### Compatibility Requirements
 

@@ -82,6 +82,7 @@ This enhancement also serves as a validation of the BMAD methodology for brownfi
 | Developer Analysis Completed         | 2025-10-03 | 1.0     | Implementation practicality assessment complete | PM     |
 | Coding Standards Added               | 2025-10-03 | 1.1     | Added CS1-CS13 coding standards and conventions | PM     |
 | PRD Finalized                        | 2025-10-03 | 1.1     | Ready for developer handoff with coding standards | PM     |
+| XML Template Import/Export Added     | 2025-10-04 | 1.2     | Added FR18/NFR14 for XML import/export, updated UI, stories, and architecture | PM     |
 
 ---
 

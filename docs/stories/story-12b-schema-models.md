@@ -19,6 +19,8 @@ So that **I can replace XML templates with database-backed schemas**.
    - `name` (CharField, max_length=255, unique=True)
    - `description` (TextField, null=True, blank=True)
    - `is_active` (BooleanField, default=False)
+   - `xml_source` (TextField, null=True, blank=True) - Stores original XML for export (NFR14)
+   - `source_type` (CharField, choices=['web', 'imported'], default='web') - Tracks origin
    - `created_at` (DateTimeField, auto_now_add=True)
    - `updated_at` (DateTimeField, auto_now=True)
 2. `SchemaRule` model created with fields:
@@ -44,24 +46,33 @@ So that **I can replace XML templates with database-backed schemas**.
 6. Schema activation logic (only one active schema at a time)
 7. Cascade deletion works correctly (delete schema → delete rules/transformations)
 8. Models registered in Django admin for debugging
+9. `xml_source` field stores complete XML for re-export (NFR14, FR18)
+10. `source_type` field enables filtering by origin (web-created vs imported)
+11. Database indexing on `name` and `source_type` for efficient querying
 
 **Quality Requirements:**
-9. Migrations apply successfully
-10. Model relationships work correctly
-11. Admin interface displays all fields properly
-12. Database queries execute efficiently
+12. Migrations apply successfully
+13. Model relationships work correctly
+14. Admin interface displays all fields properly (including xml_source and source_type)
+15. Database queries execute efficiently
+16. XML storage in `xml_source` field preserves formatting and special characters
 
 ### Technical Notes
 - **Integration Approach:** Map XML template structure to relational database models
 - **Existing Pattern Reference:** xml_handler.py logic, CR4 schema functionality
 - **Key Constraints:** Must support all XML rule types (keyword, file type, AND/OR logic)
+- **XML Storage Strategy:** Store complete XML in `xml_source` field for export/re-import (NFR14)
+- **Database Indexing:** Index on `name`, `source_type`, `is_active` for efficient filtering
 
 ### Definition of Done
-- [x] All schema models implemented
-- [x] Migrations created and applied
-- [x] Models registered in admin interface
-- [x] Relationships validated
-- [x] Documentation updated with schema model structure
+- [ ] All schema models implemented
+- [ ] `xml_source` and `source_type` fields added to Schema model
+- [ ] Migrations created and applied
+- [ ] Database indexing configured
+- [ ] Models registered in admin interface
+- [ ] Relationships validated
+- [ ] XML storage tested (import → store → export round-trip)
+- [ ] Documentation updated with schema model structure including new fields
 
 ### Risk Assessment
 - **Primary Risk:** Schema model design doesn't capture all XML template capabilities

@@ -49,7 +49,7 @@
 │                                                                                                       │
 │  PROCESSING QUEUE (245 files)                                                                        │
 │  ┌──────────────────────────────────────────────────────────────────────────────────────────────┐   │
-│  │ INPUT FILES                                                                                   │   │
+│  │ INPUT FILES                                                          [Import XML] [Export XML]│   │
 │  ├───┬────────┬─────────────────────────┬──────────────────┬────────┬────────┬───────┬─────────┤   │
 │  │ ☑ │ UID    │ Filename                │ Path             │ Format │ SR     │ BD    │ Size    │   │
 │  ├───┼────────┼─────────────────────────┼──────────────────┼────────┼────────┼───────┼─────────┤   │
@@ -59,7 +59,7 @@
 │  └───┴────────┴─────────────────────────┴──────────────────┴────────┴────────┴───────┴─────────┘   │
 │                                                                                                       │
 │  ┌──────────────────────────────────────────────────────────────────────────────────────────────┐   │
-│  │ OUTPUT DESTINATIONS        Filter by UID: [#a1f2, #b3e4, #c5d6                           ✕]  │   │
+│  │ OUTPUT DESTINATIONS        Filter by UID: [#a1f2, #b3e4, #c5d6  ✕]  [Import XML] [Export XML]│   │
 │  ├───┬────────┬─────────────────────────┬──────────────────┬────────┬────────┬───────┬─────────┤   │
 │  │ ☑ │ UID    │ Filename                │ Destination      │ Format │ SR     │ BD    │ Process │   │
 │  ├───┼────────┼─────────────────────────┼──────────────────┼────────┼────────┼───────┼─────────┤   │
@@ -101,6 +101,16 @@
    - Multi-select (Ctrl+Click) → Multiple UIDs in filter
    - Preview Transformations → Shows queue
    - Start Batch Process → Executes checked items
+
+6. **XML Template Import/Export**:
+   - **Input Files Table**: [Import XML] / [Export XML] buttons in header
+     - Import: Load XML template for input directory configuration
+     - Export: Save current input configuration as XML template
+   - **Output Destinations Table**: [Import XML] / [Export XML] buttons in header
+     - Import: Load XML template for output directory/processing rules
+     - Export: Save current output schema as XML template
+   - Templates stored in database (NFR14) with XML format preserved
+   - Enables template sharing across systems and users
 
 ---
 

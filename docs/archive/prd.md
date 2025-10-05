@@ -1,8 +1,8 @@
 # Samplify Brownfield Enhancement PRD
 ## Django Web UI Modernization
 
-**Version**: 1.1
-**Date**: 2025-10-03
+**Version**: 1.2
+**Date**: 2025-10-04
 **Author**: PM Agent (John)
 
 ---
@@ -100,6 +100,7 @@ This enhancement also serves as a validation of the BMAD methodology for brownfi
 | Developer Analysis Completed         | 2025-10-03 | 1.0     | Implementation practicality assessment complete | PM     |
 | Coding Standards Added               | 2025-10-03 | 1.1     | Added CS1-CS13 coding standards and conventions | PM     |
 | PRD Finalized                        | 2025-10-03 | 1.1     | Ready for developer handoff with coding standards | PM     |
+| XML Template Import/Export Added     | 2025-10-04 | 1.2     | Added FR18/NFR14 for XML import/export, updated UI, stories, and architecture | PM     |
 
 ---
 
@@ -141,6 +142,8 @@ This enhancement also serves as a validation of the BMAD methodology for brownfi
 
 **FR17**: The system shall maintain a clean git repository with `.gitignore` configured to exclude all binaries, downloaded files, virtual environments, and temporary artifacts generated during installation or runtime
 
+**FR18**: The system shall provide XML template import/export functionality allowing users to import existing XML configuration templates or export current schema configurations as XML files, enabling template sharing and migration between systems with Import/Export buttons in the input and output file browser table headers respectively
+
 ### Non-Functional Requirements
 
 **NFR1**: The system shall utilize the existing optimized multiprocessing worker pool pattern (one worker per CPU core, deque-based distribution) to achieve 50-70% CPU utilization during batch operations, preserving proven performance characteristics
@@ -168,6 +171,8 @@ This enhancement also serves as a validation of the BMAD methodology for brownfi
 **NFR12**: The system shall use single-table inheritance (one File model with media_type discriminator) to eliminate redundant table creation and improve ORM maintainability
 
 **NFR13**: The system shall disable Django's authentication middleware and user management entirely, operating as an open local web interface without login features, while maintaining CSRF protection
+
+**NFR14**: The system shall store imported XML templates in the database alongside web-created schemas, maintaining the XML format structure for export while allowing database-backed indexing and querying for efficient template management and retrieval
 
 ### Compatibility Requirements
 
@@ -263,7 +268,7 @@ This enhancement also serves as a validation of the BMAD methodology for brownfi
 │                                                                                                       │
 │  PROCESSING QUEUE (245 files)                                                                        │
 │  ┌──────────────────────────────────────────────────────────────────────────────────────────────┐   │
-│  │ INPUT FILES                                                                                   │   │
+│  │ INPUT FILES                                                          [Import XML] [Export XML]│   │
 │  ├───┬────────┬─────────────────────────┬──────────────────┬────────┬────────┬───────┬─────────┤   │
 │  │ ☑ │ UID    │ Filename                │ Path             │ Format │ SR     │ BD    │ Size    │   │
 │  ├───┼────────┼─────────────────────────┼──────────────────┼────────┼────────┼───────┼─────────┤   │
@@ -273,7 +278,7 @@ This enhancement also serves as a validation of the BMAD methodology for brownfi
 │  └───┴────────┴─────────────────────────┴──────────────────┴────────┴────────┴───────┴─────────┘   │
 │                                                                                                       │
 │  ┌──────────────────────────────────────────────────────────────────────────────────────────────┐   │
-│  │ OUTPUT DESTINATIONS        Filter by UID: [#a1f2, #b3e4, #c5d6                           ✕]  │   │
+│  │ OUTPUT DESTINATIONS        Filter by UID: [#a1f2, #b3e4, #c5d6  ✕]  [Import XML] [Export XML]│   │
 │  ├───┬────────┬─────────────────────────┬──────────────────┬────────┬────────┬───────┬─────────┤   │
 │  │ ☑ │ UID    │ Filename                │ Destination      │ Format │ SR     │ BD    │ Process │   │
 │  ├───┼────────┼─────────────────────────┼──────────────────┼────────┼────────┼───────┼─────────┤   │
@@ -315,6 +320,16 @@ This enhancement also serves as a validation of the BMAD methodology for brownfi
    - Multi-select (Ctrl+Click) → Multiple UIDs in filter
    - Preview Transformations → Shows queue
    - Start Batch Process → Executes checked items
+
+6. **XML Template Import/Export**:
+   - **Input Files Table**: [Import XML] / [Export XML] buttons in header
+     - Import: Load XML template for input directory configuration
+     - Export: Save current input configuration as XML template
+   - **Output Destinations Table**: [Import XML] / [Export XML] buttons in header
+     - Import: Load XML template for output directory/processing rules
+     - Export: Save current output schema as XML template
+   - Templates stored in database (NFR14) with XML format preserved
+   - Enables template sharing across systems and users
 
 ---
 

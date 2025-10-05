@@ -222,11 +222,95 @@ Deletes a schema (soft delete - marks as inactive).
 }
 ```
 
+### 6. Import XML Template
+
+**POST** `/api/schemas/import-xml/`
+
+Imports an XML template and creates corresponding schema in database (FR18).
+
+**Request:**
+```
+Content-Type: multipart/form-data
+
+file: <XML file upload>
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "schema_id": 5,
+    "name": "Imported Audio Template",
+    "source_type": "imported",
+    "import_report": {
+      "rules_imported": 12,
+      "transformations_imported": 5,
+      "directory_mappings_imported": 3
+    }
+  },
+  "message": "XML template imported successfully"
+}
+```
+
+**Error Response (Invalid XML):**
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_XML_FORMAT",
+    "message": "XML template is malformed or incompatible",
+    "details": {
+      "line": 15,
+      "error": "Missing closing tag for 'rule'"
+    }
+  }
+}
+```
+
+### 7. Export XML Template
+
+**GET** `/api/schemas/<id>/export-xml/`
+
+Exports a schema as XML template file for sharing or backup (FR18).
+
+**Response:**
+```
+Content-Type: application/xml
+Content-Disposition: attachment; filename="schema_audio_processing_template.xml"
+
+<?xml version="1.0" encoding="UTF-8"?>
+<template name="Audio Processing Template">
+  <description>Processes WAV files for drums and bass</description>
+  <rules>
+    <rule type="keyword" value="kick" operator="AND"/>
+    <rule type="extension" value=".wav" operator="AND"/>
+  </rules>
+  <transformations>
+    <transformation format="WAV" sample_rate="44100" bit_depth="24" normalize="-6.0"/>
+  </transformations>
+  <directory_mappings>
+    <mapping input="C:\Input\Samples" output="C:\Output\Drums" watched="true"/>
+  </directory_mappings>
+</template>
+```
+
+**Error Response (Schema Not Found):**
+```json
+{
+  "success": false,
+  "error": {
+    "code": "SCHEMA_NOT_FOUND",
+    "message": "Schema with ID 999 does not exist"
+  }
+}
+```
+
 ---
 
 ## File Scanning Endpoints
 
-### 6. Scan Input Directories
+### 8. Scan Input Directories
 
 **POST** `/api/scan/`
 
@@ -256,7 +340,7 @@ Triggers file scanning for specified input directories and populates database wi
 }
 ```
 
-### 7. Get Scan Status
+### 9. Get Scan Status
 
 **GET** `/api/scan/<scan_id>/status/`
 
@@ -287,7 +371,7 @@ Polls scan progress (AJAX endpoint for real-time updates).
 
 ## File Catalog Endpoints
 
-### 8. List Files
+### 10. List Files
 
 **GET** `/api/files/`
 
@@ -332,7 +416,7 @@ Retrieves paginated file catalog with filtering.
 }
 ```
 
-### 9. Get File Detail
+### 11. Get File Detail
 
 **GET** `/api/files/<id>/`
 
@@ -382,7 +466,7 @@ Retrieves detailed file metadata.
 
 ## Batch Processing Endpoints
 
-### 10. Preview Transformations
+### 12. Preview Transformations
 
 **POST** `/api/batch/preview/`
 
@@ -421,7 +505,7 @@ Generates preview of planned transformations without executing.
 }
 ```
 
-### 11. Start Batch Processing
+### 13. Start Batch Processing
 
 **POST** `/api/batch/start/`
 
@@ -449,7 +533,7 @@ Initiates batch processing operation.
 }
 ```
 
-### 12. Get Batch Processing Status
+### 14. Get Batch Processing Status
 
 **GET** `/api/batch/<batch_id>/status/`
 
@@ -489,7 +573,7 @@ Polls batch processing progress (AJAX endpoint - poll every 1-2 seconds per NFR4
 }
 ```
 
-### 13. Pause Batch Processing
+### 15. Pause Batch Processing
 
 **POST** `/api/batch/<batch_id>/pause/`
 
@@ -503,7 +587,7 @@ Pauses ongoing batch processing.
 }
 ```
 
-### 14. Resume Batch Processing
+### 16. Resume Batch Processing
 
 **POST** `/api/batch/<batch_id>/resume/`
 
@@ -517,7 +601,7 @@ Resumes paused batch processing.
 }
 ```
 
-### 15. Cancel Batch Processing
+### 17. Cancel Batch Processing
 
 **POST** `/api/batch/<batch_id>/cancel/`
 
@@ -539,7 +623,7 @@ Cancels batch processing (stops workers gracefully).
 
 ## Watchdog Management Endpoints
 
-### 16. Get Watchdog Status
+### 18. Get Watchdog Status
 
 **GET** `/api/watchdog/status/`
 
@@ -569,7 +653,7 @@ Retrieves current status of both file monitor and queue processor watchdogs.
 }
 ```
 
-### 17. Start File Monitor
+### 19. Start File Monitor
 
 **POST** `/api/watchdog/file-monitor/start/`
 
@@ -594,7 +678,7 @@ Starts file monitoring watchdog.
 }
 ```
 
-### 18. Stop File Monitor
+### 20. Stop File Monitor
 
 **POST** `/api/watchdog/file-monitor/stop/`
 
@@ -608,7 +692,7 @@ Stops file monitoring watchdog.
 }
 ```
 
-### 19. Start Queue Processor
+### 21. Start Queue Processor
 
 **POST** `/api/watchdog/queue-processor/start/`
 
@@ -626,7 +710,7 @@ Starts queue processing watchdog.
 }
 ```
 
-### 20. Stop Queue Processor
+### 22. Stop Queue Processor
 
 **POST** `/api/watchdog/queue-processor/stop/`
 
@@ -658,6 +742,8 @@ Stops queue processing watchdog (graceful shutdown).
 | `FFMPEG_NOT_AVAILABLE` | 503 | FFmpeg binary not found or not working |
 | `DIRECTORY_NOT_ACCESSIBLE` | 403 | Cannot access specified directory |
 | `OPERATION_IN_PROGRESS` | 409 | Cannot modify resource during active operation |
+| `INVALID_XML_FORMAT` | 400 | XML template is malformed or incompatible |
+| `XML_EXPORT_FAILED` | 500 | Failed to generate XML from schema |
 | `DATABASE_ERROR` | 500 | SQLite database operation failed |
 | `WORKER_POOL_ERROR` | 500 | Multiprocessing worker pool error |
 
@@ -731,6 +817,23 @@ All endpoints return proper HTTP status codes and can work without JavaScript:
 ### Django URL Configuration Example
 
 ```python
+# apps/schemas/urls.py
+from django.urls import path
+from .views import schemas
+
+urlpatterns = [
+    # Schema CRUD
+    path('schemas/', schemas.list_schemas, name='schema_list'),
+    path('schemas/<int:id>/', schemas.get_schema, name='schema_detail'),
+    path('schemas/create/', schemas.create_schema, name='schema_create'),
+    path('schemas/<int:id>/update/', schemas.update_schema, name='schema_update'),
+    path('schemas/<int:id>/delete/', schemas.delete_schema, name='schema_delete'),
+
+    # XML Import/Export (FR18)
+    path('api/schemas/import-xml/', schemas.import_xml_template, name='schema_import_xml'),
+    path('api/schemas/<int:id>/export-xml/', schemas.export_xml_template, name='schema_export_xml'),
+]
+
 # apps/processing/urls.py
 from django.urls import path
 from .views import batch, scan, watchdog

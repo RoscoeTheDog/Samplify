@@ -68,6 +68,7 @@ class Schema(models.Model):
     """
     Processing schema configuration.
     Replaces XML templates from brownfield codebase.
+    Supports XML import/export for template sharing (FR18).
     """
     name = models.CharField(
         max_length=255,
@@ -82,6 +83,17 @@ class Schema(models.Model):
         default=False,
         help_text="Only active schemas are used for processing"
     )
+    xml_source = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Original XML template (for imported schemas, NFR14)"
+    )
+    source_type = models.CharField(
+        max_length=20,
+        choices=[('web', 'Web Created'), ('imported', 'XML Imported')],
+        default='web',
+        help_text="Origin of this schema"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -90,6 +102,11 @@ class Schema(models.Model):
         verbose_name = 'Processing Schema'
         verbose_name_plural = 'Processing Schemas'
         ordering = ['name']
+        indexes = [
+            models.Index(fields=['name']),
+            models.Index(fields=['source_type']),
+            models.Index(fields=['is_active']),
+        ]
 
     def __str__(self):
         return self.name
@@ -100,8 +117,15 @@ class Schema(models.Model):
 - `name`: Unique schema identifier
 - `description`: User-friendly description
 - `is_active`: Only one schema can be active at a time (enforced in save())
+- `xml_source`: Stores original XML template for imported schemas (NFR14, FR18)
+- `source_type`: Tracks whether schema was created via web UI or imported from XML
 - `created_at`: Timestamp of creation
 - `updated_at`: Timestamp of last modification
+
+**Indexes:**
+- `name`: For fast schema lookup by name
+- `source_type`: For filtering imported vs web-created schemas
+- `is_active`: For quick retrieval of active schema
 
 ---
 
