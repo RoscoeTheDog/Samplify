@@ -1,0 +1,324 @@
+# <!-- Powered by BMAD™ Core -->
+template:
+  id: coding-style-cpp
+  name: C++ Coding Style Context
+  version: 1.0
+  type: project-profile
+  inherits:
+    - base/coding-style-base
+  output:
+    format: markdown
+    filename: .ai/profiles/coding-standards.md
+    title: "C++ Coding Standards"
+
+workflow:
+  mode: interactive
+  elicitation: advanced-elicitation
+
+sections:
+  - id: cpp-version
+    title: C++ Version and Compiler
+    instruction: |
+      Determine the C++ standard and compiler requirements. Ask about:
+      1. C++ standard version (C++11, C++14, C++17, C++20, C++23)
+      2. Primary compiler(s) (GCC, Clang, MSVC)
+      3. Compiler version requirements
+      4. Cross-platform support requirements
+      5. Any compiler-specific features in use
+    elicit: true
+    choices:
+      cpp_standard: [C++11, C++14, C++17, C++20, C++23]
+      compiler: [GCC, Clang, MSVC, Multi-Compiler]
+    template: |
+      - **C++ Standard:** {{cpp_standard}}
+      - **Compiler(s):** {{compiler}}
+      - **Compiler Version:** {{compiler_version}}
+      - **Platform Support:** {{platform_support}}
+
+  - id: cpp-style-tools
+    title: Style and Formatting Tools
+    instruction: |
+      Determine C++ formatting and analysis tools. Ask about:
+      1. Code formatter (clang-format, or none)
+      2. Static analyzer (clang-tidy, cppcheck, PVS-Studio, or none)
+      3. .clang-format configuration file location
+      4. .clang-tidy configuration
+      5. Linting CI integration
+
+      If using clang-format, ask about base style (LLVM, Google, Mozilla, WebKit, etc.)
+    elicit: true
+    choices:
+      formatter: [clang-format, None]
+      static_analyzer: [clang-tidy, cppcheck, PVS-Studio, None]
+      format_style: [LLVM, Google, Mozilla, WebKit, Chromium, Custom]
+    sections:
+      - id: tools-config
+        title: Tools Configuration
+        template: |
+          - **Formatter:** {{formatter}}
+          - **Format Style:** {{format_style}}
+          - **Static Analyzer:** {{static_analyzer}}
+          - **Config Files:** {{config_files}}
+
+  - id: cpp-naming
+    title: C++ Naming Conventions
+    instruction: |
+      Define C++ naming conventions. Ask about:
+      1. Class naming (PascalCase, snake_case, camelCase)
+      2. Function naming (camelCase, snake_case, PascalCase)
+      3. Variable naming (camelCase, snake_case)
+      4. Member variable naming (m_ prefix, _ suffix, or no prefix)
+      5. Constant naming (UPPER_CASE, kPrefix, or other)
+      6. Namespace naming (lowercase, snake_case)
+      7. Template parameter naming (T, TValue, or other convention)
+      8. Macro naming (UPPER_CASE standard)
+
+      Different C++ projects use widely varying conventions.
+    elicit: true
+    sections:
+      - id: naming-table
+        title: Naming Convention Table
+        type: table
+        columns: [Element, Convention, Example]
+        template: |
+          | Classes | {{class_naming}} | {{class_example}} |
+          | Functions | {{function_naming}} | {{function_example}} |
+          | Variables | {{variable_naming}} | {{variable_example}} |
+          | Members | {{member_naming}} | {{member_example}} |
+          | Constants | {{constant_naming}} | {{constant_example}} |
+          | Namespaces | {{namespace_naming}} | {{namespace_example}} |
+          | Templates | {{template_naming}} | {{template_example}} |
+
+  - id: header-files
+    title: Header File Organization
+    instruction: |
+      Define header file best practices. Ask about:
+      1. Header guards (#ifndef vs #pragma once)
+      2. Header file extension (.h, .hpp, .hh, .hxx)
+      3. Include order (system, library, local)
+      4. Forward declarations policy
+      5. Header-only classes policy
+      6. Public vs private header separation
+
+      This is critical for C++ organization.
+    elicit: true
+    choices:
+      header_guard: [ifndef-define, pragma-once, Both]
+      header_extension: [.h, .hpp, .hh, .hxx]
+    template: |
+      - **Header Guards:** {{header_guard}}
+      - **Header Extension:** {{header_extension}}
+      - **Include Order:** {{include_order}}
+
+      {{header_organization_details}}
+
+  - id: include-structure
+    title: Include Statements and Dependencies
+    instruction: |
+      Define include statement practices. Ask about:
+      1. Angle brackets vs quotes (<> vs "")
+      2. Include path conventions
+      3. Circular dependency handling
+      4. Precompiled headers usage
+      5. Include-what-you-use policy
+
+      This helps maintain clean dependencies.
+    elicit: true
+    template: |
+      {{include_practices}}
+
+  - id: class-structure
+    title: Class Design and Structure
+    instruction: |
+      Define C++ class design practices. Ask about:
+      1. Class member ordering (public first vs private first)
+      2. Constructor initialization list formatting
+      3. Rule of 3/5/0 application
+      4. RAII adherence
+      5. Virtual destructor policy
+      6. Explicit constructor policy
+      7. Default/delete special members usage
+
+      These are fundamental C++ design decisions.
+    elicit: true
+    template: |
+      {{class_design_practices}}
+
+  - id: memory-management
+    title: Memory Management
+    instruction: |
+      Define memory management practices. Ask about:
+      1. Smart pointer usage (unique_ptr, shared_ptr, weak_ptr policy)
+      2. Raw pointer usage (when acceptable)
+      3. new/delete usage policy (prefer smart pointers?)
+      4. malloc/free policy (avoid, or acceptable in specific contexts)
+      5. Memory pool usage
+      6. RAII for resource management
+      7. Move semantics usage
+
+      This is one of the most critical C++ sections.
+    elicit: true
+    choices:
+      smart_pointer_policy: [Required, Preferred, Optional]
+      raw_pointer_policy: [Avoid, Acceptable-For-Non-Owning, Acceptable]
+    template: |
+      **Smart Pointer Policy:** {{smart_pointer_policy}}
+      **Raw Pointer Policy:** {{raw_pointer_policy}}
+
+      {{memory_management_details}}
+
+  - id: error-handling-cpp
+    title: Error Handling (C++-Specific)
+    instruction: |
+      Define C++ error handling approach. Ask about:
+      1. Exceptions policy (use freely, use sparingly, or avoid)
+      2. Exception types (std::exception derivatives, custom exceptions)
+      3. noexcept specification policy
+      4. Error codes vs exceptions
+      5. Resource cleanup in error paths (RAII, finally alternatives)
+      6. Exception safety guarantees (basic, strong, nothrow)
+
+      This extends the base error handling with C++ specifics.
+    elicit: true
+    choices:
+      exceptions_policy: [Use-Freely, Use-Sparingly, Avoid, Forbidden]
+    template: |
+      **Exceptions Policy:** {{exceptions_policy}}
+
+      {{cpp_error_handling_details}}
+
+  - id: modern-cpp-features
+    title: Modern C++ Features Usage
+    instruction: |
+      Define which modern C++ features to use. Ask about:
+      1. auto keyword usage policy
+      2. Range-based for loops
+      3. Lambda expressions
+      4. std::optional, std::variant usage
+      5. constexpr usage
+      6. Concepts usage (C++20)
+      7. Coroutines usage (C++20)
+      8. Modules usage (C++20)
+
+      This depends heavily on the C++ standard version.
+    elicit: true
+    template: |
+      {{modern_cpp_features}}
+
+  - id: stl-usage
+    title: STL and Standard Library Usage
+    instruction: |
+      Define Standard Library usage patterns. Ask about:
+      1. Preferred STL containers
+      2. Algorithm usage (std::algorithm vs raw loops)
+      3. String type (std::string, std::string_view, custom)
+      4. Custom allocator usage
+      5. std::filesystem usage
+      6. Boost library usage policy
+
+      This guides library choices.
+    elicit: true
+    template: |
+      {{stl_usage_guidelines}}
+
+  - id: templates-metaprogramming
+    title: Templates and Metaprogramming
+    instruction: |
+      Define template usage policies. Ask about:
+      1. Template usage encouragement level
+      2. Template specialization patterns
+      3. SFINAE vs concepts (if C++20)
+      4. Template metaprogramming depth
+      5. Type traits usage
+      6. Variadic templates usage
+
+      Templates can be powerful but complex.
+    elicit: true
+    template: |
+      {{template_guidelines}}
+
+  - id: concurrency
+    title: Concurrency and Threading
+    instruction: |
+      Define concurrency practices if the project uses multithreading. Ask about:
+      1. Threading library (std::thread, pthread, or other)
+      2. Synchronization primitives (mutex, locks, atomics)
+      3. Thread-safe design patterns
+      4. Lock-free programming policy
+      5. Race condition prevention strategies
+
+      Skip this section if project is single-threaded.
+    condition: project uses multithreading
+    elicit: true
+    template: |
+      {{concurrency_guidelines}}
+
+  - id: performance-guidelines
+    title: Performance Guidelines
+    instruction: |
+      Define performance-related practices. Ask about:
+      1. Optimization priority level
+      2. Inline function usage
+      3. Pass-by-value vs pass-by-reference policies
+      4. Move semantics for performance
+      5. Profiling practices
+      6. Premature optimization stance
+
+      C++ often has performance as a key concern.
+    elicit: true
+    template: |
+      {{performance_guidelines}}
+
+  - id: documentation-cpp
+    title: Documentation (C++-Specific)
+    instruction: |
+      Define C++ documentation requirements. Ask about:
+      1. Documentation format (Doxygen, XML comments, or plain)
+      2. What to document (all public APIs, complex implementations)
+      3. Inline comments vs header comments
+      4. Example code in documentation
+
+      This extends the base documentation section.
+    elicit: true
+    choices:
+      doc_format: [Doxygen, XML, Plain]
+    template: |
+      **Documentation Format:** {{doc_format}}
+
+      {{cpp_documentation_details}}
+
+  - id: testing-cpp
+    title: C++ Testing Specifics
+    instruction: |
+      Define C++ testing configuration. Ask about:
+      1. Test framework (Google Test, Catch2, Boost.Test, doctest)
+      2. Mocking framework (Google Mock, FakeIt, etc.)
+      3. Test organization (separate test directory, inline tests)
+      4. Coverage tools (gcov, lcov, etc.)
+
+      This extends the base testing section.
+    elicit: true
+    choices:
+      test_framework: [GoogleTest, Catch2, Boost.Test, doctest, None]
+      mock_framework: [GoogleMock, FakeIt, None]
+    template: |
+      - **Test Framework:** {{test_framework}}
+      - **Mock Framework:** {{mock_framework}}
+      - **Coverage Tools:** {{coverage_tools}}
+
+  - id: cpp-critical-rules
+    title: C++-Specific Critical Rules
+    instruction: |
+      Add any C++-specific critical rules beyond the base critical rules.
+      Examples:
+      - "Never return references to local variables"
+      - "Always initialize variables"
+      - "Check nullptr before dereferencing"
+      - "Avoid undefined behavior"
+      - "Don't slice objects"
+
+      Focus on rules that prevent common C++ pitfalls.
+    elicit: true
+    repeatable: true
+    template: |
+      - **{{rule_name}}:** {{rule_description}}

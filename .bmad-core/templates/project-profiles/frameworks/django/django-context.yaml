@@ -1,0 +1,345 @@
+# <!-- Powered by BMAD™ Core -->
+template:
+  id: django-context
+  name: Django Framework Context
+  version: 1.0
+  type: project-profile
+  inherits:
+    - base/coding-style-base
+    - languages/python/coding-style-python
+  output:
+    format: markdown
+    filename: .ai/profiles/django-standards.md
+    title: "Django Framework Standards and Patterns"
+
+workflow:
+  mode: interactive
+  elicitation: advanced-elicitation
+
+sections:
+  - id: django-version
+    title: Django Version and Configuration
+    instruction: |
+      Determine Django version and setup. Ask about:
+      1. Django version (3.x, 4.x, 5.x)
+      2. Django REST Framework usage (if API project)
+      3. Database backend (PostgreSQL, MySQL, SQLite, etc.)
+      4. Async support usage (ASGI vs WSGI)
+      5. settings configuration approach (single file, split settings, django-environ)
+    elicit: true
+    choices:
+      django_version: [3.x, 4.x, 5.x]
+      drf_usage: [Yes, No]
+      database: [PostgreSQL, MySQL, SQLite, Other]
+      server: [ASGI, WSGI]
+    template: |
+      - **Django Version:** {{django_version}}
+      - **Django REST Framework:** {{drf_usage}}
+      - **Database:** {{database}}
+      - **Server:** {{server}}
+      - **Settings Approach:** {{settings_approach}}
+
+  - id: project-structure
+    title: Django Project Structure
+    instruction: |
+      Define Django project organization. Ask about:
+      1. Project layout (single app vs multi-app)
+      2. App naming conventions
+      3. Template location (per-app vs centralized)
+      4. Static files organization
+      5. Custom user model (yes/no, which app)
+
+      Show the actual directory structure if helpful.
+    elicit: true
+    template: |
+      {{project_structure}}
+
+  - id: models-patterns
+    title: Model Design Patterns
+    instruction: |
+      Define Django model best practices. Ask about:
+      1. Model inheritance approach (abstract base, multi-table, proxy)
+      2. Manager and QuerySet patterns
+      3. Model method conventions (get_absolute_url, __str__, etc.)
+      4. related_name conventions
+      5. Model validation approach (clean() methods, validators)
+      6. choices handling (Enum, TextChoices, IntegerChoices)
+      7. JSON fields usage policy
+
+      Models are core to Django applications.
+    elicit: true
+    template: |
+      {{models_patterns}}
+
+  - id: views-patterns
+    title: View Patterns and Organization
+    instruction: |
+      Define view organization approach. Ask about:
+      1. View style (function-based views, class-based views, or both)
+      2. CBV preference (which generic views to use)
+      3. View mixins usage
+      4. Permission and authentication patterns
+      5. View file organization (single views.py vs split)
+
+      Present common patterns as choices.
+    elicit: true
+    choices:
+      view_style: [FBV-Primary, CBV-Primary, Mixed]
+    template: |
+      **View Style:** {{view_style}}
+
+      {{views_patterns}}
+
+  - id: urls-patterns
+    title: URL Configuration Patterns
+    instruction: |
+      Define URL pattern organization. Ask about:
+      1. URL naming conventions
+      2. Namespace usage
+      3. Include patterns organization
+      4. path() vs re_path() preference
+      5. URL parameter naming
+
+      Clean URLs are important for maintainability.
+    elicit: true
+    template: |
+      {{urls_patterns}}
+
+  - id: forms-patterns
+    title: Forms and Validation
+    instruction: |
+      Define Django forms patterns. Ask about:
+      1. Form classes vs ModelForm preference
+      2. Form validation patterns (clean methods)
+      3. Crispy forms usage (if applicable)
+      4. Form rendering approach
+      5. File upload handling
+
+      Skip if API-only project (no HTML forms).
+    condition: not API-only project
+    elicit: true
+    template: |
+      {{forms_patterns}}
+
+  - id: templates-patterns
+    title: Template Organization
+    instruction: |
+      Define template organization and conventions. Ask about:
+      1. Template inheritance structure
+      2. Template naming conventions
+      3. Context processor usage
+      4. Template tags and filters organization
+      5. Frontend framework integration (if any)
+
+      Skip if API-only project.
+    condition: not API-only project
+    elicit: true
+    template: |
+      {{templates_patterns}}
+
+  - id: drf-patterns
+    title: Django REST Framework Patterns
+    condition: uses Django REST Framework
+    instruction: |
+      If using DRF, define API patterns. Ask about:
+      1. Serializer patterns (ModelSerializer vs Serializer)
+      2. ViewSet vs APIView preference
+      3. Router configuration
+      4. Permission classes organization
+      5. Pagination style
+      6. Filtering and search approach
+      7. API versioning strategy
+      8. Authentication methods (JWT, Token, Session)
+
+      DRF has many configuration options.
+    elicit: true
+    choices:
+      viewset_style: [ViewSets, APIViews, Mixed]
+      auth_method: [JWT, Token, Session, Multiple]
+    template: |
+      **ViewSet Style:** {{viewset_style}}
+      **Authentication:** {{auth_method}}
+
+      {{drf_patterns}}
+
+  - id: migrations-patterns
+    title: Migrations Management
+    instruction: |
+      Define migration best practices. Ask about:
+      1. Migration naming conventions
+      2. Squashing strategy
+      3. Data migrations approach
+      4. Reversible migrations policy
+      5. Migration dependencies management
+
+      Migrations can cause deployment issues if mismanaged.
+    elicit: true
+    template: |
+      {{migrations_patterns}}
+
+  - id: admin-patterns
+    title: Django Admin Configuration
+    instruction: |
+      Define Django admin usage patterns. Ask about:
+      1. Admin customization level
+      2. ModelAdmin patterns
+      3. Inline admin usage
+      4. Admin actions patterns
+      5. Custom admin views
+
+      Some projects heavily customize admin, others barely use it.
+    elicit: true
+    choices:
+      admin_usage: [Minimal, Moderate, Extensive, Custom-Interface]
+    template: |
+      **Admin Usage Level:** {{admin_usage}}
+
+      {{admin_patterns}}
+
+  - id: signals-patterns
+    title: Django Signals Usage
+    instruction: |
+      Define signal usage policy. Ask about:
+      1. When to use signals vs direct calls
+      2. Signal handler organization
+      3. Avoiding signal anti-patterns
+      4. pre_save vs post_save usage
+
+      Signals can be powerful but also cause hidden behavior.
+    elicit: true
+    choices:
+      signals_policy: [Use-Freely, Use-Sparingly, Avoid]
+    template: |
+      **Signals Policy:** {{signals_policy}}
+
+      {{signals_patterns}}
+
+  - id: middleware-patterns
+    title: Middleware Usage
+    instruction: |
+      Define custom middleware patterns. Ask about:
+      1. When to create custom middleware
+      2. Middleware ordering awareness
+      3. Request/response processing patterns
+      4. Middleware organization
+
+      Most projects don't need many custom middleware.
+    elicit: true
+    template: |
+      {{middleware_patterns}}
+
+  - id: celery-async
+    title: Async Tasks (Celery/Background Jobs)
+    condition: uses Celery or background tasks
+    instruction: |
+      If using Celery or background tasks, define patterns. Ask about:
+      1. Task organization and naming
+      2. Task parameter passing
+      3. Task retry policies
+      4. Task result handling
+      5. Periodic task configuration
+
+      Skip if no background task processing.
+    elicit: true
+    template: |
+      {{async_tasks_patterns}}
+
+  - id: testing-django
+    title: Django Testing Patterns
+    instruction: |
+      Define Django-specific testing patterns. Ask about:
+      1. Test case classes (TestCase, TransactionTestCase, SimpleTestCase)
+      2. Test database approach
+      3. Fixture usage vs factories
+      4. factories_boy or similar usage
+      5. Test coverage requirements
+      6. Integration vs unit test balance
+      7. API testing approach (if DRF)
+
+      This extends Python testing with Django specifics.
+    elicit: true
+    choices:
+      test_data_approach: [Fixtures, Factories, Mixed]
+    template: |
+      **Test Data Approach:** {{test_data_approach}}
+
+      {{django_testing_patterns}}
+
+  - id: security-patterns
+    title: Security Best Practices
+    instruction: |
+      Define Django security patterns. Ask about:
+      1. CSRF protection approach
+      2. XSS prevention patterns
+      3. SQL injection prevention awareness
+      4. Password handling requirements
+      5. Secrets management (django-environ, env variables)
+      6. HTTPS enforcement
+      7. Security middleware configuration
+
+      Security is critical in web applications.
+    elicit: true
+    template: |
+      {{security_patterns}}
+
+  - id: performance-patterns
+    title: Performance Best Practices
+    instruction: |
+      Define Django performance patterns. Ask about:
+      1. Query optimization (select_related, prefetch_related)
+      2. Caching strategy (per-view, template fragment, low-level)
+      3. Database connection pooling
+      4. Static file serving (CDN, whitenoise)
+      5. Lazy loading patterns
+      6. N+1 query prevention
+
+      Performance considerations vary by project scale.
+    elicit: true
+    template: |
+      {{performance_patterns}}
+
+  - id: deployment-patterns
+    title: Deployment Configuration
+    instruction: |
+      Define deployment-related patterns. Ask about:
+      1. Environment-specific settings handling
+      2. Static files collection (collectstatic)
+      3. Database migration strategy in deployment
+      4. Logging configuration
+      5. Monitoring and error tracking (Sentry, etc.)
+
+      This helps with production readiness.
+    elicit: true
+    template: |
+      {{deployment_patterns}}
+
+  - id: django-critical-rules
+    title: Django-Specific Critical Rules
+    instruction: |
+      Add Django-specific critical rules. Examples:
+      - "Never commit SECRET_KEY to version control"
+      - "Always use select_related/prefetch_related for foreign key queries"
+      - "Never use .get() without try/except or get_object_or_404"
+      - "Always use Django ORM, never raw SQL without parameterization"
+      - "Set DEBUG=False in production"
+
+      Focus on Django-specific gotchas and security issues.
+    elicit: true
+    repeatable: true
+    template: |
+      - **{{rule_name}}:** {{rule_description}}
+
+  - id: django-packages
+    title: Third-Party Django Packages
+    instruction: |
+      Document important third-party packages in use. Ask about:
+      1. django-extensions usage
+      2. django-debug-toolbar usage
+      3. Celery integration
+      4. Storage backends (S3, etc.)
+      5. Any other critical Django packages
+
+      This helps agents understand available tools.
+    elicit: true
+    template: |
+      {{django_packages}}

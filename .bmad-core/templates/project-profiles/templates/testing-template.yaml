@@ -1,0 +1,68 @@
+template:
+  id: testing-template
+  name: "Testing Standards Template"
+  type: wizard-template
+  protected: true
+  version: 1.0.0
+
+  creates_policy_type: user
+  policy_id_pattern: "{profile-name}-testing-v{version}"
+
+  supports_brownfield: true
+
+  wizard_flow:
+    - section: testing_framework
+      agent_prompt: "What testing framework?"
+      brownfield_prompt: "Testing framework? (detected: {detected_testing_framework})"
+
+      captures:
+        - key: testing_framework
+          type: string
+          default: "pytest"
+          brownfield_default: "{detected_testing_framework}"
+
+    - section: coverage
+      agent_prompt: "Minimum test coverage percentage?"
+      brownfield_prompt: "Min coverage? (detected: {detected_min_coverage}%)"
+
+      captures:
+        - key: min_test_coverage
+          type: number
+          default: 70
+          brownfield_default: "{detected_min_coverage}"
+
+    - section: test_requirements
+      agent_prompt: "Additional testing requirements?"
+
+      followups:
+        - agent_prompt: "Require integration tests?"
+          captures:
+            - key: require_integration_tests
+              type: boolean
+              default: true
+
+        - agent_prompt: "Require tests before merge?"
+          captures:
+            - key: test_before_merge
+              type: boolean
+              default: true
+
+  output_policy:
+    policy:
+      id: "{profile-name}-testing-v1"
+      name: "{profile-name} Testing Standards"
+      type: user
+      category: testing
+      protected: false
+      created: "{timestamp}"
+      updated: "{timestamp}"
+
+      metadata:
+        project_type: "{project_type}"
+        detection_method: "{detection_method}"
+
+    rules:
+      testing_framework: "{testing_framework}"
+      min_test_coverage: "{min_test_coverage}"
+      require_integration_tests: "{require_integration_tests}"
+      test_before_merge: "{test_before_merge}"

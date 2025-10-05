@@ -1,0 +1,294 @@
+template:
+  id: brownfield-detection-template
+  name: "Brownfield Project Convention Detection"
+  type: detection-template
+  protected: true
+  version: 1.0.0
+
+  description: |
+    Guide for Agent 2 to analyze existing codebases and extract
+    conventions via pattern matching. Used for brownfield project detection.
+
+sampling_strategy:
+  # Automatic mode: Agent selects files
+  automatic:
+    python:
+      priority_configs:
+        - pyproject.toml
+        - setup.py
+        - setup.cfg
+        - requirements.txt
+        - .ruff.toml
+        - .editorconfig
+
+      source_samples:
+        strategy: smart_selection
+        max_files: 5
+        max_lines_per_file: 300
+
+        selection_order:
+          - Main entry point (src/main.py, app.py, __init__.py)
+          - Core modules (src/**/*.py, limit 2)
+          - Test files (tests/**/*.py, limit 2)
+
+      skip_patterns:
+        - "*/venv/*"
+        - "*/.venv/*"
+        - "*/__pycache__/*"
+        - "*_pb2.py"
+        - "*.pyc"
+
+    javascript:
+      priority_configs:
+        - package.json
+        - tsconfig.json
+        - .prettierrc
+        - .eslintrc.json
+
+      source_samples:
+        max_files: 5
+        selection_order:
+          - index.js, index.ts, main.js
+          - src/**/*.{js,ts} (limit 2)
+          - tests/**/*.{js,ts} (limit 2)
+
+      skip_patterns:
+        - "*/node_modules/*"
+        - "*.min.js"
+
+  # Hinted mode: User specifies files
+  hinted:
+    max_files: 8 # 3 docs + 5 modules
+    validate_paths: true
+    file_types_allowed: [config, source, documentation]
+
+  # Token budget per mode
+  token_budget:
+    automatic: 20000 # Agent 2 total budget
+    hinted: 15000 # User controls file count, lower budget
+    response_max: 1000 # Max return to Agent 1
+
+detection_rules:
+  # Language version detection
+  language_version:
+    python:
+      sources:
+        - pattern: "requires-python\\s*=\\s*[\"']([^\"']+)[\"']"
+          file: pyproject.toml
+          extract: version_spec
+          confidence: 1.0
+
+        - pattern: "python_requires\\s*=\\s*[\"']([^\"']+)[\"']"
+          file: setup.py
+          extract: version_spec
+          confidence: 1.0
+
+      fallback:
+        action: ask_user
+        prompt: "What Python version does your project use?"
+        default: ">=3.11"
+
+    javascript:
+      sources:
+        - pattern: "\"engines\":\\s*\\{[^}]*\"node\":\\s*\"([^\"]+)\""
+          file: package.json
+          extract: version_spec
+          confidence: 1.0
+
+      fallback:
+        prompt: "What Node.js version does your project target?"
+        default: ">=18.0"
+
+  # Formatter detection
+  formatter:
+    python:
+      sources:
+        - pattern: "\\[tool\\.black\\]"
+          file: pyproject.toml
+          result: "black"
+          confidence: 0.95
+
+        - pattern: "\\[tool\\.ruff\\]"
+          file: pyproject.toml
+          result: "ruff"
+          confidence: 0.95
+
+      config_extraction:
+        black:
+          line_length:
+            pattern: "line-length\\s*=\\s*(\\d+)"
+            file: pyproject.toml
+            default: 88
+
+        ruff:
+          line_length:
+            pattern: "line-length\\s*=\\s*(\\d+)"
+            file: pyproject.toml
+            default: 88
+
+      fallback:
+        prompt: "What formatter does your project use?"
+        options: ["black", "ruff", "autopep8", "none"]
+
+  # Testing framework detection
+  testing_framework:
+    python:
+      sources:
+        - pattern: "pytest"
+          file: requirements.txt
+          result: "pytest"
+          confidence: 1.0
+
+        - pattern: '"pytest"'
+          file: pyproject.toml
+          result: "pytest"
+          confidence: 1.0
+
+      fallback:
+        prompt: "What testing framework does your project use?"
+        options: ["pytest", "unittest", "nose2"]
+
+  # Code pattern analysis (from sample files)
+  code_patterns:
+    docstring_style:
+      method: regex_match
+      patterns:
+        google:
+          - "Args:\\n"
+          - "Returns:\\n"
+          - "Raises:\\n"
+        numpy:
+          - "Parameters\\n\\s*----------"
+          - "Returns\\n\\s*-------"
+        sphinx:
+          - ":param [^:]+:"
+          - ":returns:"
+
+      decision_rule: most_common
+      min_samples: 3
+      confidence_threshold: 0.7
+
+    type_hints_usage:
+      method: count_annotations
+      patterns:
+        - "def [^(]+\\([^)]*:\\s*\\w+" # Params with types
+        - "def [^(]+\\([^)]*\\)\\s*->\\s*\\w+" # Return types
+
+      thresholds:
+        required: 0.8 # 80%+ = required
+        encouraged: 0.4 # 40-80% = encouraged
+        optional: 0.0 # <40% = optional
+
+    function_complexity:
+      method: measure_metrics
+      metrics:
+        - avg_function_lines
+        - max_function_lines
+        - avg_file_lines
+
+      sample_size: 5
+
+confidence_scoring:
+  # How to calculate confidence for each convention
+  rules:
+    found_in_config: 1.0 # Config file = high confidence
+    found_in_multiple_files: 0.9 # Consistency = high confidence
+    found_in_single_file: 0.7 # Limited sample = medium confidence
+    inferred_from_pattern: 0.5 # Pattern match = medium-low confidence
+    not_found: 0.0 # No detection = no confidence
+
+  thresholds:
+    high: 0.8 # Use value without asking
+    medium: 0.5 # Suggest value, ask confirmation
+    low: 0.3 # Ask user explicitly
+
+response_schema:
+  type: object
+  description: "Agent 2 must return this exact format to Agent 1"
+
+  required:
+    - detected_conventions
+    - confidence
+    - sources
+
+  properties:
+    detected_conventions:
+      type: object
+      description: "Extracted values ONLY (NO raw file contents)"
+      properties:
+        language_version:
+          type: string
+        formatter:
+          type: string
+        line_length:
+          type: number
+        testing_framework:
+          type: string
+        docstring_style:
+          type: string
+        type_hints_usage:
+          type: string
+        avg_function_lines:
+          type: number
+        avg_file_lines:
+          type: number
+
+    confidence:
+      type: object
+      description: "Confidence scores 0.0-1.0 for each convention"
+      additionalProperties:
+        type: number
+        minimum: 0.0
+        maximum: 1.0
+
+    sources:
+      type: object
+      description: "Source file:location for each detected value"
+      additionalProperties:
+        type: string
+        pattern: "^[^:]+:[^:]+$" # "file:location"
+
+  example:
+    detected_conventions:
+      language_version: ">=3.11"
+      formatter: "ruff"
+      line_length: 100
+      testing_framework: "pytest"
+      docstring_style: "google"
+      type_hints_usage: "90%"
+      avg_function_lines: 25
+      avg_file_lines: 180
+
+    confidence:
+      language_version: 1.0
+      formatter: 0.95
+      testing_framework: 1.0
+      docstring_style: 0.8
+      type_hints_usage: 0.85
+      avg_function_lines: 0.9
+
+    sources:
+      language_version: "pyproject.toml:requires-python"
+      formatter: "pyproject.toml:[tool.ruff]"
+      testing_framework: "pyproject.toml:[tool.pytest]"
+      docstring_style: "src/main.py:pattern_analysis"
+
+token_management:
+  agent_2_budget:
+    total: 20000 # Per task
+    breakdown:
+      file_reads: 15000 # Raw file contents
+      processing: 3000 # Pattern matching, calculations
+      response: 1000 # JSON return to Agent 1
+
+  optimization_strategies:
+    - Skip files > 500 lines (too large)
+    - Read only first 300 lines of source files
+    - Skip binary/generated files
+    - Use pattern matching (not full AST parsing)
+    - Return compressed data only
+
+  compression_target:
+    input: 15000 tokens # Raw files read
+    output: 500-1000 tokens # JSON response
+    ratio: "15-30x compression"

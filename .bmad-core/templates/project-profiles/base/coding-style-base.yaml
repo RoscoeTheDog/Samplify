@@ -1,0 +1,135 @@
+# <!-- Powered by BMAD™ Core -->
+template:
+  id: coding-style-base
+  name: Base Coding Style Context
+  version: 1.0
+  type: project-profile
+  output:
+    format: markdown
+    filename: .ai/profiles/coding-standards.md
+    title: "Coding Standards and Style Guidelines"
+
+workflow:
+  mode: interactive
+  elicitation: advanced-elicitation
+
+sections:
+  - id: introduction
+    title: Introduction
+    template: |
+      This document defines the coding standards and style guidelines for this project. These standards are **MANDATORY** for AI development agents and serve as the foundation for consistent, maintainable code across the codebase.
+
+  - id: code-organization
+    title: Code Organization Principles
+    instruction: |
+      Discuss with the user their preferred approach to code organization. Focus on:
+      1. File and directory structure philosophy
+      2. Module/package organization patterns
+      3. Separation of concerns approach
+      4. Any specific organizational patterns they prefer
+
+      Keep this high-level and universal - language-specific details come later.
+    elicit: true
+    template: |
+      {{code_organization_philosophy}}
+
+  - id: naming-conventions
+    title: Naming Conventions
+    instruction: |
+      Establish naming conventions that apply across all languages in the project.
+      Ask about:
+      1. General naming philosophy (descriptive vs concise, verbosity level)
+      2. Abbreviations policy (when acceptable, which ones are standard)
+      3. Business domain terminology preferences
+      4. Any naming anti-patterns to avoid
+
+      Note: Language-specific conventions (camelCase vs snake_case) should be in language templates.
+    elicit: true
+    sections:
+      - id: general-naming
+        title: General Guidelines
+        template: |
+          - **Naming Philosophy:** {{naming_philosophy}}
+          - **Abbreviations:** {{abbreviation_policy}}
+          - **Domain Terms:** {{domain_terminology}}
+      - id: naming-antipatterns
+        title: Naming Anti-Patterns to Avoid
+        instruction: List any specific naming patterns that should NOT be used
+        template: |
+          {{naming_antipatterns}}
+
+  - id: code-quality-principles
+    title: Code Quality Principles
+    instruction: |
+      Define the core quality principles for this project. Ask about:
+      1. Balance between simplicity and robustness
+      2. Performance vs readability priorities
+      3. DRY principle application (strict vs pragmatic)
+      4. Premature optimization stance
+      5. Tech debt tolerance level
+
+      Focus on project-specific priorities, not generic "write clean code" advice.
+    elicit: true
+    template: |
+      {{code_quality_principles}}
+
+  - id: error-handling
+    title: Error Handling Philosophy
+    instruction: |
+      Establish error handling approach. Ask about:
+      1. Error handling strategy (exceptions vs error codes vs result types)
+      2. Logging approach (what to log, at what levels)
+      3. Error message philosophy (technical vs user-friendly)
+      4. Recovery vs fail-fast preference
+      5. Error propagation patterns
+    elicit: true
+    sections:
+      - id: error-strategy
+        title: Error Handling Strategy
+        template: |
+          {{error_handling_strategy}}
+      - id: logging-approach
+        title: Logging Guidelines
+        template: |
+          {{logging_guidelines}}
+
+  - id: critical-rules
+    title: Critical Rules (AI Agent Mandatory)
+    instruction: |
+      These are CRITICAL rules that AI agents must NEVER violate. Work with the user to identify:
+      1. Security-critical patterns (e.g., "never log passwords")
+      2. Performance-critical rules (e.g., "never N+1 queries")
+      3. Architecture-critical patterns (e.g., "always use repository pattern")
+      4. Production-critical rules (e.g., "never use console.log in production")
+
+      Keep this list SHORT. Only include rules that:
+      - AI might realistically violate
+      - Would cause significant problems if violated
+      - Are project-specific (not general best practices)
+
+      Avoid obvious rules like "write clean code" or "use SOLID principles".
+    elicit: true
+    repeatable: true
+    template: |
+      - **{{rule_name}}:** {{rule_description}}
+
+  - id: documentation-standards
+    title: Code Documentation Standards
+    instruction: |
+      Define documentation expectations. Ask about:
+      1. When to write comments (always, sparingly, only for complex logic)
+      2. Documentation format (JSDoc, docstrings, XML comments, etc.)
+      3. What to document (public APIs only, all functions, complex algorithms)
+      4. README and inline doc balance
+      5. Code self-documentation philosophy
+    elicit: true
+    template: |
+      {{documentation_standards}}
+
+  - id: change-log
+    title: Change Log
+    type: table
+    columns: [Date, Version, Change, Modified By]
+    instruction: Track changes to these coding standards
+    template: |
+      | {{date}} | {{version}} | {{change}} | {{modified_by}} |

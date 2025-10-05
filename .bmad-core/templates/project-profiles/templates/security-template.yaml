@@ -1,0 +1,81 @@
+template:
+  id: security-template
+  name: "Security Policy Template"
+  type: wizard-template
+  protected: true
+  version: 1.0.0
+
+  creates_policy_type: user
+  policy_id_pattern: "{profile-name}-security-v{version}"
+
+  supports_brownfield: true
+
+  wizard_flow:
+    - section: security_level
+      agent_prompt: "What security level is required?"
+      brownfield_prompt: "Security level? (detected: {detected_security_level})"
+
+      captures:
+        - key: security_level
+          patterns:
+            - "high|critical|maximum -> high"
+            - "medium|standard|normal -> medium"
+            - "low|basic|minimal -> low"
+
+          brownfield_default: "{detected_security_level}"
+
+    - section: authentication
+      agent_prompt: "Authentication method?"
+      brownfield_prompt: "Auth method? (detected: {detected_auth_type})"
+
+      captures:
+        - key: auth_type
+          patterns:
+            - "token|jwt|bearer -> token"
+            - "session|cookie -> session"
+            - "oauth|oauth2 -> oauth2"
+
+          brownfield_default: "{detected_auth_type}"
+
+    - section: encryption
+      agent_prompt: "Encryption requirements?"
+      brownfield_prompt: "Encryption? (detected: at-rest={detected_encryption_at_rest}, in-transit={detected_encryption_in_transit})"
+
+      followups:
+        - agent_prompt: "Encryption at rest?"
+          captures:
+            - key: encryption_at_rest
+              type: boolean
+              default: true
+              brownfield_default: "{detected_encryption_at_rest}"
+
+        - agent_prompt: "Encryption in transit?"
+          captures:
+            - key: encryption_in_transit
+              type: boolean
+              default: true
+              brownfield_default: "{detected_encryption_in_transit}"
+
+  output_policy:
+    policy:
+      id: "{profile-name}-security-v1"
+      name: "{profile-name} Security Policy"
+      type: user
+      category: security
+      protected: false
+      created: "{timestamp}"
+      updated: "{timestamp}"
+
+      metadata:
+        project_type: "{project_type}"
+        detection_method: "{detection_method}"
+
+    rules:
+      security_level: "{security_level}"
+      auth_type: "{auth_type}"
+      encryption_at_rest: "{encryption_at_rest}"
+      encryption_in_transit: "{encryption_in_transit}"
+      require_https: true
+      sql_injection_prevention: true
+      xss_prevention: true
+      csrf_protection: true

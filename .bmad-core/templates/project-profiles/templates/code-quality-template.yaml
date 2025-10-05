@@ -1,0 +1,110 @@
+template:
+  id: code-quality-template
+  name: "Code Quality Policy Template"
+  type: wizard-template
+  protected: true
+  version: 1.0.0
+
+  creates_policy_type: user
+  policy_id_pattern: "{profile-name}-coding-v{version}"
+
+  supports_brownfield: true
+
+  wizard_flow:
+    - section: coding_philosophy
+      agent_prompt: "What's your coding philosophy for this project?"
+
+      # Brownfield: show detected value
+      brownfield_prompt: "Coding philosophy? (detected: {detected_philosophy})"
+
+      captures:
+        - key: philosophy
+          patterns:
+            - "strict|comprehensive|rigorous -> strict"
+            - "pragmatic|flexible|balanced -> pragmatic"
+            - "minimal|simple|lean -> minimal"
+
+          brownfield_default: "{detected_philosophy}"
+
+      followups:
+        - condition: "philosophy == strict"
+          agent_prompt: "Max file size (lines)?"
+          brownfield_prompt: "Max file size? (current avg: {detected_avg_file_lines})"
+
+          captures:
+            - key: max_file_lines
+              type: number
+              default: 500
+              brownfield_default: "{detected_max_file_lines}"
+
+        - agent_prompt: "Max function size (lines)?"
+          brownfield_prompt: "Max function size? (current avg: {detected_avg_function_lines})"
+
+          captures:
+            - key: max_function_lines
+              type: number
+              default: 50
+              brownfield_default: "{detected_max_function_lines}"
+
+    - section: formatting
+      agent_prompt: "Code formatting preferences?"
+      brownfield_prompt: "Formatting? (detected: {detected_formatter}, {detected_line_length} chars)"
+
+      followups:
+        - agent_prompt: "What formatter?"
+          captures:
+            - key: formatter
+              type: string
+              default: "black"
+              brownfield_default: "{detected_formatter}"
+
+        - agent_prompt: "Max line length?"
+          captures:
+            - key: max_line_length
+              type: number
+              default: 100
+              brownfield_default: "{detected_line_length}"
+
+    - section: type_safety
+      agent_prompt: "Type safety requirements?"
+      brownfield_prompt: "Type hints? (detected: {detected_type_hints_policy})"
+
+      followups:
+        - agent_prompt: "Require type hints?"
+          captures:
+            - key: require_type_hints
+              type: boolean
+              default: true
+              brownfield_default: "{detected_require_type_hints}"
+
+        - agent_prompt: "Docstring style?"
+          brownfield_prompt: "Docstring style? (detected: {detected_docstring_style})"
+
+          captures:
+            - key: docstring_style
+              type: string
+              default: "google"
+              brownfield_default: "{detected_docstring_style}"
+
+  output_policy:
+    policy:
+      id: "{profile-name}-coding-v1"
+      name: "{profile-name} Coding Standards"
+      type: user
+      category: code-quality
+      protected: false
+      created: "{timestamp}"
+      updated: "{timestamp}"
+
+      metadata:
+        project_type: "{project_type}"
+        detection_method: "{detection_method}"
+
+    rules:
+      philosophy: "{philosophy}"
+      max_file_lines: "{max_file_lines}"
+      max_function_lines: "{max_function_lines}"
+      formatter: "{formatter}"
+      max_line_length: "{max_line_length}"
+      require_type_hints: "{require_type_hints}"
+      docstring_style: "{docstring_style}"

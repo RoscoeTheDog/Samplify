@@ -1,0 +1,229 @@
+# <!-- Powered by BMAD™ Core -->
+template:
+  id: experience-levels-base
+  name: Base Developer Experience Levels Context
+  version: 1.0
+  type: project-profile
+  output:
+    format: markdown
+    filename: .ai/profiles/experience-levels.md
+    title: "Developer Experience Level Guidance"
+
+workflow:
+  mode: interactive
+  elicitation: advanced-elicitation
+
+sections:
+  - id: introduction
+    title: Introduction
+    template: |
+      This document helps AI development agents understand the experience levels and expertise of the development team. This context enables agents to:
+      - Provide appropriate explanations and documentation
+      - Choose suitable complexity levels for implementations
+      - Offer helpful learning guidance when relevant
+      - Avoid over-explaining to experts or under-explaining to newcomers
+
+  - id: team-composition
+    title: Team Composition
+    instruction: |
+      Understand the team's overall composition and experience levels. Ask about:
+      1. Primary developer(s) interacting with AI agents
+      2. Overall programming experience (years, variety of projects)
+      3. Team size and collaboration model
+      4. Experience diversity (uniform vs mixed levels)
+
+      This helps agents calibrate their communication style.
+    elicit: true
+    template: |
+      {{team_composition}}
+
+  - id: general-programming
+    title: General Programming Experience
+    instruction: |
+      Assess general programming expertise. Ask about:
+      1. Years of professional programming experience
+      2. Comfort with programming paradigms (OOP, functional, etc.)
+      3. Algorithmic thinking and problem-solving level
+      4. Debugging and troubleshooting capabilities
+      5. Understanding of software architecture concepts
+
+      Present experience level options:
+      - Beginner: Learning fundamentals, needs detailed explanations
+      - Intermediate: Solid fundamentals, can implement features independently
+      - Advanced: Deep understanding, handles complex architectures
+      - Expert: Extensive experience across many domains and technologies
+    elicit: true
+    choices:
+      experience_level: [Beginner, Intermediate, Advanced, Expert]
+    sections:
+      - id: experience-level
+        title: Overall Experience Level
+        template: |
+          **Experience Level:** {{experience_level}}
+      - id: experience-details
+        title: Experience Details
+        template: |
+          {{experience_details}}
+
+  - id: language-expertise
+    title: Language and Technology Expertise
+    instruction: |
+      For each primary language/technology in the project, assess expertise level.
+      Ask about:
+      1. Years using this specific language
+      2. Depth of knowledge (syntax only vs deep understanding)
+      3. Familiarity with advanced features
+      4. Production experience
+      5. Specific areas of strength or weakness
+
+      This helps agents know when to explain language-specific concepts.
+    elicit: true
+    repeatable: true
+    sections:
+      - id: language-expertise-item
+        title: "{{language_name}}"
+        template: |
+          - **Experience:** {{language_experience}}
+          - **Proficiency:** {{language_proficiency}}
+          - **Notes:** {{language_notes}}
+
+  - id: framework-expertise
+    title: Framework and Library Expertise
+    instruction: |
+      For major frameworks being used, assess familiarity level.
+      Ask about:
+      1. Experience with this specific framework
+      2. Understanding of framework patterns and idioms
+      3. Knowledge of best practices
+      4. Previous projects using this framework
+
+      This helps agents know when to explain framework-specific patterns.
+    elicit: true
+    repeatable: true
+    sections:
+      - id: framework-expertise-item
+        title: "{{framework_name}}"
+        template: |
+          - **Experience:** {{framework_experience}}
+          - **Familiarity:** {{framework_familiarity}}
+          - **Notes:** {{framework_notes}}
+
+  - id: architecture-experience
+    title: Architecture and Design Pattern Experience
+    instruction: |
+      Assess experience with software architecture and design patterns. Ask about:
+      1. Familiarity with common design patterns
+      2. Experience designing system architectures
+      3. Understanding of architectural styles (microservices, monolith, etc.)
+      4. Database design experience
+      5. API design experience
+      6. Scalability and performance optimization experience
+
+      This helps agents know how much architectural guidance to provide.
+    elicit: true
+    choices:
+      architecture_level: [Learning, Competent, Experienced, Expert]
+    template: |
+      **Architecture Experience Level:** {{architecture_level}}
+
+      {{architecture_details}}
+
+  - id: devops-infrastructure
+    title: DevOps and Infrastructure Experience
+    instruction: |
+      Assess experience with deployment, CI/CD, and infrastructure. Ask about:
+      1. Docker and containerization experience
+      2. CI/CD pipeline experience
+      3. Cloud platform experience (AWS, Azure, GCP)
+      4. Infrastructure as Code experience
+      5. Monitoring and logging experience
+
+      This helps agents provide appropriate infrastructure guidance.
+    elicit: true
+    choices:
+      devops_level: [Minimal, Basic, Intermediate, Advanced]
+    template: |
+      **DevOps Experience Level:** {{devops_level}}
+
+      {{devops_details}}
+
+  - id: testing-experience
+    title: Testing and Quality Assurance Experience
+    instruction: |
+      Assess experience with testing practices. Ask about:
+      1. Unit testing experience
+      2. Integration testing experience
+      3. TDD/BDD experience
+      4. Test framework familiarity
+      5. Mocking and stubbing understanding
+
+      This helps agents know how much testing guidance to provide.
+    elicit: true
+    choices:
+      testing_level: [Learning, Competent, Experienced, Expert]
+    template: |
+      **Testing Experience Level:** {{testing_level}}
+
+      {{testing_details}}
+
+  - id: learning-preferences
+    title: Learning Preferences and Communication Style
+    instruction: |
+      Understand how the developer(s) prefer to learn and receive information from AI agents.
+      Ask about:
+      1. Preferred explanation style (concise vs detailed)
+      2. Desire for learning opportunities vs just solutions
+      3. Interest in best practices and alternatives
+      4. Comfort with being pointed to documentation vs inline explanations
+      5. Preference for examples and code samples
+
+      This helps agents communicate most effectively.
+    elicit: true
+    sections:
+      - id: explanation-style
+        title: Preferred Explanation Style
+        template: |
+          {{explanation_style_preference}}
+      - id: learning-approach
+        title: Learning Approach
+        template: |
+          {{learning_approach}}
+
+  - id: knowledge-gaps
+    title: Specific Knowledge Gaps and Learning Goals
+    instruction: |
+      Identify any specific areas where extra guidance would be helpful.
+      Ask about:
+      1. Technologies being used for the first time
+      2. Concepts the developer wants to learn
+      3. Areas where mistakes have been made in the past
+      4. Topics that need extra explanation
+
+      Be honest - this helps agents provide targeted, helpful guidance.
+    elicit: true
+    template: |
+      {{knowledge_gaps}}
+
+  - id: agent-interaction-preferences
+    title: AI Agent Interaction Preferences
+    instruction: |
+      Define how the developer prefers to interact with AI coding agents.
+      Ask about:
+      1. When to ask for clarification vs make assumptions
+      2. How much context to provide in responses
+      3. Proactiveness preference (suggest improvements vs just implement requests)
+      4. Code comment verbosity in generated code
+      5. Willingness to challenge or suggest alternatives
+
+      This helps agents match the developer's working style.
+    elicit: true
+    template: |
+      {{agent_interaction_preferences}}
+
+  - id: change-log
+    title: Change Log
+    type: table
+    columns: [Date, Version, Change, Modified By]
+    instruction: Track changes to experience level document (as skills grow)
+    template: |
+      | {{date}} | {{version}} | {{change}} | {{modified_by}} |

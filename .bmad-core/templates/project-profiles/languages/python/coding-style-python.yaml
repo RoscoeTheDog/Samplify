@@ -1,0 +1,246 @@
+# <!-- Powered by BMAD™ Core -->
+template:
+  id: coding-style-python
+  name: Python Coding Style Context
+  version: 1.0
+  type: project-profile
+  inherits:
+    - base/coding-style-base
+  output:
+    format: markdown
+    filename: .ai/profiles/coding-standards.md
+    title: "Python Coding Standards"
+
+workflow:
+  mode: interactive
+  elicitation: advanced-elicitation
+
+sections:
+  - id: python-version
+    title: Python Version and Runtime
+    instruction: |
+      Determine the Python version and runtime requirements. Ask about:
+      1. Minimum Python version required
+      2. Target Python version(s)
+      3. Any version-specific features being used
+      4. Virtual environment approach (venv, conda, poetry, etc.)
+    elicit: true
+    template: |
+      - **Python Version:** {{python_version}}
+      - **Virtual Environment:** {{venv_approach}}
+
+  - id: python-style-tools
+    title: Style and Linting Tools
+    instruction: |
+      Determine Python style and linting configuration. Ask about:
+      1. Formatter (Black, autopep8, YAPF, Ruff, or none)
+      2. Linter (Pylint, Flake8, Ruff, or none)
+      3. Type checker (mypy, pyright, or none)
+      4. Line length limit
+      5. Import sorter (isort, or none)
+      6. Configuration files to reference
+
+      Present common options as choices.
+    elicit: true
+    choices:
+      formatter: [Black, Ruff, autopep8, YAPF, None]
+      linter: [Ruff, Pylint, Flake8, None]
+      type_checker: [mypy, pyright, None]
+      import_sorter: [isort, Ruff, None]
+    sections:
+      - id: tools-config
+        title: Tools Configuration
+        template: |
+          - **Formatter:** {{formatter}}
+          - **Linter:** {{linter}}
+          - **Type Checker:** {{type_checker}}
+          - **Import Sorter:** {{import_sorter}}
+          - **Line Length:** {{line_length}}
+          - **Config Files:** {{config_files}}
+
+  - id: python-naming
+    title: Python Naming Conventions
+    instruction: |
+      Define Python-specific naming conventions. Ask about:
+      1. Module/package naming (lowercase, lowercase_with_underscores)
+      2. Class naming (CapWords standard, or deviations)
+      3. Function/method naming (lowercase_with_underscores standard, or deviations)
+      4. Constants naming (UPPER_CASE standard, or deviations)
+      5. Private members (single underscore _ prefix policy)
+      6. Name mangling (double underscore __ prefix policy)
+
+      Only document if deviating from PEP 8 standards.
+    elicit: true
+    template: |
+      {{python_naming_conventions}}
+
+  - id: type-hints
+    title: Type Hints Policy
+    instruction: |
+      Define type hinting requirements. Ask about:
+      1. Type hints requirement level (required all, public APIs only, optional, avoid)
+      2. Type hint style (PEP 484 vs PEP 585 vs PEP 604)
+      3. Use of typing module (List, Dict, etc. vs built-in list, dict)
+      4. Generic types usage
+      5. Union vs | operator preference
+      6. Type hint placement (inline vs stub files)
+
+      This is critical for AI agents to know.
+    elicit: true
+    choices:
+      type_hints_level: [Required-All, Public-APIs-Only, Optional, Minimal]
+      type_hints_style: [PEP-484-Style, Modern-Style-3.9+, Mixed]
+    template: |
+      **Type Hints Requirement:** {{type_hints_level}}
+      **Type Hints Style:** {{type_hints_style}}
+
+      {{type_hints_details}}
+
+  - id: docstrings
+    title: Docstring Standards
+    instruction: |
+      Define docstring requirements. Ask about:
+      1. Docstring format (Google, NumPy, Sphinx/reStructuredText, or plain)
+      2. What requires docstrings (all functions, public only, classes only)
+      3. Required sections (Args, Returns, Raises, Examples)
+      4. One-line vs multi-line docstring criteria
+      5. Examples in docstrings policy
+
+      Show examples of each format if user is unsure.
+    elicit: true
+    choices:
+      docstring_format: [Google, NumPy, Sphinx, Plain]
+      docstring_requirement: [All-Functions, Public-Only, Classes-And-Public, Minimal]
+    sections:
+      - id: docstring-config
+        title: Docstring Configuration
+        template: |
+          - **Format:** {{docstring_format}}
+          - **Requirement Level:** {{docstring_requirement}}
+          - **Required Sections:** {{required_sections}}
+      - id: docstring-examples
+        title: Docstring Examples
+        instruction: Provide an example of a well-formatted docstring
+        template: |
+          {{docstring_example}}
+
+  - id: import-organization
+    title: Import Organization
+    instruction: |
+      Define import organization rules. Ask about:
+      1. Import grouping (standard library, third-party, local)
+      2. Absolute vs relative imports policy
+      3. Wildcard imports policy (from x import *)
+      4. Import aliasing conventions
+      5. __all__ definition requirements
+
+      These rules help maintain clean, readable imports.
+    elicit: true
+    template: |
+      {{import_organization_rules}}
+
+  - id: class-structure
+    title: Class Structure and Design
+    instruction: |
+      Define Python class design preferences. Ask about:
+      1. Dataclass usage (when to use @dataclass)
+      2. Property usage (@property decorator policy)
+      3. Class method vs static method preferences
+      4. Abstract base classes usage
+      5. Slots usage policy
+      6. Multiple inheritance stance
+
+      Focus on project-specific preferences.
+    elicit: true
+    template: |
+      {{class_design_preferences}}
+
+  - id: exception-handling
+    title: Exception Handling (Python-Specific)
+    instruction: |
+      Define Python exception handling patterns. Ask about:
+      1. Exception inheritance (derive from Exception vs built-ins)
+      2. Custom exception organization
+      3. Bare except: policy (forbidden, discouraged, or acceptable)
+      4. Exception chaining (use "raise ... from ..." or not)
+      5. Context managers for resource management
+      6. EAFP vs LBYL preference (pythonic vs defensive)
+
+      This extends the base error handling section with Python specifics.
+    elicit: true
+    template: |
+      {{python_exception_patterns}}
+
+  - id: python-idioms
+    title: Python Idioms and Best Practices
+    instruction: |
+      Define which Python idioms and features to use or avoid. Ask about:
+      1. List comprehensions (encouraged, or avoid for readability)
+      2. Generator expressions usage
+      3. Context managers (with statements)
+      4. F-strings vs .format() vs % formatting
+      5. Pathlib vs os.path preference
+      6. Async/await usage (if applicable)
+      7. Decorators usage policy
+
+      Focus on project-specific preferences, not generic Python advice.
+    elicit: true
+    template: |
+      {{python_idioms}}
+
+  - id: dependency-management
+    title: Dependency Management
+    instruction: |
+      Define dependency management approach. Ask about:
+      1. Package manager (pip, poetry, pipenv, conda)
+      2. Requirements file structure (requirements.txt, pyproject.toml)
+      3. Dependency pinning policy (exact versions vs ranges)
+      4. Development vs production dependencies
+      5. Optional dependencies handling
+
+      This helps AI agents maintain dependencies correctly.
+    elicit: true
+    choices:
+      package_manager: [pip, poetry, pipenv, conda]
+    template: |
+      - **Package Manager:** {{package_manager}}
+      - **Requirements Files:** {{requirements_files}}
+      - **Pinning Policy:** {{pinning_policy}}
+
+  - id: testing-specifics
+    title: Python Testing Specifics
+    instruction: |
+      Define Python testing configuration. Ask about:
+      1. Test framework (pytest, unittest, nose)
+      2. Test file naming convention
+      3. Fixture usage and organization
+      4. Mock/patch usage preferences
+      5. Parametrized test usage
+      6. Test coverage tools (coverage.py, pytest-cov)
+
+      This extends the base testing section with Python specifics.
+    elicit: true
+    choices:
+      test_framework: [pytest, unittest, nose2]
+    template: |
+      - **Test Framework:** {{test_framework}}
+      - **Test File Convention:** {{test_file_convention}}
+      - **Coverage Tool:** {{coverage_tool}}
+
+      {{testing_specifics}}
+
+  - id: python-critical-rules
+    title: Python-Specific Critical Rules
+    instruction: |
+      Add any Python-specific critical rules beyond the base critical rules.
+      Examples:
+      - "Never use mutable default arguments"
+      - "Always close file handles (use context managers)"
+      - "Never catch SystemExit or KeyboardInterrupt"
+      - "Avoid circular imports"
+
+      Only include rules AI might violate that aren't obvious.
+    elicit: true
+    repeatable: true
+    template: |
+      - **{{rule_name}}:** {{rule_description}}

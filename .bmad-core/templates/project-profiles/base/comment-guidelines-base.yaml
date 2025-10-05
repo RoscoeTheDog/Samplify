@@ -1,0 +1,167 @@
+# <!-- Powered by BMAD™ Core -->
+template:
+  id: comment-guidelines-base
+  name: Base Comment Guidelines Context
+  version: 1.0
+  type: project-profile
+  output:
+    format: markdown
+    filename: .ai/profiles/comment-guidelines.md
+    title: "Code Comment Guidelines"
+
+workflow:
+  mode: interactive
+  elicitation: advanced-elicitation
+
+sections:
+  - id: introduction
+    title: Introduction
+    template: |
+      This document defines the comment and documentation guidelines for this project. These guidelines help AI agents understand when and how to write comments that add value without creating noise.
+
+  - id: comment-philosophy
+    title: Comment Philosophy
+    instruction: |
+      Establish the project's overall philosophy on code comments. Ask about:
+      1. Overall stance (heavy commenting vs self-documenting code preference)
+      2. Signal-to-noise balance
+      3. When comments are required vs optional vs discouraged
+      4. Maintenance philosophy (keep comments updated or remove if stale)
+
+      Present common philosophies as choices:
+      - "Comments explain WHY, code explains WHAT"
+      - "Prefer self-documenting code with minimal comments"
+      - "Comment liberally for team knowledge sharing"
+      - "Comments only for complex algorithms and non-obvious decisions"
+    elicit: true
+    choices:
+      comment_approach: [Minimal, Moderate, Comprehensive, Custom]
+    template: |
+      **Comment Approach:** {{comment_approach}}
+
+      {{comment_philosophy}}
+
+  - id: required-comments
+    title: Required Comments
+    instruction: |
+      Define where comments are MANDATORY. Ask about:
+      1. Public API documentation requirements
+      2. Complex algorithm explanations
+      3. Workarounds and hacks
+      4. Performance-sensitive code
+      5. Security-sensitive code
+      6. Non-obvious business logic
+      7. File headers
+
+      Be specific about what must be commented.
+    elicit: true
+    sections:
+      - id: api-documentation
+        title: Public API Documentation
+        template: |
+          {{api_documentation_requirements}}
+      - id: complex-logic
+        title: Complex Logic and Algorithms
+        template: |
+          {{complex_logic_requirements}}
+      - id: special-cases
+        title: Special Cases Requiring Comments
+        repeatable: true
+        template: |
+          - **{{case_name}}:** {{comment_requirement}}
+
+  - id: discouraged-comments
+    title: Discouraged Comment Patterns
+    instruction: |
+      Define what kinds of comments should be AVOIDED. Ask about:
+      1. Obvious comments (e.g., "// increment counter")
+      2. Commented-out code (delete vs preserve)
+      3. Redundant comments that mirror code
+      4. TODO comments (are they acceptable?)
+      5. Attribution comments (e.g., "// written by John")
+      6. Changelog comments (use git history instead?)
+
+      Help the user think about comment anti-patterns they've seen.
+    elicit: true
+    template: |
+      {{discouraged_patterns}}
+
+  - id: comment-structure
+    title: Comment Structure and Format
+    instruction: |
+      Define how comments should be formatted. Ask about:
+      1. Documentation format (JSDoc, docstrings, XML comments, etc.)
+      2. Required documentation tags (@param, @returns, etc.)
+      3. Single-line vs multi-line comment style
+      4. Comment capitalization and punctuation
+      5. Examples and usage documentation
+      6. Link to external docs when appropriate
+    elicit: true
+    sections:
+      - id: doc-format
+        title: Documentation Format
+        template: |
+          {{documentation_format}}
+      - id: required-tags
+        title: Required Documentation Tags
+        template: |
+          {{required_tags}}
+      - id: style-rules
+        title: Comment Style Rules
+        template: |
+          {{comment_style_rules}}
+
+  - id: inline-vs-block
+    title: Inline vs Block Comments
+    instruction: |
+      Define when to use inline comments vs block comments. Ask about:
+      1. When to use inline comments (end of line)
+      2. When to use block comments (above code)
+      3. Maximum inline comment length
+      4. Grouping related comments
+    elicit: true
+    template: |
+      {{inline_vs_block_guidance}}
+
+  - id: todo-comments
+    title: TODO and FIXME Comments
+    instruction: |
+      Define the policy for TODO, FIXME, HACK, NOTE comments. Ask about:
+      1. Are TODO comments acceptable?
+      2. Required format (e.g., "TODO(username): description")
+      3. When TODOs must become tickets
+      4. FIXME vs HACK vs NOTE usage
+      5. Deadline or context requirements
+    elicit: true
+    choices:
+      todo_policy: [Allowed, Discouraged, Forbidden, Must-Link-To-Ticket]
+    template: |
+      **TODO Policy:** {{todo_policy}}
+
+      {{todo_guidelines}}
+
+  - id: example-good-comments
+    title: Examples of Good Comments
+    instruction: |
+      Provide 2-3 examples of comments that follow these guidelines well.
+      These will help AI agents understand the desired style.
+    elicit: true
+    template: |
+      {{example_good_comments}}
+
+  - id: example-bad-comments
+    title: Examples of Bad Comments
+    instruction: |
+      Provide 2-3 examples of comments that violate these guidelines.
+      Show what NOT to do.
+    elicit: true
+    template: |
+      {{example_bad_comments}}
+
+  - id: change-log
+    title: Change Log
+    type: table
+    columns: [Date, Version, Change, Modified By]
+    instruction: Track changes to these comment guidelines
+    template: |
+      | {{date}} | {{version}} | {{change}} | {{modified_by}} |

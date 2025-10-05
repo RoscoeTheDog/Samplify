@@ -1,0 +1,350 @@
+# <!-- Powered by BMAD™ Core -->
+template:
+  id: coding-style-typescript
+  name: TypeScript Coding Style Context
+  version: 1.0
+  type: project-profile
+  inherits:
+    - base/coding-style-base
+  output:
+    format: markdown
+    filename: .ai/profiles/coding-standards.md
+    title: "TypeScript Coding Standards"
+
+workflow:
+  mode: interactive
+  elicitation: advanced-elicitation
+
+sections:
+  - id: typescript-version
+    title: TypeScript Version and Configuration
+    instruction: |
+      Determine TypeScript and Node.js requirements. Ask about:
+      1. TypeScript version
+      2. Node.js version
+      3. Target ECMAScript version (ES5, ES2015, ES2020, ESNext)
+      4. Module system (CommonJS, ES Modules, UMD)
+      5. tsconfig.json strict mode settings
+
+      This defines the TypeScript environment.
+    elicit: true
+    choices:
+      module_system: [ES-Modules, CommonJS, Both]
+      target: [ES5, ES2015, ES2020, ESNext]
+    template: |
+      - **TypeScript Version:** {{typescript_version}}
+      - **Node.js Version:** {{nodejs_version}}
+      - **Target:** {{target}}
+      - **Module System:** {{module_system}}
+      - **Strict Mode:** {{strict_mode}}
+
+  - id: typescript-style-tools
+    title: Style and Linting Tools
+    instruction: |
+      Determine TypeScript formatting and linting configuration. Ask about:
+      1. Formatter (Prettier, dprint, or none)
+      2. Linter (ESLint, TSLint deprecated, or none)
+      3. ESLint configuration (Airbnb, Standard, Google, custom)
+      4. Line length
+      5. Semicolons (required, never, or auto)
+      6. Quote style (single, double)
+      7. Trailing commas policy
+
+      Present common configurations as choices.
+    elicit: true
+    choices:
+      formatter: [Prettier, dprint, None]
+      linter: [ESLint, None]
+      eslint_config: [Airbnb, Standard, Google, Custom]
+      semicolons: [Required, Never, Auto]
+      quotes: [Single, Double]
+      trailing_commas: [All, ES5, None]
+    sections:
+      - id: tools-config
+        title: Tools Configuration
+        template: |
+          - **Formatter:** {{formatter}}
+          - **Linter:** {{linter}}
+          - **ESLint Config:** {{eslint_config}}
+          - **Line Length:** {{line_length}}
+          - **Semicolons:** {{semicolons}}
+          - **Quotes:** {{quotes}}
+          - **Trailing Commas:** {{trailing_commas}}
+
+  - id: typescript-naming
+    title: TypeScript Naming Conventions
+    instruction: |
+      Define TypeScript naming conventions. Ask about:
+      1. Interface naming (IInterface prefix, or no prefix)
+      2. Type alias naming (TType prefix, or no prefix)
+      3. Enum naming (PascalCase, UPPER_CASE)
+      4. Class naming (PascalCase standard)
+      5. Function naming (camelCase standard, or deviations)
+      6. Variable naming (camelCase standard, or deviations)
+      7. Constants naming (UPPER_CASE, or camelCase)
+      8. Private member naming (_ prefix, # private fields, or no prefix)
+      9. Generic type parameters (T, TValue, or descriptive names)
+
+      TypeScript projects vary on interface/type prefixing.
+    elicit: true
+    choices:
+      interface_naming: [No-Prefix, I-Prefix]
+      type_naming: [No-Prefix, T-Prefix]
+      private_naming: [Underscore-Prefix, Hash-Private, No-Prefix]
+    sections:
+      - id: naming-config
+        title: Naming Configuration
+        template: |
+          - **Interface Naming:** {{interface_naming}}
+          - **Type Naming:** {{type_naming}}
+          - **Private Members:** {{private_naming}}
+      - id: naming-examples
+        title: Naming Examples
+        template: |
+          {{naming_examples}}
+
+  - id: type-system
+    title: Type System Usage
+    instruction: |
+      Define TypeScript type system practices. Ask about:
+      1. Type inference vs explicit typing (when to add types)
+      2. any usage policy (forbidden, discouraged, acceptable)
+      3. unknown vs any preference
+      4. Type assertions (as vs <>) and when acceptable
+      5. Non-null assertions (!) policy
+      6. Type guards usage
+      7. Branded/nominal types usage
+
+      This is critical for type safety.
+    elicit: true
+    choices:
+      any_policy: [Forbidden, Discouraged, Acceptable-Rarely]
+      type_inference_level: [Prefer-Explicit, Prefer-Inference, Balanced]
+    template: |
+      **Type Inference Level:** {{type_inference_level}}
+      **'any' Policy:** {{any_policy}}
+
+      {{type_system_details}}
+
+  - id: interfaces-vs-types
+    title: Interfaces vs Type Aliases
+    instruction: |
+      Define when to use interfaces vs type aliases. Ask about:
+      1. General preference (interfaces first, types first, or situational)
+      2. Object types (interface vs type)
+      3. Union/intersection types (type only)
+      4. Function types preference
+      5. Extension patterns
+
+      This is a common TypeScript debate.
+    elicit: true
+    choices:
+      preference: [Prefer-Interfaces, Prefer-Types, Situational]
+    template: |
+      **General Preference:** {{preference}}
+
+      {{interfaces_vs_types_guidelines}}
+
+  - id: module-organization
+    title: Module Organization and Imports
+    instruction: |
+      Define module organization practices. Ask about:
+      1. Import grouping and ordering
+      2. Barrel exports (index.ts) usage
+      3. Relative vs absolute imports
+      4. Default exports vs named exports preference
+      5. Namespace usage (avoid or acceptable)
+      6. Re-exports pattern
+
+      This helps maintain clean module structure.
+    elicit: true
+    choices:
+      export_style: [Prefer-Named, Prefer-Default, Situational]
+      barrel_exports: [Use, Avoid]
+    template: |
+      **Export Style:** {{export_style}}
+      **Barrel Exports:** {{barrel_exports}}
+
+      {{module_organization_details}}
+
+  - id: class-design-typescript
+    title: Class Design (TypeScript-Specific)
+    instruction: |
+      Define TypeScript class design practices. Ask about:
+      1. Access modifiers usage (public, private, protected)
+      2. Readonly properties usage
+      3. Parameter properties (constructor shorthand)
+      4. Abstract classes usage
+      5. Static members usage
+      6. Class vs functional approach preference
+
+      TypeScript adds OOP features to JavaScript.
+    elicit: true
+    template: |
+      {{typescript_class_design}}
+
+  - id: functional-patterns
+    title: Functional Programming Patterns
+    instruction: |
+      Define functional programming approach. Ask about:
+      1. Immutability preference
+      2. Pure functions emphasis
+      3. Array methods (map, filter, reduce) vs loops
+      4. Function composition patterns
+      5. Readonly types and const assertions usage
+      6. Lodash/Ramda usage policy
+
+      Modern TypeScript encourages functional patterns.
+    elicit: true
+    template: |
+      {{functional_patterns}}
+
+  - id: async-patterns
+    title: Asynchronous Patterns
+    instruction: |
+      Define async/await and Promise patterns. Ask about:
+      1. Promises vs async/await preference
+      2. Promise chaining style
+      3. Error handling in async code (try-catch, .catch, or both)
+      4. Concurrent operations (Promise.all, Promise.race)
+      5. Callback avoidance
+      6. Observable usage (RxJS) if applicable
+
+      This is critical for modern TypeScript.
+    elicit: true
+    template: |
+      {{async_patterns}}
+
+  - id: error-handling-typescript
+    title: Error Handling (TypeScript-Specific)
+    instruction: |
+      Define TypeScript error handling patterns. Ask about:
+      1. Custom error classes usage
+      2. Error type discrimination
+      3. Result/Either types usage
+      4. Never type for exhaustiveness checking
+      5. Validation library usage (zod, io-ts, yup)
+
+      This extends base error handling with TypeScript specifics.
+    elicit: true
+    template: |
+      {{typescript_error_handling}}
+
+  - id: generics
+    title: Generics and Advanced Types
+    instruction: |
+      Define generics usage patterns. Ask about:
+      1. Generic constraints usage
+      2. Conditional types usage
+      3. Mapped types usage
+      4. Template literal types usage
+      5. Utility types (Partial, Pick, Omit, etc.)
+      6. Type manipulation vs runtime validation
+
+      Advanced types are a TypeScript strength.
+    elicit: true
+    template: |
+      {{generics_guidelines}}
+
+  - id: react-patterns
+    title: React Integration (if applicable)
+    condition: project uses React
+    instruction: |
+      If project uses React, define React-TypeScript patterns. Ask about:
+      1. Component typing (FC, React.Component, or function)
+      2. Props typing (interface vs type)
+      3. Children typing
+      4. Event handler typing
+      5. Ref typing
+      6. Hooks typing
+
+      Skip if not using React.
+    elicit: true
+    template: |
+      {{react_typescript_patterns}}
+
+  - id: nodejs-patterns
+    title: Node.js Integration (if applicable)
+    condition: project uses Node.js
+    instruction: |
+      If project is Node.js backend, define patterns. Ask about:
+      1. @types packages usage
+      2. Module resolution strategy
+      3. ESM vs CommonJS interop
+      4. Path aliasing approach
+      5. Global type augmentation
+
+      Skip if browser-only project.
+    elicit: true
+    template: |
+      {{nodejs_typescript_patterns}}
+
+  - id: documentation-typescript
+    title: Documentation (TypeScript-Specific)
+    instruction: |
+      Define TypeScript documentation requirements. Ask about:
+      1. JSDoc usage (TSDoc format)
+      2. Type documentation (document complex types)
+      3. Public API documentation requirements
+      4. Examples in documentation
+      5. When types are sufficient vs needing comments
+
+      TypeScript types provide self-documentation.
+    elicit: true
+    template: |
+      {{typescript_documentation}}
+
+  - id: testing-typescript
+    title: TypeScript Testing Specifics
+    instruction: |
+      Define TypeScript testing configuration. Ask about:
+      1. Test framework (Jest, Vitest, Mocha, Jasmine)
+      2. Test file naming (_test.ts, .spec.ts, .test.ts)
+      3. Mock/spy approach (jest.mock, vitest.mock, sinon)
+      4. Type testing (tsd, expect-type)
+      5. Coverage tools
+
+      This extends base testing section.
+    elicit: true
+    choices:
+      test_framework: [Jest, Vitest, Mocha, Jasmine]
+      test_suffix: [.test.ts, .spec.ts, _test.ts]
+    template: |
+      - **Test Framework:** {{test_framework}}
+      - **Test File Suffix:** {{test_suffix}}
+      - **Coverage Tool:** {{coverage_tool}}
+
+      {{typescript_testing_details}}
+
+  - id: typescript-config-options
+    title: tsconfig.json Critical Settings
+    instruction: |
+      Document important tsconfig.json settings. Ask about:
+      1. strict: true (and individual strict flags)
+      2. noImplicitAny
+      3. strictNullChecks
+      4. noUnusedLocals/noUnusedParameters
+      5. esModuleInterop
+      6. resolveJsonModule
+      7. skipLibCheck
+
+      Reference the actual tsconfig.json file.
+    elicit: true
+    template: |
+      {{tsconfig_critical_settings}}
+
+  - id: typescript-critical-rules
+    title: TypeScript-Specific Critical Rules
+    instruction: |
+      Add any TypeScript-specific critical rules beyond base rules.
+      Examples:
+      - "Never use 'any' without justification comment"
+      - "Always enable strict mode in tsconfig.json"
+      - "Never use type assertions to lie about types"
+      - "Always handle Promise rejections"
+
+      Focus on type-safety critical rules.
+    elicit: true
+    repeatable: true
+    template: |
+      - **{{rule_name}}:** {{rule_description}}

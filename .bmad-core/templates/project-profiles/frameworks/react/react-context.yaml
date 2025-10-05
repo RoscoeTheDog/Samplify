@@ -1,0 +1,384 @@
+# <!-- Powered by BMAD™ Core -->
+template:
+  id: react-context
+  name: React Framework Context
+  version: 1.0
+  type: project-profile
+  inherits:
+    - base/coding-style-base
+    - languages/typescript/coding-style-typescript
+  output:
+    format: markdown
+    filename: .ai/profiles/react-standards.md
+    title: "React Framework Standards and Patterns"
+
+workflow:
+  mode: interactive
+  elicitation: advanced-elicitation
+
+sections:
+  - id: react-version
+    title: React Version and Configuration
+    instruction: |
+      Determine React setup and version. Ask about:
+      1. React version (16.x, 17.x, 18.x)
+      2. TypeScript or JavaScript
+      3. Build tool (Vite, Create React App, Next.js, custom webpack)
+      4. React mode (Strict Mode enabled?)
+      5. Concurrent features usage (React 18+)
+    elicit: true
+    choices:
+      react_version: [16.x, 17.x, 18.x, 19.x]
+      language: [TypeScript, JavaScript]
+      build_tool: [Vite, CRA, Next.js, Custom-Webpack, Other]
+    template: |
+      - **React Version:** {{react_version}}
+      - **Language:** {{language}}
+      - **Build Tool:** {{build_tool}}
+      - **Strict Mode:** {{strict_mode}}
+
+  - id: project-structure
+    title: Project Structure
+    instruction: |
+      Define React project organization. Ask about:
+      1. Component organization (flat, by feature, by type)
+      2. Pages/routes structure
+      3. Shared/common components location
+      4. Hooks organization
+      5. Utils/helpers organization
+      6. Assets organization (images, styles, etc.)
+
+      Show example directory structure if helpful.
+    elicit: true
+    choices:
+      component_organization: [By-Feature, By-Type, Flat, Atomic-Design]
+    template: |
+      **Component Organization:** {{component_organization}}
+
+      {{project_structure}}
+
+  - id: component-patterns
+    title: Component Patterns
+    instruction: |
+      Define React component patterns. Ask about:
+      1. Component style (functional only, class-based allowed)
+      2. Component file naming (PascalCase.tsx, index.tsx)
+      3. Component export style (default vs named)
+      4. Props interface naming (ComponentProps, ComponentNameProps)
+      5. Component composition patterns
+      6. HOC usage policy
+      7. Render props usage
+
+      Functional components are modern standard.
+    elicit: true
+    choices:
+      component_style: [Functional-Only, Functional-Primary, Allow-Class]
+      file_naming: [ComponentName.tsx, index.tsx, component-name.tsx]
+      export_style: [Default, Named, Situational]
+    template: |
+      **Component Style:** {{component_style}}
+      **File Naming:** {{file_naming}}
+      **Export Style:** {{export_style}}
+
+      {{component_patterns}}
+
+  - id: hooks-patterns
+    title: Hooks Usage and Custom Hooks
+    instruction: |
+      Define hooks patterns. Ask about:
+      1. Custom hooks naming (useSomething convention)
+      2. Custom hooks organization (colocated vs hooks folder)
+      3. useEffect dependency array strictness
+      4. Custom hooks testing approach
+      5. Hooks composition patterns
+      6. When to extract logic into custom hooks
+
+      Hooks are fundamental to modern React.
+    elicit: true
+    template: |
+      {{hooks_patterns}}
+
+  - id: state-management
+    title: State Management
+    instruction: |
+      Define state management approach. Ask about:
+      1. State management library (Redux, Zustand, Jotai, MobX, Context, none)
+      2. When to use local state vs global state
+      3. State organization patterns
+      4. Redux patterns if applicable (Redux Toolkit, slices, thunks)
+      5. Context API usage patterns
+      6. Server state (React Query, SWR, or manual)
+
+      This is critical for application architecture.
+    elicit: true
+    choices:
+      global_state: [Redux, Zustand, Jotai, MobX, Context-Only, None]
+      server_state: [React-Query, SWR, RTK-Query, Manual]
+    template: |
+      **Global State:** {{global_state}}
+      **Server State:** {{server_state}}
+
+      {{state_management_patterns}}
+
+  - id: styling-approach
+    title: Styling Approach
+    instruction: |
+      Define styling methodology. Ask about:
+      1. Styling solution (CSS Modules, Styled Components, Tailwind, Emotion, CSS-in-JS, plain CSS)
+      2. File organization (colocated, separate styles folder)
+      3. Global styles approach
+      4. Theme system (if any)
+      5. CSS naming conventions (BEM, or other)
+      6. Responsive design patterns
+
+      Styling approaches vary widely.
+    elicit: true
+    choices:
+      styling_solution: [CSS-Modules, Styled-Components, Tailwind, Emotion, Plain-CSS, Other]
+    template: |
+      **Styling Solution:** {{styling_solution}}
+
+      {{styling_patterns}}
+
+  - id: routing-patterns
+    title: Routing Configuration
+    instruction: |
+      Define routing approach. Ask about:
+      1. Router library (React Router, Next.js routing, other)
+      2. Route organization
+      3. Protected routes pattern
+      4. Route parameters handling
+      5. Navigation patterns
+      6. Lazy loading/code splitting patterns
+
+      Skip if no routing needed (component library).
+    condition: uses routing
+    elicit: true
+    choices:
+      router: [React-Router, Next.js, TanStack-Router, Other, None]
+    template: |
+      **Router:** {{router}}
+
+      {{routing_patterns}}
+
+  - id: forms-patterns
+    title: Forms and Validation
+    instruction: |
+      Define form handling approach. Ask about:
+      1. Form library (React Hook Form, Formik, uncontrolled, controlled)
+      2. Validation approach (Zod, Yup, manual)
+      3. Form state management
+      4. Error handling and display
+      5. File upload patterns
+
+      Forms are common in React apps.
+    elicit: true
+    choices:
+      form_library: [React-Hook-Form, Formik, Uncontrolled, Controlled, None]
+      validation: [Zod, Yup, Manual, None]
+    template: |
+      **Form Library:** {{form_library}}
+      **Validation:** {{validation}}
+
+      {{forms_patterns}}
+
+  - id: data-fetching
+    title: Data Fetching Patterns
+    instruction: |
+      Define data fetching patterns. Ask about:
+      1. HTTP client (fetch, axios, other)
+      2. API client organization
+      3. Request/response interceptors
+      4. Error handling patterns
+      5. Loading states handling
+      6. Caching strategies
+      7. Optimistic updates
+
+      Data fetching is core to most React apps.
+    elicit: true
+    choices:
+      http_client: [fetch, axios, ky, Other]
+    template: |
+      **HTTP Client:** {{http_client}}
+
+      {{data_fetching_patterns}}
+
+  - id: performance-patterns
+    title: Performance Optimization
+    instruction: |
+      Define performance best practices. Ask about:
+      1. Memoization (useMemo, useCallback, React.memo)
+      2. Code splitting and lazy loading
+      3. Virtual scrolling (if applicable)
+      4. Image optimization
+      5. Bundle size monitoring
+      6. Re-render optimization strategies
+
+      Performance varies by application needs.
+    elicit: true
+    template: |
+      {{performance_patterns}}
+
+  - id: error-handling-react
+    title: Error Handling (React-Specific)
+    instruction: |
+      Define React error handling patterns. Ask about:
+      1. Error boundaries usage
+      2. Async error handling
+      3. Global error handling
+      4. Error logging (Sentry, LogRocket, etc.)
+      5. User-facing error messages
+      6. Fallback UI patterns
+
+      Error handling improves user experience.
+    elicit: true
+    template: |
+      {{react_error_handling}}
+
+  - id: testing-react
+    title: React Testing Patterns
+    instruction: |
+      Define React testing approach. Ask about:
+      1. Testing library (React Testing Library, Enzyme, Vitest)
+      2. Test organization (colocated vs tests folder)
+      3. Unit vs integration test balance
+      4. Component testing patterns
+      5. Hook testing patterns
+      6. E2E testing (Playwright, Cypress, or none)
+      7. Coverage requirements
+
+      Testing is critical for maintainability.
+    elicit: true
+    choices:
+      testing_library: [React-Testing-Library, Vitest, Jest, Other]
+      e2e_testing: [Playwright, Cypress, None]
+    template: |
+      **Testing Library:** {{testing_library}}
+      **E2E Testing:** {{e2e_testing}}
+
+      {{react_testing_patterns}}
+
+  - id: accessibility
+    title: Accessibility (A11y) Standards
+    instruction: |
+      Define accessibility requirements. Ask about:
+      1. A11y standard (WCAG 2.1 AA, AAA, or minimal)
+      2. Semantic HTML enforcement
+      3. ARIA attributes usage
+      4. Keyboard navigation requirements
+      5. Screen reader testing
+      6. A11y linting (eslint-plugin-jsx-a11y)
+
+      Accessibility is increasingly important.
+    elicit: true
+    choices:
+      a11y_standard: [WCAG-2.1-AA, WCAG-2.1-AAA, Minimal, None]
+    template: |
+      **A11y Standard:** {{a11y_standard}}
+
+      {{accessibility_patterns}}
+
+  - id: typescript-react
+    title: TypeScript Integration (if TypeScript)
+    condition: using TypeScript
+    instruction: |
+      Define TypeScript-React patterns. Ask about:
+      1. Props typing (interface vs type)
+      2. Event handler typing
+      3. Ref typing
+      4. Children typing
+      5. Generic component patterns
+      6. Discriminated unions for props
+
+      This extends TypeScript template with React specifics.
+    elicit: true
+    template: |
+      {{typescript_react_patterns}}
+
+  - id: next-js-patterns
+    title: Next.js Specific Patterns
+    condition: using Next.js
+    instruction: |
+      If using Next.js, define Next.js patterns. Ask about:
+      1. App Router vs Pages Router
+      2. Server Components usage (React 18+)
+      3. Data fetching patterns (getServerSideProps, etc.)
+      4. API routes organization
+      5. Image optimization usage
+      6. Metadata management
+      7. Middleware patterns
+
+      Next.js has many framework-specific patterns.
+    elicit: true
+    choices:
+      next_router: [App-Router, Pages-Router]
+    template: |
+      **Next.js Router:** {{next_router}}
+
+      {{nextjs_patterns}}
+
+  - id: deployment-build
+    title: Build and Deployment
+    instruction: |
+      Define build and deployment patterns. Ask about:
+      1. Environment variables handling
+      2. Build optimization settings
+      3. Production build verification
+      4. Source maps policy
+      5. CI/CD integration
+      6. Deployment target (Vercel, Netlify, AWS, etc.)
+
+      This helps with production readiness.
+    elicit: true
+    template: |
+      {{deployment_patterns}}
+
+  - id: react-critical-rules
+    title: React-Specific Critical Rules
+    instruction: |
+      Add React-specific critical rules. Examples:
+      - "Never mutate state directly"
+      - "Always include all dependencies in useEffect dependency array"
+      - "Never call hooks conditionally"
+      - "Use key prop for list items"
+      - "Avoid inline function definitions in JSX (performance-sensitive)"
+
+      Focus on React-specific gotchas.
+    elicit: true
+    repeatable: true
+    template: |
+      - **{{rule_name}}:** {{rule_description}}
+
+  - id: ui-libraries
+    title: UI Component Libraries
+    instruction: |
+      Document UI libraries in use. Ask about:
+      1. Component library (Material-UI, Ant Design, Chakra, Shadcn, custom)
+      2. Icon library
+      3. Animation library (Framer Motion, React Spring, etc.)
+      4. Date picker, modals, etc.
+      5. Customization approach
+
+      This helps agents use the right components.
+    elicit: true
+    choices:
+      ui_library: [Material-UI, Ant-Design, Chakra, Shadcn, Custom, None]
+    template: |
+      **UI Library:** {{ui_library}}
+
+      {{ui_libraries}}
+
+  - id: code-organization
+    title: Code Organization Best Practices
+    instruction: |
+      Define code organization principles. Ask about:
+      1. File size limits
+      2. Component complexity guidelines
+      3. When to split components
+      4. Barrel exports usage
+      5. Index files patterns
+
+      This maintains codebase health.
+    elicit: true
+    template: |
+      {{code_organization}}
