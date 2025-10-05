@@ -8,10 +8,9 @@ handlers/__pycache__/
 # Logs
 samplify.log
 
-# IDE
-.idea/workspace.xml
-.idea/sonarlint/
-.idea/inspectionProfiles/
+# IDE (exclude all IDE configs except project structure)
+.idea/
+!.idea/vcs.xml
 
 # Dependencies
 node_modules/
