@@ -63,7 +63,7 @@ Individual story files for Epic 1 (Django Web UI Modernization):
 
 **Note**: Setup instructions, git workflow, and implementation checklists are embedded in the PRD and story specifications:
 - **Setup**: See Story 1.0 acceptance criteria
-- **Git Workflow**: See PRD Development Workflow Requirements (DW1-DW5)
+- **Git Workflow**: See PRD Development Workflow Requirements (DW1-DW6)
 - **Implementation Checklist**: Each story has Definition of Done
 
 ### Dependencies & Configuration
@@ -93,7 +93,7 @@ Contains superseded monolithic documentation files:
 
 ### 1. Read Core Documents (in order)
 1. [`brief.md`](brief.md) - Understand the project
-2. [`prd/index.md`](prd/index.md) - Read full requirements (includes DW1-DW5 git workflow)
+2. [`prd/index.md`](prd/index.md) - Read full requirements (includes DW1-DW6 git workflow)
 3. [`architecture/index.md`](architecture/index.md) - Understand technical design
 4. [`architecture/coding-standards.md`](architecture/coding-standards.md) - Review CS1-CS13 standards
 5. [`stories/index.md`](stories/index.md) - Review story details
@@ -133,7 +133,7 @@ Begin here: [`stories/story-10-repository-environment-foundation.md`](stories/st
 | **Testing Strategy** | `/docs/architecture/testing-strategy.md` |
 | **Tech Stack** | `/docs/architecture/tech-stack.md` |
 | **FFmpeg Integration** | `/docs/architecture/ffmpeg-sources.md` |
-| **Git Workflow** | `/docs/prd/requirements.md` (DW1-DW5) |
+| **Git Workflow** | `/docs/prd/requirements.md` (DW1-DW6) |
 
 ### By Development Phase
 

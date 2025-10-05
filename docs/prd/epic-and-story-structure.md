@@ -70,22 +70,32 @@
 **Story 1.17**: Integration Testing & Validation
 - Algorithm validation, performance benchmarking
 
-### Dependency Graph (Optimized)
+### Dependency Graph
 
-**Critical Path** (24 days with 3 parallel agents):
+**Sequential Implementation Order** (single development agent):
 ```
-1.0 → 1.1 → 1.2A → 1.5 → 1.6 → 1.8 → 1.15 → 1.17
+1.0 → 1.1 → 1.2A → 1.2B → 1.2C → 1.3 → 1.4 → 1.5 → 1.6 → 1.7 → 1.8 → 1.9 → 1.10 → 1.11 → 1.12 → 1.13 → 1.14 → 1.15 → 1.16 → 1.17
 ```
 
-**Parallel Work Streams**:
+**Rationale for Sequential Order**:
+- Each story depends on infrastructure and models from previous stories
+- Backend foundation (1.0-1.4) must exist before services (1.5-1.9)
+- Services must exist before frontend UI (1.10-1.15)
+- Integration testing (1.17) validates complete system
+
+**Git Workflow** (per DW1-DW6 requirements):
+- Each story = feature branch (naming: `feature/story-X.X` or `feature/story-X.Xa`)
+- Development agent creates feature branch from `dev`
+- Development agent merges to `dev` when story complete using `--no-ff` flag (creates merge checkpoint)
+- Sequential merging ensures each story has access to all previous story dependencies
+- Human oversight merges `dev` → `master` when epic complete and all tests pass
+
+**Parallel Implementation Note** (future optimization):
+If using multiple development agents simultaneously, these work streams can execute in parallel:
 - Backend: 1.0 → 1.1 → 1.2A → 1.5 → 1.6 → 1.8
 - Frontend: 1.2B → 1.9 → 1.10 → 1.11 → 1.12 → 1.13
-- Infrastructure: 1.3, 1.4, 1.14, 1.16 (parallel)
-
-**Merge Strategy** (per DW requirements):
-- Each story = feature branch
-- Merge to `dev` when feature-complete
-- `dev` → `master` only when all stories pass tests
+- Infrastructure: 1.3, 1.4, 1.7, 1.14, 1.16 (parallel)
+However, current implementation uses single agent sequential workflow
 
 ---
 

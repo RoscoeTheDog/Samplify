@@ -2746,12 +2746,56 @@ git commit -m "feat(api): Expose is_active field in Schema API"
 **Pattern**: OK in feature branches only, must be squashed before merging
 
 ```bash
-# ✅ In feature branch
+# ✅ In feature branch (e.g., feature/story-1.5)
 git commit -m "WIP: Implementing OAuth integration (login works, logout pending)"
 
-# Before merging - squash
-git rebase -i main
+# Before merging to dev - squash
+git rebase -i dev
 ```
+
+#### Branch Strategy
+**Pattern**: Follow project-defined Development Workflow Requirements (DW1-DW6 in PRD)
+
+**Branch Hierarchy**:
+```
+original ← Read-only archive (tagged v0.1-pre-bmad)
+   │
+master ← Stable production releases
+   │
+   └─ dev ← Integration branch (sequential story merges)
+        ├─ feature/story-1.0 ← Story implementation branches
+        ├─ feature/story-1.1
+        └─ feature/story-X.X
+```
+
+**Workflow**:
+```bash
+# Create feature branch for story
+git checkout dev
+git pull origin dev
+git checkout -b feature/story-1.0
+
+# Implement story with atomic commits
+git commit -m "feat(env): Add .gitignore configuration"
+git push -u origin feature/story-1.0
+
+# When story complete, merge to dev with explicit merge commit
+git checkout dev
+git merge --no-ff feature/story-1.0  # Creates checkpoint
+git push origin dev
+
+# Next story branches from updated dev
+git checkout -b feature/story-1.1
+```
+
+**Key Principles**:
+- Stories implemented sequentially in dependency order
+- Each merge to `dev` creates explicit checkpoint (`--no-ff` flag)
+- Feature branches follow naming: `feature/story-X.X` or `feature/story-X.Xa`
+- Agent authorized to merge completed stories to `dev`
+- Human oversight merges `dev` → `master` at epic completion
+
+**Reference**: See PRD requirements.md Development Workflow Requirements (DW1-DW6) for complete specification
 
 ---
 

@@ -85,29 +85,40 @@
 ### Development Workflow Requirements
 
 **DW1: Branch Strategy**
-- **master branch**: Stable production-ready code (current brownfield baseline)
-- **dev branch**: Integration branch where all completed features merge
-- **feature branches**: Individual feature branches (e.g., `feature/django-models`, `feature/web-ui`, `feature/batch-processing`) isolated for agent work
+- **original branch**: Read-only archive of pre-BMAD independent development (tagged `v0.1-pre-bmad`). Never updated, serves as historical baseline for comparing independent vs BMAD-assisted development approaches
+- **master branch**: Stable production-ready code (receives merges from `dev` when all features stable)
+- **dev branch**: Integration branch where all completed story features merge sequentially
+- **feature branches**: Individual story implementation branches (e.g., `feature/story-1.0`, `feature/story-1.1`) created by development agent, isolated for story work
 
-**DW2: Feature Sequencing and Dependency Management**
-- Features must be sequenced to avoid circular dependencies (backend before frontend)
-- Each feature branch should declare its backend/frontend dependencies in branch description
+**DW2: Sequential Story Implementation**
+- Stories must be implemented sequentially in dependency order (Story 1.0 → 1.1 → 1.2a → etc.)
+- Each feature branch is created from `dev` and merged back to `dev` when story is complete
+- Sequential merging ensures each story has access to all previously completed story dependencies
+- Feature branches follow naming convention: `feature/story-X.X` or `feature/story-X.Xa` for sub-stories
 
 **DW3: Merge and Test Protocol**
-- Feature branches merge to `dev` only when feature-complete
-- `dev` branch runs full test suite on each merge
-- If tests fail due to missing dependencies: document failure, prioritize dependent feature next
-- Only merge `dev` → `master` when all features stable and tests pass
+- Development agent merges completed stories to `dev` using `--no-ff` flag (creates explicit merge commits as checkpoints)
+- `dev` branch runs full test suite on each story merge
+- If tests fail: fix in feature branch, then merge again
+- Only merge `dev` → `master` when epic is complete and all tests pass
 
 **DW4: Controlled Development Propagation**
 - Feature isolation prevents breaking changes from affecting other work
-- `dev` serves as integration testing environment
-- `master` remains stable baseline for new feature branches
+- `dev` serves as integration testing environment with sequential story checkpoints
+- `master` remains stable baseline for epic-level releases
+- `original` preserves pre-BMAD project state for historical reference
 
 **DW5: Dependency-Aware Sequencing**
 - Backend architecture changes must merge before frontend features that depend on them
 - Shared utilities/services merge before features that consume them
 - Database migrations must be backward-compatible or sequenced correctly
+- Story sequence in PRD already accounts for dependency ordering
+
+**DW6: Agent Merge Responsibility**
+- Development agent is authorized to merge completed story feature branches to `dev`
+- Agent uses `git merge --no-ff feature/story-X.X` to preserve merge history
+- Agent pushes `dev` branch to remote after each story merge
+- Human oversight reviews merge commits on `dev` branch as quality checkpoints
 
 ---
 
