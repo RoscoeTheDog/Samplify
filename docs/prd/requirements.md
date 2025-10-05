@@ -68,6 +68,8 @@
 
 **NFR14**: The system shall store imported XML templates in the database alongside web-created schemas, maintaining the XML format structure for export while allowing database-backed indexing and querying for efficient template management and retrieval
 
+**NFR15**: The system shall enforce ephemeral artifact cleanup policies following the "ignore what can be regenerated" principle (Twelve-Factor App methodology), requiring all ephemeral development artifacts (debug scripts, profiling outputs, one-off utilities) to be removed before merging feature branches to `dev`, while tracking only source of truth files (setup automation, tracked source code, permanent test fixtures) in the repository per `.gitignore` configuration and automated pre-commit hooks
+
 ### Compatibility Requirements
 
 **CR1: Processing Algorithm Preservation**: The Django implementation MUST retain ALL search, filtering, and dispatch algorithms from the brownfield codebase (`handlers/rules.py`, `__main__.py` lines 206-469) exactly as-is for the first prototype. **Allowed modifications**: import statement changes (SQLAlchemy → Django ORM), method signature adaptations for Django patterns, variable renaming for Django conventions. **Prohibited modifications**: algorithm logic changes, flow control changes, performance optimizations, code restructuring

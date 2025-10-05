@@ -40,6 +40,7 @@ The goal is quality delivery, not just checking boxes.]]
    - [ ] Basic security best practices (e.g., input validation, proper error handling, no hardcoded secrets) applied for new/modified code.
    - [ ] No new linter errors or warnings introduced.
    - [ ] Code is well-commented where necessary (clarifying complex logic, not obvious statements).
+   - [ ] **Ephemeral artifact cleanup completed** (NFR15): All ephemeral development artifacts (debug scripts, profiling outputs, agent logs, one-off utilities) removed before merge using "ignore what can be regenerated" principle (see `docs/architecture/development-and-deployment.md - Ephemeral Artifact Cleanup Guidelines`). Pre-commit hook enforces this automatically.
 
 3. **Testing:**
 
