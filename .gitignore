@@ -20,3 +20,9 @@ node_modules/
 venv/
 env/
 .venv/
+
+# Media test files (local only - too large for git)
+# Allow directory structure but exclude all contents except README and .gitkeep
+media/*
+!media/.gitkeep
+!media/README.md
