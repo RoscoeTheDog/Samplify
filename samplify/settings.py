@@ -30,13 +30,14 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 INSTALLED_APPS = [
     # Django built-in apps (authentication DISABLED per NFR13)
-    # "django.contrib.admin",  # DISABLED - no admin interface needed
-    # "django.contrib.auth",   # DISABLED per NFR13 - open local interface
+    "django.contrib.admin",  # ENABLED for Story 1.2A - model debugging
+    "django.contrib.auth",  # REQUIRED by admin - but no authentication middleware
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Project apps will be added here in future stories
+    # Project apps
+    "apps.catalog",
 ]
 
 MIDDLEWARE = [
@@ -44,7 +45,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",  # ENABLED - security requirement
-    # "django.contrib.auth.middleware.AuthenticationMiddleware",  # DISABLED per NFR13
+    "django.contrib.auth.middleware.AuthenticationMiddleware",  # Required by admin
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -60,7 +61,7 @@ TEMPLATES = [
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
-                # "django.contrib.auth.context_processors.auth",  # DISABLED
+                "django.contrib.auth.context_processors.auth",  # Required by admin
                 "django.contrib.messages.context_processors.messages",
                 "samplify.context_processors.version.version_info",
             ],
