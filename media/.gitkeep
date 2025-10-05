@@ -1,0 +1,2 @@
+# This file ensures the /media/ directory structure is tracked in git
+# Test media files should be added to this directory following the structure in README.md
