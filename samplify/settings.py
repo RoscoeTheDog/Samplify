@@ -62,6 +62,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 # "django.contrib.auth.context_processors.auth",  # DISABLED
                 "django.contrib.messages.context_processors.messages",
+                "samplify.context_processors.version.version_info",
             ],
         },
     },
