@@ -1,0 +1,28 @@
+# Samplify Django Modernization - Story Details
+
+## Table of Contents
+
+- [Samplify Django Modernization - Story Details](#table-of-contents)
+  - [Epic 1: Django Web UI Modernization](#epic-1-django-web-ui-modernization)
+  - [Story 1.0: Repository & Environment Foundation](#story-10-repository-environment-foundation)
+  - [Story 1.1: Django Project Setup & Configuration](#story-11-django-project-setup-configuration)
+  - [Story 1.2A: File Model (Single-Table Inheritance)](#story-12a-file-model-single-table-inheritance)
+  - [Story 1.2B: Schema Models](#story-12b-schema-models)
+  - [Story 1.2C: WAL Configuration](#story-12c-wal-configuration)
+  - [Story 1.3: Loguru Configuration](#story-13-loguru-configuration)
+  - [Story 1.4: FFmpeg Detection & Download Service](#story-14-ffmpeg-detection-download-service)
+  - [Story 1.5: File Scanning Service](#story-15-file-scanning-service)
+  - [Story 1.6: Batch Processing Management Command](#story-16-batch-processing-management-command)
+  - [Story 1.7: File Monitor Watchdog](#story-17-file-monitor-watchdog)
+  - [Story 1.8: Queue Processor Watchdog](#story-18-queue-processor-watchdog)
+  - [Story 1.9: XML Template Import/Migration Tool](#story-19-xml-template-importmigration-tool)
+  - [Story 1.10: Schema Management UI (CRUD)](#story-110-schema-management-ui-crud)
+  - [Story 1.11: Dual Directory Table Layout](#story-111-dual-directory-table-layout)
+  - [Story 1.12: Properties Panel with Filter/Rule CRUD](#story-112-properties-panel-with-filterrule-crud)
+  - [Story 1.13: Watchdog Control Panel UI](#story-113-watchdog-control-panel-ui)
+  - [Story 1.14: AJAX Progress Monitoring Endpoints](#story-114-ajax-progress-monitoring-endpoints)
+  - [Story 1.15: Dual Queue Visualization with UID Filtering](#story-115-dual-queue-visualization-with-uid-filtering)
+  - [Story 1.16: Complete Setup Script](#story-116-complete-setup-script)
+  - [Story 1.17: Integration Testing & Validation](#story-117-integration-testing-validation)
+  - [Coding Standards Reference](#coding-standards-reference)
+  - [Developer Analysis Summary](#developer-analysis-summary)
