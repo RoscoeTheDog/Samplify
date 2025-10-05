@@ -49,12 +49,12 @@ So that **the UI can display batch processing status without page refresh**.
 - **Key Constraints:** 1-2 second polling interval, efficient responses
 
 ### Definition of Done
-- [x] JSON endpoints implemented
-- [x] Response format validated
-- [x] Polling tested (1-2 second intervals)
-- [x] 304 Not Modified optimization working
-- [x] Error handling tested
-- [x] Documentation updated with API endpoint details
+- [ ] JSON endpoints implemented
+- [ ] Response format validated
+- [ ] Polling tested (1-2 second intervals)
+- [ ] 304 Not Modified optimization working
+- [ ] Error handling tested
+- [ ] Documentation updated with API endpoint details
 
 ### Risk Assessment
 - **Primary Risk:** High polling frequency degrades performance

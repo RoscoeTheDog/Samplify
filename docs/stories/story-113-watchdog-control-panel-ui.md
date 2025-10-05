@@ -44,12 +44,12 @@ So that **I can start/stop watchdog services from the web interface**.
 - **Key Constraints:** Reliable subprocess lifecycle, status persistence
 
 ### Definition of Done
-- [x] Watchdog control panel implemented
-- [x] Start/stop functionality working
-- [x] Status indicators accurate
-- [x] Service persistence tested
-- [x] Graceful shutdown verified
-- [x] Documentation updated with watchdog control instructions
+- [ ] Watchdog control panel implemented
+- [ ] Start/stop functionality working
+- [ ] Status indicators accurate
+- [ ] Service persistence tested
+- [ ] Graceful shutdown verified
+- [ ] Documentation updated with watchdog control instructions
 
 ### Risk Assessment
 - **Primary Risk:** Subprocess management unreliable (zombie processes)

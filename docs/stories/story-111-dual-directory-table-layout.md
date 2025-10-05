@@ -42,12 +42,12 @@ So that **I can select folders and configure mappings visually**.
 - **Key Constraints:** Cross-platform file paths, local JavaScript
 
 ### Definition of Done
-- [x] Input/output directory tables implemented
-- [x] Add/remove folder functionality working
-- [x] File browser dialog tested on all platforms
-- [x] Checkbox selection functional
-- [x] UI matches wireframe design
-- [x] Documentation updated with directory management instructions
+- [ ] Input/output directory tables implemented
+- [ ] Add/remove folder functionality working
+- [ ] File browser dialog tested on all platforms
+- [ ] Checkbox selection functional
+- [ ] UI matches wireframe design
+- [ ] Documentation updated with directory management instructions
 
 ### Risk Assessment
 - **Primary Risk:** File browser API inconsistent across platforms

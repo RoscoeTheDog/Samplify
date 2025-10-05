@@ -48,12 +48,12 @@ So that **I can define how files are processed without editing code**.
 - **Key Constraints:** Must support all XML rule types, auto-save
 
 ### Definition of Done
-- [x] Properties panel implemented
-- [x] Filter CRUD functional
-- [x] Processing rule CRUD functional
-- [x] AND/OR logic selector working
-- [x] Auto-save tested
-- [x] Documentation updated with filter/rule configuration instructions
+- [ ] Properties panel implemented
+- [ ] Filter CRUD functional
+- [ ] Processing rule CRUD functional
+- [ ] AND/OR logic selector working
+- [ ] Auto-save tested
+- [ ] Documentation updated with filter/rule configuration instructions
 
 ### Risk Assessment
 - **Primary Risk:** UI doesn't support all filter/rule types (CR4)

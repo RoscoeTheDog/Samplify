@@ -45,12 +45,12 @@ So that **the system can bundle platform-specific FFmpeg binaries without git re
 - **Key Constraints:** Must work offline after initial download, no git bloat
 
 ### Definition of Done
-- [x] FFmpeg detection service implemented
-- [x] Auto-download works on Windows/macOS/Linux
-- [x] Binary verification succeeds
-- [x] Manual installation instructions provided
-- [x] .gitignore excludes /bin/ directory
-- [x] Documentation updated with FFmpeg setup details
+- [ ] FFmpeg detection service implemented
+- [ ] Auto-download works on Windows/macOS/Linux
+- [ ] Binary verification succeeds
+- [ ] Manual installation instructions provided
+- [ ] .gitignore excludes /bin/ directory
+- [ ] Documentation updated with FFmpeg setup details
 
 ### Risk Assessment
 - **Primary Risk:** FFmpeg download URLs become unavailable

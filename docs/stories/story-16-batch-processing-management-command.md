@@ -45,12 +45,12 @@ So that **I can execute media transformations with proven performance characteri
 - **Key Constraints:** MUST preserve worker scheduling, deque patterns exactly
 
 ### Definition of Done
-- [x] Batch processing command implemented
-- [x] Multiprocessing patterns preserved exactly (CR2 validated)
-- [x] Performance benchmarked (matches NFR1)
-- [x] Worker pool verified (one per CPU core)
-- [x] Management command tested with sample files
-- [x] Documentation updated with multiprocessing details
+- [ ] Batch processing command implemented
+- [ ] Multiprocessing patterns preserved exactly (CR2 validated)
+- [ ] Performance benchmarked (matches NFR1)
+- [ ] Worker pool verified (one per CPU core)
+- [ ] Management command tested with sample files
+- [ ] Documentation updated with multiprocessing details
 
 ### Risk Assessment
 - **Primary Risk:** Multiprocessing modification degrades performance (CR2/NFR1 violation)

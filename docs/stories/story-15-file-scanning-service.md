@@ -45,12 +45,12 @@ So that **I can populate the database with file metadata using proven logic**.
 - **Key Constraints:** MUST preserve exact algorithm logic, only adapt for Django ORM
 
 ### Definition of Done
-- [x] File scanning service implemented
-- [x] Existing algorithms preserved exactly (CR1 validated)
-- [x] FFmpeg integration working
-- [x] Database population verified
-- [x] Management command tested
-- [x] Documentation updated with algorithm preservation details
+- [ ] File scanning service implemented
+- [ ] Existing algorithms preserved exactly (CR1 validated)
+- [ ] FFmpeg integration working
+- [ ] Database population verified
+- [ ] Management command tested
+- [ ] Documentation updated with algorithm preservation details
 
 ### Risk Assessment
 - **Primary Risk:** Algorithm modification breaks existing logic (CR1 violation)

@@ -45,14 +45,14 @@ So that **I can clone the repository and start development without manual config
 - **Key Constraints:** Must support Python 3.10+ on Windows/macOS/Linux
 
 ### Definition of Done
-- [x] .gitignore configured and tested
-- [x] Virtual environment scripts work on all platforms
-- [x] requirements.txt complete and validated
-- [x] Documentation updated with setup instructions
-- [x] No binaries or virtual environments in git repository
-- [x] **Coding Standards**: All code adheres to CS1-CS13 (see `docs/coding-standards.md`)
-- [x] **Code Quality**: Black, Pylint (≥8.5), mypy, isort pass without errors
-- [x] **Documentation**: All functions have Google-style docstrings with type hints
+- [ ] .gitignore configured and tested
+- [ ] Virtual environment scripts work on all platforms
+- [ ] requirements.txt complete and validated
+- [ ] Documentation updated with setup instructions
+- [ ] No binaries or virtual environments in git repository
+- [ ] **Coding Standards**: All code adheres to CS1-CS13 (see `docs/coding-standards.md`)
+- [ ] **Code Quality**: Black, Pylint (≥8.5), mypy, isort pass without errors
+- [ ] **Documentation**: All functions have Google-style docstrings with type hints
 
 ### Risk Assessment
 - **Primary Risk:** Missing dependencies causing installation failures

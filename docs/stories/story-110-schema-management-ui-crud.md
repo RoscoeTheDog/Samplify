@@ -44,12 +44,12 @@ So that **I can manage processing configurations without editing XML files**.
 - **Key Constraints:** Browser-based UI, no authentication (NFR13)
 
 ### Definition of Done
-- [x] Schema CRUD views implemented
-- [x] Forms validated and working
-- [x] AJAX save/load functional
-- [x] Delete cascade verified
-- [x] UI tested on Chrome/Firefox/Edge
-- [x] Documentation updated with schema management instructions
+- [ ] Schema CRUD views implemented
+- [ ] Forms validated and working
+- [ ] AJAX save/load functional
+- [ ] Delete cascade verified
+- [ ] UI tested on Chrome/Firefox/Edge
+- [ ] Documentation updated with schema management instructions
 
 ### Risk Assessment
 - **Primary Risk:** UI doesn't support all schema features (CR4)

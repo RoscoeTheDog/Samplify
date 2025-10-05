@@ -43,12 +43,12 @@ So that **I can build the web UI on a solid foundation**.
 - **Key Constraints:** Self-contained (no CDN), local-only web interface
 
 ### Definition of Done
-- [x] Django project scaffolded and runnable
-- [x] Static files configured and serving
-- [x] Base templates created
-- [x] Development server verified on localhost:8000
-- [x] Authentication disabled, CSRF enabled
-- [x] Documentation updated with Django setup instructions
+- [ ] Django project scaffolded and runnable
+- [ ] Static files configured and serving
+- [ ] Base templates created
+- [ ] Development server verified on localhost:8000
+- [ ] Authentication disabled, CSRF enabled
+- [ ] Documentation updated with Django setup instructions
 
 ### Risk Assessment
 - **Primary Risk:** Django configuration errors preventing startup

@@ -49,11 +49,11 @@ So that **Django web server, batch processing, and watch mode can access the dat
 - **Key Constraints:** Must support Django + multiprocessing workers simultaneously
 
 ### Definition of Done
-- [x] WAL mode configured in settings.py
-- [x] Concurrent access tested successfully
-- [x] No database lock errors
-- [x] Performance benchmarked
-- [x] Documentation updated with WAL configuration details
+- [ ] WAL mode configured in settings.py
+- [ ] Concurrent access tested successfully
+- [ ] No database lock errors
+- [ ] Performance benchmarked
+- [ ] Documentation updated with WAL configuration details
 
 ### Risk Assessment
 - **Primary Risk:** SQLite WAL mode incompatibility with multiprocessing

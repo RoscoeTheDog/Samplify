@@ -43,12 +43,12 @@ So that **I can detect new files in input directories in real-time**.
 - **Key Constraints:** Must detect files <10s, operate independently
 
 ### Definition of Done
-- [x] File monitor command implemented
-- [x] Watchdog integration working
-- [x] File events trigger database updates
-- [x] Latency verified (<10 seconds)
-- [x] Long-running stability tested
-- [x] Documentation updated with file monitor details
+- [ ] File monitor command implemented
+- [ ] Watchdog integration working
+- [ ] File events trigger database updates
+- [ ] Latency verified (<10 seconds)
+- [ ] Long-running stability tested
+- [ ] Documentation updated with file monitor details
 
 ### Risk Assessment
 - **Primary Risk:** Watchdog latency exceeds NFR10 requirement

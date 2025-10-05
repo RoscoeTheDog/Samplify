@@ -46,13 +46,13 @@ So that **I can preview input files and output destinations before batch process
 - **Key Constraints:** Local JavaScript, 1000+ file performance
 
 ### Definition of Done
-- [x] Dual queue tables implemented
-- [x] UID filtering functional
-- [x] Click-to-filter working
-- [x] AJAX updates tested
-- [x] Performance validated (1000+ files)
-- [x] UI matches wireframe
-- [x] Documentation updated with queue visualization instructions
+- [ ] Dual queue tables implemented
+- [ ] UID filtering functional
+- [ ] Click-to-filter working
+- [ ] AJAX updates tested
+- [ ] Performance validated (1000+ files)
+- [ ] UI matches wireframe
+- [ ] Documentation updated with queue visualization instructions
 
 ### Risk Assessment
 - **Primary Risk:** Performance degrades with 1000+ files
