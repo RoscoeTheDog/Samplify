@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}Samplify{% endblock %}</title>
+
+    <!-- Bootstrap CSS (local copy - no CDN) -->
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">
+
+    <!-- Custom Samplify CSS -->
+    <link rel="stylesheet" href="{% static 'css/samplify.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <strong>Samplify</strong>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% block nav_items %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Schemas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Files</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Queue</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Watchdog</a>
+                    </li>
+                    {% endblock %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="container">
+            {% block messages %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% endblock %}
+
+            {% block content %}
+            <!-- Page content goes here -->
+            {% endblock %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="text-muted mb-0">
+                        &copy; {% now "Y" %} Samplify - Media Library Automation
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted mb-0">
+                        <small>Django {{ django_version }} | Python {{ python_version }}</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery (local copy - no CDN) -->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+
+    <!-- Bootstrap Bundle JS (local copy - no CDN) -->
+    <script src="{% static 'vendor/bootstrap/bootstrap.bundle.min.js' %}"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
