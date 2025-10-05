@@ -11,6 +11,11 @@ samplify.log
 # IDE (exclude all IDE configs except project structure)
 .idea/
 !.idea/vcs.xml
+.idea/workspace.xml
+.vscode/
+*.swp
+*.swo
+*~
 
 # Dependencies
 node_modules/
