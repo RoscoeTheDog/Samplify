@@ -50,9 +50,11 @@ db.sqlite3
 database/*.db
 database/*.sqlite3
 
-# Django static files
-/static/
+# Django static files (collected by collectstatic)
 /staticfiles/
+
+# Note: /static/ directory contains source static files (Bootstrap, jQuery, custom CSS/JS)
+# and MUST be committed to repository (NFR3: no CDN dependencies)
 
 # Django media files
 /media/

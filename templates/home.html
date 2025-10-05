@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Samplify{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="jumbotron bg-light p-5 rounded">
+            <h1 class="display-4">Welcome to Samplify</h1>
+            <p class="lead">
+                Media library automation tool with web-based UI for creating and managing processing schemas.
+            </p>
+            <hr class="my-4">
+            <p>
+                Samplify allows you to organize your media libraries through automated processing with customizable templates.
+                Process different media types to various output locations using keywords, regex patterns, or media metadata attributes.
+            </p>
+            <p class="text-muted">
+                <strong>Status:</strong> Django Web UI Migration in Progress
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-file-earmark-text"></i> Schema Management
+                </h5>
+                <p class="card-text text-muted-light">
+                    Create and manage processing schemas with custom filters and rules.
+                </p>
+                <a href="#" class="btn btn-primary btn-sm disabled">Coming in Story 1.10</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-folder2-open"></i> File Browser
+                </h5>
+                <p class="card-text text-muted-light">
+                    Browse input directories and view file metadata in interactive tree.
+                </p>
+                <a href="#" class="btn btn-primary btn-sm disabled">Coming in Story 1.11</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-speedometer2"></i> Processing Queue
+                </h5>
+                <p class="card-text text-muted-light">
+                    Monitor batch processing with real-time progress updates.
+                </p>
+                <a href="#" class="btn btn-primary btn-sm disabled">Coming in Story 1.15</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">System Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Features</h6>
+                        <ul class="list-unstyled">
+                            <li>✓ Real-time file detection</li>
+                            <li>✓ Customizable processing rules</li>
+                            <li>✓ Multi-processing support</li>
+                            <li>✓ GPU acceleration</li>
+                            <li>✓ Wide file support (FFmpeg + Pillow)</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Technology Stack</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Backend:</strong> Django 4.2 LTS</li>
+                            <li><strong>Database:</strong> SQLite with WAL mode</li>
+                            <li><strong>Frontend:</strong> Bootstrap 5.3</li>
+                            <li><strong>Media Processing:</strong> FFmpeg, Pillow</li>
+                            <li><strong>Logging:</strong> Loguru</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
