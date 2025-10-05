@@ -72,6 +72,30 @@ These files are preserved for historical reference only. All active development 
 
 ---
 
+### 4. `documentation-assessment.md` (31KB)
+**Superseded by**: Completed audit, issues resolved
+
+**Why archived**: BA/PM working document for quality assessment
+- Pre-handoff quality audit
+- Gap analysis and conflict identification
+- Not needed for development workflow
+
+**Current reference**: N/A - audit complete, all issues resolved
+
+---
+
+### 5. `DOCUMENTATION-FIXES-SUMMARY.md` (11KB)
+**Superseded by**: Completed work, issues resolved
+
+**Why archived**: BA/PM working document for tracking fixes
+- Summary of critical gaps resolved
+- Tech stack, FFmpeg, testing strategy additions
+- Not needed for development workflow
+
+**Current reference**: N/A - fixes complete, documentation current
+
+---
+
 ## Archive Policy
 
 These files are retained for:

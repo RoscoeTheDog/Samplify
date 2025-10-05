@@ -63,8 +63,6 @@ Individual story files for Epic 1 (Django Web UI Modernization):
 | [`DEVELOPMENT_SETUP.md`](DEVELOPMENT_SETUP.md) | Development environment setup instructions | 13KB |
 | [`GIT_WORKFLOW.md`](GIT_WORKFLOW.md) | Git branching strategy and workflow | 20KB |
 | [`IMPLEMENTATION_CHECKLISTS.md`](IMPLEMENTATION_CHECKLISTS.md) | Story-by-story development checklists | 16KB |
-| [`documentation-assessment.md`](documentation-assessment.md) | Quality assessment and gap analysis | 31KB |
-| [`DOCUMENTATION-FIXES-SUMMARY.md`](DOCUMENTATION-FIXES-SUMMARY.md) | Critical fixes completed pre-handoff | 11KB |
 
 ### Dependencies & Configuration
 
