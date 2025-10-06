@@ -516,3 +516,132 @@ class WALConfigurationTest(TestCase):
         self.assertIn(enable_wal_mode, handlers)
 
         # Test passes - WAL configuration is properly set up for concurrent access
+
+
+class LoguruConfigurationTest(TestCase):
+    """Test cases for Loguru logging configuration (Story 1.3)."""
+
+    def test_loguru_config_exists(self) -> None:
+        """Test that LOGURU_CONFIG is defined in settings."""
+        from django.conf import settings
+
+        self.assertTrue(hasattr(settings, "LOGURU_CONFIG"), "LOGURU_CONFIG should exist in settings")
+        config = settings.LOGURU_CONFIG
+
+        # Verify required configuration keys
+        self.assertIn("log_level", config)
+        self.assertIn("log_file", config)
+        self.assertIn("log_format", config)
+        self.assertIn("rotation", config)
+        self.assertIn("retention", config)
+        self.assertIn("colorize", config)
+
+    def test_log_file_path_configured(self) -> None:
+        """Test that log file path is properly configured."""
+        from django.conf import settings
+
+        log_file = settings.LOGURU_CONFIG["log_file"]
+
+        # Verify it's a Path object
+        self.assertIsInstance(log_file, Path)
+
+        # Verify it points to logs directory
+        self.assertTrue(str(log_file).endswith("samplify.log"))
+        self.assertEqual(log_file.name, "samplify.log")
+
+    def test_log_format_hierarchical(self) -> None:
+        """Test that log format includes hierarchical elements (module:function:line)."""
+        from django.conf import settings
+
+        log_format = settings.LOGURU_CONFIG["log_format"]
+
+        # Verify hierarchical format elements are present
+        self.assertIn("{name}", log_format, "Format should include module name")
+        self.assertIn("{function}", log_format, "Format should include function name")
+        self.assertIn("{line}", log_format, "Format should include line number")
+        # Check for level (may have formatting like {level: <8})
+        self.assertTrue(
+            "{level" in log_format,
+            "Format should include log level (with or without formatting)"
+        )
+        self.assertIn("{message}", log_format, "Format should include message")
+
+    def test_log_rotation_configured(self) -> None:
+        """Test that log rotation is configured correctly."""
+        from django.conf import settings
+
+        config = settings.LOGURU_CONFIG
+
+        # Verify rotation is 10 MB
+        self.assertEqual(config["rotation"], "10 MB")
+
+        # Verify retention is 5 files
+        self.assertEqual(config["retention"], 5)
+
+    def test_loguru_import_available(self) -> None:
+        """Test that loguru package is available."""
+        try:
+            from loguru import logger
+
+            self.assertIsNotNone(logger, "Loguru logger should be available")
+        except ImportError:
+            self.fail("Loguru package should be installed")
+
+    def test_loguru_basic_logging(self) -> None:
+        """Test basic logging functionality."""
+        from loguru import logger
+        import io
+
+        # Create string buffer to capture logs
+        buffer = io.StringIO()
+
+        # Add temporary handler
+        handler_id = logger.add(buffer, format="{level} | {message}")
+
+        # Log test message
+        logger.info("Test message")
+
+        # Remove temporary handler
+        logger.remove(handler_id)
+
+        # Verify message was logged
+        output = buffer.getvalue()
+        self.assertIn("INFO", output)
+        self.assertIn("Test message", output)
+
+    def test_loguru_exception_handling(self) -> None:
+        """Test that Loguru can handle exceptions with tracebacks."""
+        from loguru import logger
+        import io
+
+        # Create string buffer to capture logs
+        buffer = io.StringIO()
+
+        # Add temporary handler with backtrace enabled
+        handler_id = logger.add(buffer, format="{level} | {message}", backtrace=True, diagnose=False)
+
+        # Log exception
+        try:
+            _ = 1 / 0
+        except ZeroDivisionError:
+            logger.exception("Test exception")
+
+        # Remove temporary handler
+        logger.remove(handler_id)
+
+        # Verify exception was logged
+        output = buffer.getvalue()
+        self.assertIn("ERROR", output)
+        self.assertIn("Test exception", output)
+        self.assertIn("ZeroDivisionError", output)
+
+    def test_logs_directory_created(self) -> None:
+        """Test that logs directory is created during app initialization."""
+        from django.conf import settings
+
+        log_file = settings.LOGURU_CONFIG["log_file"]
+        logs_dir = log_file.parent
+
+        # Directory should exist (created by configure_loguru)
+        self.assertTrue(logs_dir.exists(), f"Logs directory {logs_dir} should exist")
+        self.assertTrue(logs_dir.is_dir(), "Logs path should be a directory")
