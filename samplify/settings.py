@@ -75,7 +75,10 @@ WSGI_APPLICATION = "samplify.wsgi.application"
 # ==============================================================================
 # DATABASE
 # ==============================================================================
-# SQLite with WAL mode (configured in Story 1.2C)
+# SQLite with WAL mode (Story 1.2C) - enables concurrent access for:
+# - Django web server (main process)
+# - Batch processing workers (multiprocessing)
+# - Watch mode service (background thread)
 
 DATABASES = {
     "default": {
@@ -83,6 +86,9 @@ DATABASES = {
         "NAME": BASE_DIR / "database" / "samplify.db",
     }
 }
+
+# WAL mode is configured via database signal in apps.catalog.apps.CatalogConfig.ready()
+# This ensures WAL is enabled on every database connection
 
 
 # ==============================================================================
@@ -131,25 +137,6 @@ STATICFILES_FINDERS = [
 # ==============================================================================
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-
-# ==============================================================================
-# LOGGING CONFIGURATION (Placeholder for Story 1.3 - Loguru)
-# ==============================================================================
-
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-        },
-    },
-    "root": {
-        "handlers": ["console"],
-        "level": "INFO",
-    },
-}
 
 
 # ==============================================================================
