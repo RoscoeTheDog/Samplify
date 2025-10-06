@@ -1,0 +1,19 @@
+TEMPLATE STRUCTURE FOR STORIES 1.10-1.17:
+
+Each story needs:
+1. Status: "Approved"
+2. Tasks/Subtasks (5-8 tasks with AC mapping)
+3. Dev Notes section with:
+   - Previous Story Insights
+   - File Locations
+   - Data Models
+   - Technical Patterns
+   - Code Examples
+4. Dev Notes > Testing section with:
+   - Test File Location
+   - Testing Standards
+   - Test Categories
+   - Example Tests
+   - Running Tests
+5. Change Log
+6. Dev Agent Record structure
