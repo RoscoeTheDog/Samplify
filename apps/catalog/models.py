@@ -42,6 +42,13 @@ class File(models.Model):
         ("image", "Image"),
     ]
 
+    PROCESSING_STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("processing", "Processing"),
+        ("completed", "Completed"),
+        ("failed", "Failed"),
+    ]
+
     # Core file information
     file_path = models.CharField(max_length=500, help_text="Full path to the file")
     file_name = models.CharField(max_length=255, help_text="File name with extension")
@@ -71,6 +78,14 @@ class File(models.Model):
         max_length=10,
         choices=MEDIA_TYPE_CHOICES,
         help_text="Type of media file",
+    )
+
+    # Batch processing status (Story 1.6)
+    processing_status = models.CharField(
+        max_length=20,
+        choices=PROCESSING_STATUS_CHOICES,
+        default="pending",
+        help_text="Current processing status for batch operations",
     )
 
     # Timestamps
