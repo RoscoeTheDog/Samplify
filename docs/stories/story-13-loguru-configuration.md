@@ -64,21 +64,25 @@ So that **I can migrate from structlog with hierarchical logging and IDE-clickab
 Claude 3.5 Sonnet (claude-sonnet-4-5-20250929)
 
 ### Implementation Approach
-Configured standard Loguru 0.7.2 (not custom fork per tech stack) using Django app ready() hook. Created comprehensive logging configuration with hierarchical format, rotation, and full IDE-clickable tracebacks.
+Configured custom Loguru fork (https://github.com/RoscoeTheDog/loguru) using Django app ready() hook. Implemented true hierarchical tree-based console output with Unicode box-drawing, structured JSON file output, and global exception hooks.
 
 ### Debug Log References
 None - implementation completed successfully.
 
 ### Completion Notes
-- Using standard Loguru 0.7.2 as specified in tech-stack.md (not custom fork)
+- Using custom Loguru fork from https://github.com/RoscoeTheDog/loguru
 - Loguru configured in `apps/catalog/apps.py` via `configure_loguru()` function
 - Configuration includes:
-  - Hierarchical format: `{time} | {level} | {name}:{function}:{line} - {message}`
+  - **Console output**: Hierarchical tree rendering with Unicode box-drawing characters
+  - **File output**: Structured JSON format for retrospective analysis
+  - **Format function**: Uses `create_hierarchical_format_function()` for proper tree layout
+  - **Global exception hook**: Installed via `install_exception_hook()` for uncaught exceptions
+  - **Context styling**: Automatic styling for URLs, IPs, emails, file paths
   - Log rotation: 10 MB per file, 5 files retention, zip compression
-  - Console and file logging with colorization
-  - Global exception handling with backtrace and diagnose
   - Thread-safe and process-safe logging (enqueue=True)
-- Test management command created to demonstrate logging capabilities
+- Test management command created to demonstrate hierarchical logging with rich context
+- Updated tech-stack.md to reflect custom fork usage (version 1.1)
+- Updated requirements.txt to install from git+https://github.com/RoscoeTheDog/loguru.git@master
 - Comprehensive test suite added (8 tests) covering:
   - Configuration validation
   - Log format hierarchical structure
@@ -86,27 +90,30 @@ None - implementation completed successfully.
   - Basic logging functionality
   - Exception handling with tracebacks
   - Logs directory creation
-- All 44 catalog app tests pass
 - Django system checks pass
-- Log file created successfully at `logs/samplify.log`
 
 ### File List
-- `samplify/settings.py` - Added LOGURU_CONFIG dictionary with all logging settings
-- `apps/catalog/apps.py` - Added `configure_loguru()` function and app ready() hook
-- `apps/catalog/management/commands/test_logging.py` - Test command demonstrating logging
+- `requirements.txt` - Updated to use custom loguru fork from GitHub
+- `docs/architecture/tech-stack.md` - Updated to version 1.1, documents custom fork usage
+- `samplify/settings.py` - Updated LOGURU_CONFIG with console_format for hierarchical rendering
+- `apps/catalog/apps.py` - Implemented hierarchical logging with tree output and JSON file
+- `apps/catalog/management/commands/test_logging.py` - Enhanced demo with rich context
 - `apps/catalog/management/__init__.py` - Management package init
 - `apps/catalog/management/commands/__init__.py` - Commands package init
-- `apps/catalog/tests.py` - Added LoguruConfigurationTest class with 8 test methods
+- `apps/catalog/tests.py` - LoguruConfigurationTest class with 8 test methods
 
 ### Change Log
-- 2025-10-05: Loguru 0.7.2 configured with hierarchical logging format
-- 2025-10-05: Log rotation and compression configured (10 MB, 5 files)
-- 2025-10-05: Test management command created and validated
-- 2025-10-05: Comprehensive test suite added (8 tests, all passing)
-- 2025-10-05: Story marked as Ready for Review
+- 2025-10-05: Initial implementation with standard Loguru 0.7.2 (incomplete - flat format)
+- 2025-10-05: Updated to custom Loguru fork from https://github.com/RoscoeTheDog/loguru
+- 2025-10-05: Implemented hierarchical tree console output with Unicode box-drawing
+- 2025-10-05: Configured dual output: hierarchical console + structured JSON file
+- 2025-10-05: Installed global exception hook for uncaught exceptions
+- 2025-10-05: Enhanced test_logging command with rich context demonstration
+- 2025-10-05: Updated tech-stack.md to version 1.1 documenting fork usage
+- 2025-10-05: Story reworked and ready for testing
 
 ### Status
-Ready for Review
+In Development - Requires loguru fork installation and testing
 
 ---
 

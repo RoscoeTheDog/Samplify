@@ -144,19 +144,20 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # ==============================================================================
 
 # Loguru configuration (configured in apps.catalog.apps.CatalogConfig.ready())
-# - Hierarchical logging: module.function.line format
-# - Global exception handling
+# Using custom fork: https://github.com/RoscoeTheDog/loguru
+# - Hierarchical tree-based console output with Unicode box-drawing
+# - Structured JSON file output for retrospective analysis
+# - Global exception hook for uncaught exceptions
 # - IDE-clickable tracebacks (PyCharm/VSCode)
-# - Log rotation: 10 MB per file, 5 files retention
-# - Console and file logging
+# - Context-aware styling (URLs, IPs, emails, file paths)
+# - Log rotation: 10 MB per file, 5 files retention, zip compression
 
 LOGURU_CONFIG = {
     "log_level": os.environ.get("LOG_LEVEL", "INFO"),
     "log_file": BASE_DIR / "logs" / "samplify.log",
-    "log_format": "{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}",
+    "console_format": "{time:HH:mm:ss} | {level} | {name} | {message}",  # Used by hierarchical formatter
     "rotation": "10 MB",
     "retention": 5,
-    "colorize": True,
 }
 
 # Django's built-in logging (minimal - Loguru handles most logging)
