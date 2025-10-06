@@ -84,6 +84,18 @@ git checkout -b feature/story-1.1
 
 **Detection Rule**: Story series identified by **letter suffix** (e.g., `story-1.2a`, `story-1.2b`)
 
+**Linear Dependency Pattern**: Sub-stories typically have linear dependencies (1.2C depends on 1.2B, which depends on 1.2A). The parent branch acts as an **integration point** that accumulates work from each completed sub-story:
+
+```
+feature/story-1.2 (parent - accumulates sub-story work incrementally)
+  ├─ feature/story-1.2a → [implement → test → merge to parent → DELETE BRANCH]
+  ├─ feature/story-1.2b (from UPDATED parent with 1.2A) → [test → merge → DELETE]
+  └─ feature/story-1.2c (from UPDATED parent with 1.2A+B) → [test → merge → DELETE]
+       └─ When complete: merge parent → dev (contains all sub-story work)
+```
+
+**CRITICAL**: Always branch sub-stories from **parent**, never from previous sub-story branch. The parent branch contains all previously merged sub-story work.
+
 ```bash
 # Step 1: Create parent branch first (from dev)
 git checkout dev
@@ -91,16 +103,14 @@ git pull origin dev
 git checkout -b feature/story-1.2
 git push -u origin feature/story-1.2
 
-# Step 2: For each sub-story (1.2A, 1.2B, 1.2C)
-
-# 2a. Create sub-story branch from parent
+# Step 2: Implement 1.2A
 git checkout feature/story-1.2
-git pull origin feature/story-1.2
+git pull origin feature/story-1.2  # Get latest parent (empty initially)
 git checkout -b feature/story-1.2a
 
-# 2b. Implement sub-story (code, tests, docs)
+# Implement sub-story (code, tests, docs)
 
-# 2c. Commit and merge to parent
+# Commit and merge to parent
 git add .
 git commit -m "feat(story-1.2a): Sub-story description
 
@@ -115,15 +125,29 @@ Tests: X/X passing
 Co-Authored-By: Claude <noreply@anthropic.com>"
 
 git checkout feature/story-1.2
-git merge --no-ff feature/story-1.2a
+git merge --no-ff feature/story-1.2a  # Parent now contains 1.2A work
 git push origin feature/story-1.2
+git branch -d feature/story-1.2a  # Clean up merged branch
 
-# 2d. Repeat for 1.2b, 1.2c, etc.
+# Step 3: Implement 1.2B (branches from UPDATED parent with 1.2A)
+git checkout feature/story-1.2
+git pull origin feature/story-1.2  # ← Gets 1.2A's work from parent!
+git checkout -b feature/story-1.2b  # 1.2B now has 1.2A as base
 
-# Step 3: When ALL sub-stories complete, merge parent to dev
+# Implement, test, commit, merge to parent, delete branch
+# (repeat pattern from Step 2)
+
+# Step 4: Implement 1.2C (branches from UPDATED parent with 1.2A+1.2B)
+git checkout feature/story-1.2
+git pull origin feature/story-1.2  # ← Gets 1.2A+1.2B work from parent!
+git checkout -b feature/story-1.2c  # 1.2C now has 1.2A+1.2B as base
+
+# Implement, test, commit, merge to parent
+
+# Step 5: When ALL sub-stories complete, merge parent to dev
 git checkout dev
 git pull origin dev
-git merge --no-ff feature/story-1.2
+git merge --no-ff feature/story-1.2  # Contains all sub-story work
 git push origin dev
 ```
 
@@ -201,15 +225,18 @@ Development agents must execute this guard **BEFORE** reading story tasks:
    4. **IF sub-story branch does NOT exist**:
       ```bash
       git checkout feature/story-{base}
+      git pull origin feature/story-{base}  # CRITICAL: Get previous sub-story work!
       git checkout -b feature/story-{full}
       ```
-      - Inform user: "Created sub-story branch feature/story-{full} from parent"
+      - Inform user: "Created sub-story branch feature/story-{full} from parent (includes previous sub-story work)"
 
    5. **IF on wrong branch**:
       ```bash
       git checkout feature/story-{full}
       ```
       - Inform user: "Switched to feature/story-{full} branch"
+
+   **CRITICAL - Linear Dependencies**: Always branch sub-stories from **parent**, never from previous sub-story branch. Parent branch accumulates all merged sub-story work, ensuring linear dependencies (1.2C gets 1.2A+1.2B work by branching from updated parent).
 
    **B. For Individual Stories (no letter suffix)**:
 
@@ -300,11 +327,16 @@ git branch --list feature/story-1.2a
 
 # Step 7: Create sub-story branch from parent
 git checkout feature/story-1.2
+git pull origin feature/story-1.2  # Get any previous sub-story work (empty for 1.2a)
 git checkout -b feature/story-1.2a
 # Output: Switched to a new branch 'feature/story-1.2a'
-echo "Created sub-story branch feature/story-1.2a from parent feature/story-1.2"
+echo "Created sub-story branch feature/story-1.2a from parent (includes previous sub-story work)"
 
 # Step 8: Proceed with story implementation
+
+# NOTE: For 1.2B, the parent will contain 1.2A's merged work
+# NOTE: For 1.2C, the parent will contain 1.2A+1.2B's merged work
+# This ensures linear dependencies are maintained
 ```
 
 ### Guard Placement

@@ -77,20 +77,24 @@ git checkout -b feature/story-1.0
 git checkout dev && git merge --no-ff feature/story-1.0
 ```
 
-**Story Series** (e.g., 1.2A/B/C - letter suffix):
+**Story Series** (e.g., 1.2A/B/C - letter suffix) with **Linear Dependencies**:
 ```bash
 # Create parent first
 git checkout dev && git pull
 git checkout -b feature/story-1.2
 git push -u origin feature/story-1.2
 
-# For each sub-story
-git checkout feature/story-1.2 && git pull
+# For each sub-story (ALWAYS branch from PARENT, not previous sub-story)
+git checkout feature/story-1.2 && git pull  # ← Gets previous sub-story work!
 git checkout -b feature/story-1.2a
 # Implement, test, commit
 git checkout feature/story-1.2
-git merge --no-ff feature/story-1.2a
+git merge --no-ff feature/story-1.2a  # Parent now has 1.2A work
 git push origin feature/story-1.2
+git branch -d feature/story-1.2a  # Clean up
+
+# Repeat for 1.2B (branches from updated parent with 1.2A)
+# Repeat for 1.2C (branches from updated parent with 1.2A+B)
 
 # When all sub-stories complete
 git checkout dev && git pull
@@ -99,6 +103,7 @@ git push origin dev
 ```
 
 **Detection**: Letter suffix = series (requires parent branch)
+**Critical**: Branch from **parent** (accumulates work), not from previous sub-story
 
 ---
 
