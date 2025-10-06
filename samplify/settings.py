@@ -140,6 +140,42 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 # ==============================================================================
+# LOGGING CONFIGURATION (Story 1.3 - Loguru)
+# ==============================================================================
+
+# Loguru configuration (configured in apps.catalog.apps.CatalogConfig.ready())
+# - Hierarchical logging: module.function.line format
+# - Global exception handling
+# - IDE-clickable tracebacks (PyCharm/VSCode)
+# - Log rotation: 10 MB per file, 5 files retention
+# - Console and file logging
+
+LOGURU_CONFIG = {
+    "log_level": os.environ.get("LOG_LEVEL", "INFO"),
+    "log_file": BASE_DIR / "logs" / "samplify.log",
+    "log_format": "{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}",
+    "rotation": "10 MB",
+    "retention": 5,
+    "colorize": True,
+}
+
+# Django's built-in logging (minimal - Loguru handles most logging)
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "WARNING",  # Only show warnings/errors from Django internals
+    },
+}
+
+
+# ==============================================================================
 # PROJECT-SPECIFIC SETTINGS
 # ==============================================================================
 
