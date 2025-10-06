@@ -109,6 +109,58 @@ Begin here: [`stories/story-10-repository-environment-foundation.md`](stories/st
 
 ---
 
+## 🔧 MCP Tool Initialization (For AI Agents)
+
+### Prerequisites
+Ensure MCP (Model Context Protocol) servers are configured in Claude Code settings for:
+- **Serena MCP**: LSP-powered symbol navigation and project memory
+- **Claude Context MCP**: Semantic codebase search and understanding
+
+### Initialization Sequence
+
+**1. Check Serena MCP Onboarding**
+```
+mcp__serena__check_onboarding_performed()
+```
+- If not performed, run: `mcp__serena__onboarding()`
+- Onboarding makes agents context-aware of available MCP functions
+- Enables symbol navigation, LSP operations, and project memory features
+
+**2. Index Codebase with Claude Context**
+```
+mcp__claude_context__index_codebase({path: "<absolute-path-to-repo>"})
+```
+- Required for semantic search capabilities
+- Verify with: `mcp__claude_context__get_indexing_status({path: "<absolute-path>"})`
+- Enable real-time sync: `mcp__claude_context__enable_realtime_sync({path: "<absolute-path>"})`
+
+**3. Verify MCP Availability**
+```
+# Serena: Try listing memories to confirm availability
+mcp__serena__list_memories()
+
+# Claude Context: Check health status
+mcp__claude_context__health_check()
+```
+
+### When to Use Each Tool
+
+**Serena MCP** - Use for:
+- Symbol-level code navigation (find functions, classes, references)
+- LSP operations (rename, find usages, type information)
+- Project-specific memory (remember decisions, patterns)
+- Precise code modifications (insert/replace at symbol locations)
+
+**Claude Context MCP** - Use for:
+- Semantic codebase search (find by concept, not just text)
+- Understanding code relationships and dependencies
+- Pattern discovery across large codebases
+- Context-aware code analysis
+
+**Best Practice**: Use **both** tools together - Serena for precise operations, Claude Context for semantic understanding.
+
+---
+
 ## 📊 Documentation Statistics
 
 - **Total Files**: 63 markdown files
