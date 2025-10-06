@@ -75,8 +75,7 @@ Django==4.2.7                # LTS web framework
 django-environ==0.11.2       # Environment variable management (.env files)
 
 # Logging
-loguru==0.7.2                # Enhanced logging library
-                             # Note: Using standard Loguru (not custom fork)
+git+https://github.com/RoscoeTheDog/loguru.git@master  # Custom loguru fork with hierarchical logging
 
 # File System Monitoring
 watchdog==3.0.0              # Cross-platform file system events
@@ -458,11 +457,13 @@ LOG_FILE=logs/samplify.log
 - **WAL mode**: Enables concurrent reads during writes
 - **Future**: Could migrate to PostgreSQL for multi-user server deployment
 
-### Why Loguru (not stdlib logging)?
-- **Developer experience**: Simpler API, better formatting
-- **Features**: Automatic rotation, structured logging, exception handling
-- **Performance**: Minimal overhead
-- **Standard library**: Using standard Loguru 0.7.2+ (not custom fork)
+### Why Custom Loguru Fork (not stdlib logging)?
+- **Developer experience**: Simpler API, hierarchical formatting
+- **Hierarchical logging**: Tree-based visual output with Unicode box-drawing
+- **Dual output**: Hierarchical console + structured JSON file logging
+- **Features**: Automatic rotation, structured logging, global exception hooks
+- **Performance**: Minimal overhead with intelligent caching
+- **Fork source**: https://github.com/RoscoeTheDog/loguru
 
 ### Why Django 4.2 LTS (not 5.x)?
 - **Stability**: LTS release with extended support (until April 2026)
@@ -488,8 +489,11 @@ LOG_FILE=logs/samplify.log
 
 ## Version History
 
+- **1.1** (2025-10-05): Updated logging dependency to custom Loguru fork
+  - Changed from standard Loguru 0.7.2 to RoscoeTheDog/loguru fork
+  - Added hierarchical logging with tree-based visual output
+  - Added dual output: hierarchical console + structured JSON file
 - **1.0** (2025-10-04): Initial tech stack specification
   - Python 3.10+, Django 4.2.7 LTS
-  - Standard Loguru 0.7.2 (clarified - not custom fork)
   - Development tooling configurations
   - Complete dependency list with rationale

@@ -19,18 +19,21 @@ def enable_wal_mode(sender, connection, **kwargs) -> None:
 
 
 def configure_loguru() -> None:
-    """Configure Loguru logging for the application (Story 1.3).
+    """Configure Loguru hierarchical logging for the application (Story 1.3).
 
     Features:
-    - Hierarchical logging with module.function.line format
-    - Global exception handling
-    - IDE-clickable tracebacks
+    - Hierarchical tree-based console output with Unicode box-drawing
+    - Structured JSON file output for retrospective analysis
+    - Global exception handling with IDE-clickable tracebacks
     - Log rotation (10 MB per file, 5 files retention)
-    - Console and file logging
+    - Context-aware styling (URLs, IPs, emails, file paths)
 
     Reference: NFR7 hierarchical logging requirement, CR5 Loguru migration
+    Fork: https://github.com/RoscoeTheDog/loguru
     """
     from loguru import logger
+    from loguru._template_formatters import create_hierarchical_format_function
+    from loguru._exception_hook import install_exception_hook
     from django.conf import settings
     import sys
 
@@ -44,31 +47,44 @@ def configure_loguru() -> None:
     log_file = config["log_file"]
     log_file.parent.mkdir(parents=True, exist_ok=True)
 
-    # Add console handler (with colors)
+    # Create hierarchical format function for console output
+    console_format_func = create_hierarchical_format_function(
+        format_string=config["console_format"],
+        template="hierarchical"
+    )
+
+    # Add console handler with hierarchical tree rendering
     logger.add(
         sys.stderr,
-        format=config["log_format"],
+        format=console_format_func,
+        colorize=True,
         level=config["log_level"],
-        colorize=config["colorize"],
         backtrace=True,  # Show full traceback
         diagnose=True,  # Show variable values in traceback
     )
 
-    # Add file handler (with rotation)
+    # Add JSON file handler for structured logging
     logger.add(
         str(log_file),
-        format=config["log_format"],
+        format="{message}",  # Message only for JSON
         level=config["log_level"],
         rotation=config["rotation"],
         retention=config["retention"],
-        compression="zip",  # Compress rotated files
+        compression="zip",
+        serialize=True,  # Enable JSON output
         backtrace=True,
         diagnose=True,
         enqueue=True,  # Thread-safe, process-safe logging
     )
 
+    # Install global exception hook for uncaught exceptions
+    install_exception_hook(logger, "hierarchical")
+
     # Log startup message
-    logger.info("Loguru logging configured successfully")
+    logger.info("Loguru hierarchical logging configured successfully",
+                console_format="hierarchical_tree",
+                file_format="structured_json",
+                exception_hook="installed")
 
 
 class CatalogConfig(AppConfig):

@@ -11,7 +11,7 @@ django-environ==0.11.2       # Environment variable management (.env files)
 # ================================================================
 # LOGGING
 # ================================================================
-loguru==0.7.2                # Enhanced logging library (standard, not custom fork)
+git+https://github.com/RoscoeTheDog/loguru.git@master  # Custom loguru fork with hierarchical logging
 
 # ================================================================
 # FILE SYSTEM MONITORING
