@@ -18,12 +18,14 @@ Including another URLconf
 
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import path
+from django.urls import include, path
 from django.views.generic import TemplateView
 
 urlpatterns = [
     # Temporary homepage (will be replaced in frontend stories)
     path("", TemplateView.as_view(template_name="home.html"), name="home"),
+    # Catalog app URLs (API endpoints)
+    path("", include("apps.catalog.urls")),
 ]
 
 # Serve static files during development

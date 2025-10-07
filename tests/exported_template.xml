@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<samplify>
+    <name>Test Import Template</name>
+    <libraries>
+        <directory path="C:\Users\Admin\Documents\Samplify\Input"/>
+    </libraries>
+    <outputDirectories>
+        <directory path="C:\Users\Admin\Documents\Samplify\Output\Images">
+            <rules>
+                <extensions>.wav</extensions>
+                <expression>Kick</expression>
+                <audioPreserve>True</audioPreserve>
+                <extensions>.png</extensions>
+                <audioNormalize>True</audioNormalize>
+                <extensions>.mp4</extensions>
+                <imageFormat>PNG</imageFormat>
+                <audioChannels>1</audioChannels>
+                <extensions>.asd</extensions>
+                <containsVideo>true</containsVideo>
+                <containsImage>true</containsImage>
+                <containsAudio>true</containsAudio>
+                <extensions>default</extensions>
+            </rules>
+            <governor>
+                <comparison>AND</comparison>
+            </governor>
+        </directory>
+        <directory path="C:\Users\Admin\Documents\Samplify\Output\Videos">
+            <rules>
+                <extensions>.wav</extensions>
+                <expression>Kick</expression>
+                <audioPreserve>True</audioPreserve>
+                <extensions>.png</extensions>
+                <audioNormalize>True</audioNormalize>
+                <extensions>.mp4</extensions>
+                <imageFormat>PNG</imageFormat>
+                <audioChannels>1</audioChannels>
+                <extensions>.asd</extensions>
+                <containsVideo>true</containsVideo>
+                <containsImage>true</containsImage>
+                <containsAudio>true</containsAudio>
+                <extensions>default</extensions>
+            </rules>
+            <governor>
+                <comparison>AND</comparison>
+            </governor>
+        </directory>
+        <directory path="C:\Users\Admin\Documents\Samplify\Output\extension test">
+            <rules>
+                <extensions>.wav</extensions>
+                <expression>Kick</expression>
+                <audioPreserve>True</audioPreserve>
+                <extensions>.png</extensions>
+                <audioNormalize>True</audioNormalize>
+                <extensions>.mp4</extensions>
+                <imageFormat>PNG</imageFormat>
+                <audioChannels>1</audioChannels>
+                <extensions>.asd</extensions>
+                <containsVideo>true</containsVideo>
+                <containsImage>true</containsImage>
+                <containsAudio>true</containsAudio>
+                <extensions>default</extensions>
+            </rules>
+            <governor>
+                <comparison>AND</comparison>
+            </governor>
+        </directory>
+        <directory path="C:\Users\Admin\Documents\Samplify\Output\kick">
+            <rules>
+                <extensions>.wav</extensions>
+                <expression>Kick</expression>
+                <audioPreserve>True</audioPreserve>
+                <extensions>.png</extensions>
+                <audioNormalize>True</audioNormalize>
+                <extensions>.mp4</extensions>
+                <imageFormat>PNG</imageFormat>
+                <audioChannels>1</audioChannels>
+                <extensions>.asd</extensions>
+                <containsVideo>true</containsVideo>
+                <containsImage>true</containsImage>
+                <containsAudio>true</containsAudio>
+                <extensions>default</extensions>
+            </rules>
+            <governor>
+                <comparison>AND</comparison>
+            </governor>
+        </directory>
+    </outputDirectories>
+</samplify>
