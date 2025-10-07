@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<samplify>
+    <name>Test Import Template</name>
+    <libraries>
+        <directory path="C:\Users\Admin\Documents\Samplify\Input"/>
+    </libraries>
+    <outputDirectories>
+        <!-- Video filter example -->
+        <directory path="C:\Users\Admin\Documents\Samplify\Output\Videos">
+            <rules>
+                <containsVideo>true</containsVideo>
+                <videoOutputContainer>.mp4</videoOutputContainer>
+            </rules>
+            <governor>
+                <comparison>AND</comparison>
+            </governor>
+        </directory>
+
+        <!-- Image filter example -->
+        <directory path="C:\Users\Admin\Documents\Samplify\Output\Images">
+            <rules>
+                <containsImage>true</containsImage>
+                <imageFormat>PNG</imageFormat>
+                <exportType>.png</exportType>
+            </rules>
+            <governor>
+                <comparison>AND</comparison>
+            </governor>
+        </directory>
+
+        <!-- Audio filter example -->
+        <directory path="C:\Users\Admin\Documents\Samplify\Output\kick">
+            <rules>
+                <expression>Kick</expression>
+                <extensions>.wav</extensions>
+                <containsAudio>true</containsAudio>
+                <audioFormat>default</audioFormat>
+                <audioSampleRate>default</audioSampleRate>
+                <audioBitrate></audioBitrate>
+                <audioChannels>1</audioChannels>
+                <audioNormalize>True</audioNormalize>
+                <audioPreserve>True</audioPreserve>
+            </rules>
+            <governor>
+                <comparison>AND</comparison>
+            </governor>
+        </directory>
+
+        <!-- Extension filter example -->
+        <directory path="C:\Users\Admin\Documents\Samplify\Output\extension test">
+            <rules>
+                <extensions>.asd</extensions>
+                <exportType>default</exportType>
+            </rules>
+            <governor>
+                <comparison>OR</comparison>
+            </governor>
+        </directory>
+    </outputDirectories>
+</samplify>

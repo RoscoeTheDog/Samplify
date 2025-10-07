@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Project apps
+    "samplify",  # Management commands (Story 1.9)
     "apps.catalog",
 ]
 
