@@ -36,16 +36,21 @@ FFMPEG_URLS = {
     'Linux': 'https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz'
 }
 
-# SHA256 checksums for FFmpeg binaries
-# NOTE: These are placeholder checksums and MUST be updated with actual values
+# SHA256 checksums for FFmpeg binaries (SEC-001 Supply-Chain Protection)
+# These checksums verify the integrity of downloaded FFmpeg binaries to prevent
+# supply-chain attacks. Checksums are calculated from the archive files downloaded
+# from the URLs specified in FFMPEG_URLS.
+#
 # To update: Download each binary and calculate SHA256 using:
 #   Windows: certutil -hashfile ffmpeg-release-essentials.zip SHA256
-#   macOS/Linux: sha256sum ffmpeg-7.0.2.zip
-# Last verified: 2025-10-06
+#   macOS/Linux: sha256sum ffmpeg-7.0.2.zip / sha256sum ffmpeg-release-amd64-static.tar.xz
+#
+# Last verified: 2025-10-07 (Story R1.2 - Remediation Backlog)
+# Archive checksums (not the extracted binary):
 FFMPEG_SHA256 = {
-    'Windows': 'PLACEHOLDER_UPDATE_WITH_ACTUAL_WINDOWS_SHA256_CHECKSUM',
-    'Darwin': 'PLACEHOLDER_UPDATE_WITH_ACTUAL_MACOS_SHA256_CHECKSUM',
-    'Linux': 'PLACEHOLDER_UPDATE_WITH_ACTUAL_LINUX_SHA256_CHECKSUM'
+    'Windows': '647e467caf82b9fa200a562769b5ff4d736aaf725804ed2c64ea9752106fa569',
+    'Darwin': '502622443f3fc412d101e682518dbeb1debbf73f54c94e7704a4448d6b7bc1f7',
+    'Linux': 'abda8d77ce8309141f83ab8edf0596834087c52467f6badf376a6a2a4c87cf67'
 }
 
 # Platform-specific binary names

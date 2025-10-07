@@ -89,6 +89,7 @@ So that **the system can bundle platform-specific FFmpeg binaries without git re
 | 2025-10-05 | Created FFmpeg detection & download service with platform support for Windows/macOS/Linux | samplify/utils/ffmpeg.py |
 | 2025-10-05 | Implemented comprehensive test suite (24 tests) | tests/test_ffmpeg_utils.py |
 | 2025-10-05 | Created utils package structure | samplify/utils/__init__.py |
+| 2025-10-07 | **R1.2 Remediation:** Updated FFmpeg SHA256 checksums with production values (SEC-001 complete) | samplify/utils/ffmpeg.py |
 
 ### Status
 Ready for Review
