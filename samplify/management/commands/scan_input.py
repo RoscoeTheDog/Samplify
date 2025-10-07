@@ -150,8 +150,8 @@ class Command(BaseCommand):
                     metadata = self.extract_metadata(file_path)
 
                     if metadata:
-                        # Create or update File record
-                        file_obj, created = self.upsert_file(file_path, metadata, force_rescan)
+                        # Create or update File record (with directory mapping for schema association)
+                        file_obj, created = self.upsert_file(file_path, metadata, force_rescan, mapping)
 
                         if created:
                             total_files_added += 1
@@ -389,7 +389,13 @@ class Command(BaseCommand):
         # All retries exhausted
         return None
 
-    def upsert_file(self, file_path: Path, metadata: Dict, force_rescan: bool) -> tuple:
+    def upsert_file(
+        self,
+        file_path: Path,
+        metadata: Dict,
+        force_rescan: bool,
+        directory_mapping: DirectoryMapping
+    ) -> tuple:
         """
         Create or update File record in database.
 
@@ -399,6 +405,7 @@ class Command(BaseCommand):
             file_path: Path to file
             metadata: Metadata dictionary from FFmpeg
             force_rescan: Whether to update existing records
+            directory_mapping: DirectoryMapping this file belongs to (for schema association)
 
         Returns:
             Tuple of (File object or None, created boolean)
@@ -418,6 +425,7 @@ class Command(BaseCommand):
                         existing_file.codec = metadata.get("codec")
                         existing_file.sample_rate = metadata.get("sample_rate")
                         existing_file.bit_depth = metadata.get("bit_depth")
+                        existing_file.directory_mapping = directory_mapping  # Associate with schema
                         existing_file.save()
 
                         logger.debug(f"Updated file record: {metadata['file_name']}")
@@ -437,6 +445,7 @@ class Command(BaseCommand):
                     codec=metadata.get("codec"),
                     sample_rate=metadata.get("sample_rate"),
                     bit_depth=metadata.get("bit_depth"),
+                    directory_mapping=directory_mapping,  # Associate with schema
                 )
 
                 logger.debug(f"Created file record: {metadata['file_name']}")

@@ -148,10 +148,12 @@ class Command(BaseCommand):
             with transaction.atomic():
                 # Query pending files with row-level locking
                 # skip_locked=True prevents blocking on files locked by other transactions
+                # Filter by schema via directory_mapping relationship (Story R1.3)
                 pending_files = list(
                     File.objects.select_for_update(skip_locked=True)
                     .filter(
                         processing_status="pending",
+                        directory_mapping__schema=schema,  # Schema relationship filter
                     )
                     .order_by("created_at")[:batch_size]
                 )

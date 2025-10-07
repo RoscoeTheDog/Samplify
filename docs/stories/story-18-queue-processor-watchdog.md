@@ -486,6 +486,7 @@ pytest tests/test_queue_processor.py::test_24_hour_stability -v --timeout=86400
 ## Change Log
 | Date | Version | Description | Author |
 |------|---------|-------------|--------|
+| 2025-10-07 | 1.2 | **R1.3 Remediation:** Implemented schema filtering via File-DirectoryMapping relationship (AC#5 complete) | Dev (James) |
 | 2025-10-06 | 1.1 | Implementation completed - queue processor watchdog with full test coverage | Dev (James) |
 | 2025-10-05 | 1.0 | Story completed by Scrum Master - added Status, Tasks, Dev Notes, Testing sections | SM (Bob) |
 

@@ -34,7 +34,7 @@ class TestQueueProcessorPolling(TransactionTestCase):
 
     def test_poll_finds_pending_files(self):
         """Test polling finds pending files."""
-        # Create pending files
+        # Create pending files with directory mapping for schema filtering
         file1 = File.objects.create(
             file_path="/test/input/file1.wav",
             file_name="file1.wav",
@@ -42,6 +42,7 @@ class TestQueueProcessorPolling(TransactionTestCase):
             file_size=1024,
             media_type="audio",
             processing_status="pending",
+            directory_mapping=self.dir_mapping,
         )
         file2 = File.objects.create(
             file_path="/test/input/file2.wav",
@@ -50,6 +51,7 @@ class TestQueueProcessorPolling(TransactionTestCase):
             file_size=2048,
             media_type="audio",
             processing_status="pending",
+            directory_mapping=self.dir_mapping,
         )
 
         cmd = QueueProcessorCommand()
@@ -69,6 +71,7 @@ class TestQueueProcessorPolling(TransactionTestCase):
             file_size=1024,
             media_type="audio",
             processing_status="completed",
+            directory_mapping=self.dir_mapping,
         )
         File.objects.create(
             file_path="/test/input/processing.wav",
@@ -77,6 +80,7 @@ class TestQueueProcessorPolling(TransactionTestCase):
             file_size=1024,
             media_type="audio",
             processing_status="processing",
+            directory_mapping=self.dir_mapping,
         )
 
         cmd = QueueProcessorCommand()
@@ -97,6 +101,7 @@ class TestQueueProcessorPolling(TransactionTestCase):
                 file_size=1024,
                 media_type="audio",
                 processing_status="pending",
+            directory_mapping=self.dir_mapping,
             )
 
         cmd = QueueProcessorCommand()
@@ -125,6 +130,7 @@ class TestQueueProcessorPolling(TransactionTestCase):
             file_size=1024,
             media_type="audio",
             processing_status="pending",
+            directory_mapping=self.dir_mapping,
         )
         time.sleep(0.01)
 
@@ -135,6 +141,7 @@ class TestQueueProcessorPolling(TransactionTestCase):
             file_size=1024,
             media_type="audio",
             processing_status="pending",
+            directory_mapping=self.dir_mapping,
         )
 
         cmd = QueueProcessorCommand()
@@ -153,6 +160,51 @@ class TestQueueProcessorPolling(TransactionTestCase):
         # Verify oldest file processed first
         assert processed_files[0].id == file1.id
         assert processed_files[1].id == file2.id
+
+    def test_schema_filtering(self):
+        """Test queue processor only processes files from active schema (Story R1.3)."""
+        # Create a second schema with its own directory mapping
+        schema_b = Schema.objects.create(name="Schema B", is_active=False)
+        dir_mapping_b = DirectoryMapping.objects.create(
+            schema=schema_b, input_path="/test/input_b/", output_path="/test/output_b/"
+        )
+
+        # Create files for both schemas
+        file_a = File.objects.create(
+            file_path="/test/input/file_a.wav",
+            file_name="file_a.wav",
+            file_format="wav",
+            file_size=1024,
+            media_type="audio",
+            processing_status="pending",
+            directory_mapping=self.dir_mapping,  # Schema A
+        )
+        file_b = File.objects.create(
+            file_path="/test/input_b/file_b.wav",
+            file_name="file_b.wav",
+            file_format="wav",
+            file_size=1024,
+            media_type="audio",
+            processing_status="pending",
+            directory_mapping=dir_mapping_b,  # Schema B
+        )
+
+        cmd = QueueProcessorCommand()
+        cmd.batch_processor = MagicMock()
+
+        # Process with schema A active
+        processed_files = []
+
+        def capture_files(files, schema):
+            processed_files.extend(files)
+
+        cmd._process_files = capture_files
+        processed_count = cmd._poll_and_process(self.schema, batch_size=10)
+
+        # Verify only schema A files were processed
+        assert processed_count == 1
+        assert len(processed_files) == 1
+        assert processed_files[0].id == file_a.id
 
 
 class TestRaceConditionPrevention(TransactionTestCase):
@@ -181,6 +233,7 @@ class TestRaceConditionPrevention(TransactionTestCase):
             file_size=1024,
             media_type="audio",
             processing_status="pending",
+            directory_mapping=self.dir_mapping,
         )
 
         results = {"processor1_count": 0, "processor2_count": 0}
@@ -253,6 +306,7 @@ class TestBatchProcessingIntegration(TransactionTestCase):
             file_size=1024,
             media_type="audio",
             processing_status="pending",
+            directory_mapping=self.dir_mapping,
         )
 
         cmd = QueueProcessorCommand()
@@ -278,6 +332,7 @@ class TestBatchProcessingIntegration(TransactionTestCase):
             file_size=1024,
             media_type="audio",
             processing_status="pending",
+            directory_mapping=self.dir_mapping,
         )
 
         cmd = QueueProcessorCommand()
@@ -308,6 +363,7 @@ class TestStatusManagement(TransactionTestCase):
             file_size=1024,
             media_type="audio",
             processing_status="pending",
+            directory_mapping=self.dir_mapping,
         )
 
         cmd = QueueProcessorCommand()
@@ -334,6 +390,7 @@ class TestStatusManagement(TransactionTestCase):
             file_size=1024,
             media_type="audio",
             processing_status="pending",
+            directory_mapping=self.dir_mapping,
         )
 
         cmd = QueueProcessorCommand()
@@ -352,6 +409,9 @@ class TestGracefulShutdown(TransactionTestCase):
     def setUp(self):
         """Setup test fixtures."""
         self.schema = Schema.objects.create(name="Test Schema", is_active=True)
+        self.dir_mapping = DirectoryMapping.objects.create(
+            schema=self.schema, input_path="/test/input/", output_path="/test/output/"
+        )
 
     def test_sigint_stops_processing_loop(self):
         """Test SIGINT signal stops processing loop gracefully."""
@@ -394,6 +454,9 @@ class TestErrorHandling(TransactionTestCase):
     def setUp(self):
         """Setup test fixtures."""
         self.schema = Schema.objects.create(name="Test Schema", is_active=True)
+        self.dir_mapping = DirectoryMapping.objects.create(
+            schema=self.schema, input_path="/test/input/", output_path="/test/output/"
+        )
 
     def test_continues_after_polling_error(self):
         """Test processor continues after polling error."""
@@ -446,6 +509,7 @@ class TestErrorHandling(TransactionTestCase):
             file_size=1024,
             media_type="audio",
             processing_status="pending",
+            directory_mapping=self.dir_mapping,
         )
 
         cmd._poll_and_process(self.schema, batch_size=10)
@@ -460,6 +524,9 @@ class TestCommandLineArguments(TransactionTestCase):
     def setUp(self):
         """Setup test fixtures."""
         self.schema = Schema.objects.create(name="Test Schema", is_active=True)
+        self.dir_mapping = DirectoryMapping.objects.create(
+            schema=self.schema, input_path="/test/input/", output_path="/test/output/"
+        )
 
     @patch("samplify.management.commands.queue_processor.Command._poll_and_process")
     @patch("samplify.management.commands.queue_processor.time.sleep")

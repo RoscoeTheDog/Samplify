@@ -88,6 +88,16 @@ class File(models.Model):
         help_text="Current processing status for batch operations",
     )
 
+    # Schema association via directory mapping (Story R1.3 - Remediation)
+    directory_mapping = models.ForeignKey(
+        'DirectoryMapping',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='files',
+        help_text="Directory mapping (and thus schema) this file is associated with",
+    )
+
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -103,6 +113,7 @@ class File(models.Model):
             models.Index(fields=["media_type"]),
             models.Index(fields=["file_format"]),
             models.Index(fields=["-created_at"]),
+            models.Index(fields=["directory_mapping"]),
         ]
 
     def __str__(self) -> str:
