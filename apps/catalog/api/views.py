@@ -19,7 +19,11 @@ from django.views.decorators.http import require_http_methods
 from apps.catalog.models import Schema
 
 
-@csrf_exempt
+# SECURITY WARNING: CSRF exemption is TEMPORARY for CLI-only usage
+# Story 1.10 MUST remove @csrf_exempt and add authentication
+# DO NOT deploy to production web UI without fixing
+# See: docs/qa/REMEDIATION-BACKLOG.md Story R1.4
+@csrf_exempt  # TODO(Story 1.10): Remove - CLI-only temporary exemption
 @require_http_methods(["POST"])
 def import_xml_api(request: HttpRequest) -> JsonResponse:
     """
@@ -27,6 +31,12 @@ def import_xml_api(request: HttpRequest) -> JsonResponse:
 
     Accepts multipart/form-data file upload and imports XML template
     into database using import_xml_template management command.
+
+    SECURITY TODO (Story 1.10):
+    - Remove @csrf_exempt decorator
+    - Add authentication (Django Rest Framework or similar)
+    - Add authorization (user permissions for import)
+    - Add rate limiting to prevent abuse
 
     Args:
         request: HTTP request with uploaded XML file
@@ -98,6 +108,9 @@ def import_xml_api(request: HttpRequest) -> JsonResponse:
         return JsonResponse({"error": f"Import failed: {str(e)}"}, status=500)
 
 
+# SECURITY WARNING: No authentication for export endpoint
+# Story 1.10 MUST add authentication before web UI deployment
+# See: docs/qa/REMEDIATION-BACKLOG.md Story R1.4
 @require_http_methods(["GET"])
 def export_xml_api(request: HttpRequest, schema_id: int) -> HttpResponse:
     """
@@ -105,6 +118,11 @@ def export_xml_api(request: HttpRequest, schema_id: int) -> HttpResponse:
 
     Generates brownfield XML template from schema and returns
     as downloadable file.
+
+    SECURITY TODO (Story 1.10):
+    - Add authentication (Django Rest Framework or similar)
+    - Add authorization (user permissions for export)
+    - Add rate limiting to prevent abuse
 
     Args:
         request: HTTP request

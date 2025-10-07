@@ -851,6 +851,7 @@ pytest tests/test_xml_export.py::test_export_import_roundtrip -v
 ## Change Log
 | Date | Version | Description | Author |
 |------|---------|-------------|--------|
+| 2025-10-07 | 2.3 | **R1.4 Remediation:** Added security warnings for CSRF/authentication deferral in API views | Dev (James) |
 | 2025-10-05 | 1.0 | Story completed by Scrum Master - added Status, Tasks, Dev Notes, Testing sections | SM (Bob) |
 | 2025-10-06 | 2.0 | **REVISED** per Dev Agent validation report - removed UI integration tasks (AC 16-22, 31, Task 7), deferred to Story 1.10; added database migration task (Task 7); updated Dev Notes with actual brownfield XML schema from handlers/xml_handler.py; verified Django file paths; added template directory location (`%USERPROFILE%\Documents\Samplify\Templates\`); added transaction rollback test scenarios; updated Definition of Done to remove UI items; marked UI items as deferred | SM (Bob) |
 | 2025-10-06 | 2.1 | **VALIDATION FIXES** per SM course correction - Updated Task 7 to reflect fields already exist from Story 1.2B (verified apps/catalog/models.py:168-178, 191); changed task focus from "create migration" to "verify and test existing fields"; updated Dev Notes to confirm xml_source and source_type fields with code references; no scope changes | SM (Bob) |
