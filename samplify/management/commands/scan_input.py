@@ -15,7 +15,9 @@ Usage:
 import json
 import re
 import subprocess
+import time
 from datetime import datetime
+from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -25,6 +27,70 @@ from loguru import logger
 
 from apps.catalog.models import DirectoryMapping, File, Schema
 from samplify.utils.ffmpeg import get_ffmpeg_path
+
+
+# ============================================================================
+# Error Classification System
+# ============================================================================
+
+
+class FFmpegErrorType(Enum):
+    """
+    FFmpeg error classification for categorizing failure types.
+
+    Used to distinguish between:
+    - Transient errors that should be retried (network issues)
+    - Permanent errors that should be skipped (corrupt files, unsupported formats)
+    - Critical errors that should abort processing (permission denied, disk full)
+    """
+    CORRUPT_FILE = "corrupt_file"          # Permanently damaged file
+    UNSUPPORTED_FORMAT = "unsupported"     # Format not supported by FFmpeg
+    NETWORK_ERROR = "network"              # Network/timeout issues
+    PERMISSION_ERROR = "permission"        # File access denied
+    DISK_ERROR = "disk"                    # Disk full/IO error
+    UNKNOWN = "unknown"                     # Unclassified error
+
+
+def parse_ffmpeg_error(stderr_output: str) -> FFmpegErrorType:
+    """
+    Parse FFmpeg error output and categorize the error type.
+
+    Uses pattern matching to identify error categories from FFmpeg stderr.
+    This enables intelligent retry/skip/abort decisions based on error type.
+
+    Args:
+        stderr_output: FFmpeg stderr output string
+
+    Returns:
+        FFmpegErrorType: Categorized error type
+
+    Examples:
+        >>> parse_ffmpeg_error("Invalid data found when processing input")
+        FFmpegErrorType.CORRUPT_FILE
+
+        >>> parse_ffmpeg_error("Connection timed out")
+        FFmpegErrorType.NETWORK_ERROR
+    """
+    stderr_lower = stderr_output.lower()
+
+    # Pattern matching for error types
+    if "invalid data found" in stderr_lower or "invalid" in stderr_lower:
+        return FFmpegErrorType.CORRUPT_FILE
+    elif "unknown format" in stderr_lower or "not supported" in stderr_lower:
+        return FFmpegErrorType.UNSUPPORTED_FORMAT
+    elif "connection" in stderr_lower or "timeout" in stderr_lower:
+        return FFmpegErrorType.NETWORK_ERROR
+    elif "permission denied" in stderr_lower or "access denied" in stderr_lower:
+        return FFmpegErrorType.PERMISSION_ERROR
+    elif "no space left" in stderr_lower or "i/o error" in stderr_lower:
+        return FFmpegErrorType.DISK_ERROR
+    else:
+        return FFmpegErrorType.UNKNOWN
+
+
+# Retry configuration for transient errors
+MAX_RETRIES = 3
+RETRY_DELAY = 2  # Base delay in seconds (will be multiplied by attempt number)
 
 
 class Command(BaseCommand):
@@ -170,9 +236,12 @@ class Command(BaseCommand):
 
     def extract_metadata(self, file_path: Path) -> Optional[Dict]:
         """
-        Extract media metadata using FFmpeg.
+        Extract media metadata using FFmpeg with intelligent error handling.
 
-        Integration with Story 1.4 FFmpeg service.
+        Integration with Story 1.4 FFmpeg service, enhanced with:
+        - Error classification (transient vs permanent vs critical)
+        - Automatic retry for transient errors (network issues)
+        - Structured logging with error categorization
 
         Args:
             file_path: Path to media file
@@ -186,76 +255,139 @@ class Command(BaseCommand):
             logger.error("FFmpeg not available - cannot extract metadata")
             return None
 
-        try:
-            # Run FFmpeg probe to get metadata
-            cmd = [
-                ffmpeg_path,
-                "-i",
-                str(file_path),
-                "-print_format",
-                "json",
-                "-show_format",
-                "-show_streams",
-                "-v",
-                "quiet",
-            ]
+        # Retry loop for transient errors
+        for attempt in range(MAX_RETRIES):
+            try:
+                # Run FFmpeg probe to get metadata
+                cmd = [
+                    ffmpeg_path,
+                    "-i",
+                    str(file_path),
+                    "-print_format",
+                    "json",
+                    "-show_format",
+                    "-show_streams",
+                    "-v",
+                    "quiet",
+                ]
 
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+                result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
 
-            if result.returncode != 0:
-                logger.warning(f"FFmpeg failed for {file_path}: {result.stderr}")
-                return None
+                if result.returncode != 0:
+                    # Parse error type from stderr
+                    error_type = parse_ffmpeg_error(result.stderr)
 
-            # Parse JSON output
-            ffmpeg_data = json.loads(result.stdout)
+                    # Handle error based on type
+                    if error_type == FFmpegErrorType.NETWORK_ERROR and attempt < MAX_RETRIES - 1:
+                        # Transient error - retry with exponential backoff
+                        delay = RETRY_DELAY * (attempt + 1)
+                        logger.warning(
+                            f"Network error processing {file_path} (attempt {attempt + 1}/{MAX_RETRIES}) - retrying in {delay}s"
+                        )
+                        time.sleep(delay)
+                        continue
 
-            # Extract relevant metadata
-            metadata = {
-                "file_path": str(file_path.resolve()),
-                "file_name": file_path.name,
-                "file_format": file_path.suffix.lstrip(".").upper(),
-                "file_size": file_path.stat().st_size,
-            }
+                    elif error_type in [FFmpegErrorType.CORRUPT_FILE, FFmpegErrorType.UNSUPPORTED_FORMAT]:
+                        # Permanent error - skip file with warning
+                        logger.warning(
+                            f"Skipping {file_path}: {error_type.value}"
+                        )
+                        return None
 
-            # Detect media type and extract type-specific metadata
-            streams = ffmpeg_data.get("streams", [])
+                    elif error_type in [FFmpegErrorType.PERMISSION_ERROR, FFmpegErrorType.DISK_ERROR]:
+                        # Critical error - abort processing
+                        logger.error(
+                            f"Critical error: {error_type.value} for {file_path}"
+                        )
+                        raise RuntimeError(f"Critical FFmpeg error: {error_type.value}")
 
-            if not streams:
-                return None
+                    else:
+                        # Unknown error - log and skip
+                        logger.error(
+                            f"Unknown FFmpeg error for {file_path}: {result.stderr[:200]}"
+                        )
+                        return None
 
-            # Check for video stream
-            video_stream = next((s for s in streams if s.get("codec_type") == "video"), None)
-            # Check for audio stream
-            audio_stream = next((s for s in streams if s.get("codec_type") == "audio"), None)
+                # Parse JSON output
+                ffmpeg_data = json.loads(result.stdout)
 
-            if video_stream:
-                metadata["media_type"] = "video"
-                metadata["codec"] = video_stream.get("codec_name", "")
-                # Video may also have audio - get sample rate from audio stream
-                if audio_stream:
+                # Get file size safely (file must exist for FFmpeg to have succeeded)
+                try:
+                    file_size = file_path.stat().st_size
+                except Exception:
+                    file_size = 0
+
+                # Extract relevant metadata
+                metadata = {
+                    "file_path": str(file_path.resolve()),
+                    "file_name": file_path.name,
+                    "file_format": file_path.suffix.lstrip(".").upper(),
+                    "file_size": file_size,
+                }
+
+                # Detect media type and extract type-specific metadata
+                streams = ffmpeg_data.get("streams", [])
+
+                if not streams:
+                    return None
+
+                # Check for video stream
+                video_stream = next((s for s in streams if s.get("codec_type") == "video"), None)
+                # Check for audio stream
+                audio_stream = next((s for s in streams if s.get("codec_type") == "audio"), None)
+
+                if video_stream:
+                    metadata["media_type"] = "video"
+                    metadata["codec"] = video_stream.get("codec_name", "")
+                    # Video may also have audio - get sample rate from audio stream
+                    if audio_stream:
+                        metadata["sample_rate"] = int(audio_stream.get("sample_rate", 0) or 0)
+                        metadata["bit_depth"] = int(audio_stream.get("bits_per_raw_sample", 0) or 0)
+                elif audio_stream:
+                    metadata["media_type"] = "audio"
+                    metadata["codec"] = audio_stream.get("codec_name", "")
                     metadata["sample_rate"] = int(audio_stream.get("sample_rate", 0) or 0)
                     metadata["bit_depth"] = int(audio_stream.get("bits_per_raw_sample", 0) or 0)
-            elif audio_stream:
-                metadata["media_type"] = "audio"
-                metadata["codec"] = audio_stream.get("codec_name", "")
-                metadata["sample_rate"] = int(audio_stream.get("sample_rate", 0) or 0)
-                metadata["bit_depth"] = int(audio_stream.get("bits_per_raw_sample", 0) or 0)
-            else:
-                # Assume image if no audio/video streams
-                metadata["media_type"] = "image"
-                metadata["codec"] = streams[0].get("codec_name", "")
+                else:
+                    # Assume image if no audio/video streams
+                    metadata["media_type"] = "image"
+                    metadata["codec"] = streams[0].get("codec_name", "")
 
-            return metadata
+                return metadata
 
-        except subprocess.TimeoutExpired:
-            logger.error(f"FFmpeg timeout for file: {file_path}")
-            return None
-        except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse FFmpeg JSON output for {file_path}: {e}")
-            return None
-        except Exception as e:
-            logger.error(f"Error extracting metadata from {file_path}: {e}")
-            return None
+            except subprocess.TimeoutExpired:
+                # Treat timeout as network error - retry if attempts remain
+                if attempt < MAX_RETRIES - 1:
+                    delay = RETRY_DELAY * (attempt + 1)
+                    logger.warning(
+                        f"FFmpeg timeout for {file_path} (attempt {attempt + 1}/{MAX_RETRIES}) - retrying in {delay}s"
+                    )
+                    time.sleep(delay)
+                    continue
+                else:
+                    logger.error(
+                        f"FFmpeg timeout for {file_path} after {MAX_RETRIES} attempts"
+                    )
+                    return None
+
+            except json.JSONDecodeError as e:
+                logger.error(
+                    f"Failed to parse FFmpeg JSON output for {file_path}: {e}"
+                )
+                return None
+
+            except RuntimeError:
+                # Re-raise critical errors (permission, disk full)
+                raise
+
+            except Exception as e:
+                logger.error(
+                    f"Error extracting metadata from {file_path}: {e}"
+                )
+                return None
+
+        # All retries exhausted
+        return None
 
     def upsert_file(self, file_path: Path, metadata: Dict, force_rescan: bool) -> tuple:
         """

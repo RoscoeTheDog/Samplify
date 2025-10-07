@@ -1,0 +1,11 @@
+Guide,Story,Title,Tier,Priority,Effort (hrs),Status,Assigned To,Due Date,Progress %,Test Status,Quality Gate Impact,Notes
+GUIDE 1,1.4,SEC-001: SHA256 Checksum Verification,TIER 1,CRITICAL,4-8,NOT STARTED,,,0%,,"Current: CONCERNS (70) → Target: PASS (90+)",Blocks production - FR7 requirement
+GUIDE 2,1.5,PERF-001: Performance Benchmark Test,TIER 1,CRITICAL,4-10,NOT STARTED,,,0%,,"Current: CONCERNS (80) → Target: PASS (90+)",NFR5 validation - may need GUIDE 10
+GUIDE 3,1.4,REL-001: Network Retry Logic,TIER 2,HIGH,2-4,NOT STARTED,,,0%,,Improves reliability,Quick win - exponential backoff
+GUIDE 8,1.5,REL-002: Enhanced Error Categorization,TIER 2,HIGH,3-5,NOT STARTED,,,0%,,Better error handling,6 error categories + retry
+GUIDE 9,1.5,DATA-001: Transaction Isolation,TIER 3,MEDIUM,1-2,NOT STARTED,,,0%,,Prevents data inconsistency,SERIALIZABLE + batch size 50
+GUIDE 6,1.4,TEST-001: Integration Testing,TIER 3,MEDIUM,3-4,NOT STARTED,,,0%,,Real download validation,CI/CD workflow included
+GUIDE 10,1.5,Performance Optimizations (Conditional),TIER 3,MEDIUM,4-8,NOT STARTED,,,0%,,Only if GUIDE 2 fails,Multiprocessing + batch writes
+GUIDE 4,1.3,Performance Benchmark (NFR7),TIER 4,LOW,2-3,NOT STARTED,,,0%,,Validates minimal impact,<5% overhead target
+GUIDE 5,1.3,Fork Maintenance Plan,TIER 4,LOW,1 + ongoing,NOT STARTED,,,0%,,Long-term maintainability,Monthly monitoring
+GUIDE 7,1.4,Fallback Download Mirrors,TIER 4,LOW,4-6,NOT STARTED,,,0%,,Reduces single point of failure,2-3 mirrors per platform

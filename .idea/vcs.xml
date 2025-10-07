@@ -2,5 +2,10 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/media/raw_samples/audio_dump/adafruit-sounds" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/media/raw_samples/audio_dump/dirt-samples" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/media/raw_samples/audio_dump/tonejs-instruments" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/media/raw_samples/image_dump/test-images" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/media/raw_samples/video_dump/matroska-tests" vcs="Git" />
   </component>
 </project>

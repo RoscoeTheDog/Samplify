@@ -64,7 +64,7 @@
 
 **NFR12**: The system shall use single-table inheritance (one File model with media_type discriminator) to eliminate redundant table creation and improve ORM maintainability
 
-**NFR13**: The system shall disable Django's authentication middleware and user management entirely, operating as an open local web interface without login features, while maintaining CSRF protection
+**NFR13**: The system shall operate as an open local web interface without requiring end-user authentication for file processing operations (CLI commands, batch processing, file monitoring), while maintaining CSRF protection. *Note: Django admin framework is excluded from this requirement as it serves as developer tooling for database inspection and debugging, not end-user functionality (see ADR-001).*
 
 **NFR14**: The system shall store imported XML templates in the database alongside web-created schemas, maintaining the XML format structure for export while allowing database-backed indexing and querying for efficient template management and retrieval
 

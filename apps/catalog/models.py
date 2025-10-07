@@ -358,7 +358,7 @@ class DirectoryMapping(models.Model):
         schema: Parent schema
         input_path: Path to input directory
         output_path: Path to output directory
-        is_watched: Whether this directory is actively monitored
+        monitor_enabled: Whether this directory is actively monitored
     """
 
     schema = models.ForeignKey(
@@ -375,7 +375,7 @@ class DirectoryMapping(models.Model):
         max_length=500,
         help_text="Output directory path",
     )
-    is_watched = models.BooleanField(
+    monitor_enabled = models.BooleanField(
         default=False,
         help_text="Whether this directory is actively monitored",
     )
@@ -394,5 +394,5 @@ class DirectoryMapping(models.Model):
         Returns:
             Mapping description with input/output paths
         """
-        watched = " [WATCHED]" if self.is_watched else ""
+        watched = " [WATCHED]" if self.monitor_enabled else ""
         return f"{self.input_path} → {self.output_path}{watched}"

@@ -28,10 +28,22 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 # APPLICATION DEFINITION
 # ==============================================================================
 
+# ADR-001: Django Admin Framework as Developer Tooling
+# NFR13 requires "no end-user authentication" for file processing operations.
+# Django admin is EXCLUDED from this requirement as it serves as developer
+# tooling for database inspection, debugging, and model management.
+# See: docs/architecture/decisions/ADR-001-admin-framework.md
+#
+# Rationale:
+# - Admin enables debugging for Stories 1.2A/1.2B (AC compliance)
+# - Application is local-only (localhost:8000, no network exposure)
+# - Admin is framework tooling, not end-user authentication
+# - Zero security impact for local deployment model
+
 INSTALLED_APPS = [
-    # Django built-in apps (authentication DISABLED per NFR13)
-    "django.contrib.admin",  # ENABLED for Story 1.2A - model debugging
-    "django.contrib.auth",  # REQUIRED by admin - but no authentication middleware
+    # Django built-in apps
+    "django.contrib.admin",  # Developer tooling (ADR-001, not end-user auth)
+    "django.contrib.auth",  # Required by admin framework (ADR-001)
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
@@ -45,8 +57,8 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",  # ENABLED - security requirement
-    "django.contrib.auth.middleware.AuthenticationMiddleware",  # Required by admin
+    "django.middleware.csrf.CsrfViewMiddleware",  # ENABLED - NFR13 security requirement
+    "django.contrib.auth.middleware.AuthenticationMiddleware",  # Required by admin (ADR-001)
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -62,7 +74,7 @@ TEMPLATES = [
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",  # Required by admin
+                "django.contrib.auth.context_processors.auth",  # Required by admin (ADR-001)
                 "django.contrib.messages.context_processors.messages",
                 "samplify.context_processors.version.version_info",
             ],

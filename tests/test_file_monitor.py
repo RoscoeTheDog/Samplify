@@ -303,24 +303,24 @@ class ManagementCommandTestCase(TestCase):
 
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
-    def test_get_directories_to_monitor_with_is_watched_true(self):
-        """Test get_directories_to_monitor returns watched directories."""
-        # Create watched directory
-        watched_dir = DirectoryMapping.objects.create(
-            schema=self.schema, input_path=self.temp_dir, output_path="/output/", is_watched=True
+    def test_get_directories_to_monitor_with_monitor_enabled_true(self):
+        """Test get_directories_to_monitor returns monitored directories."""
+        # Create monitored directory
+        monitored_dir = DirectoryMapping.objects.create(
+            schema=self.schema, input_path=self.temp_dir, output_path="/output/", monitor_enabled=True
         )
 
         cmd = Command()
         directories = cmd.get_directories_to_monitor()
 
         assert len(directories) == 1
-        assert directories[0].id == watched_dir.id
+        assert directories[0].id == monitored_dir.id
 
-    def test_get_directories_to_monitor_excludes_unwatched(self):
-        """Test get_directories_to_monitor excludes is_watched=False directories."""
-        # Create unwatched directory
+    def test_get_directories_to_monitor_excludes_unmonitored(self):
+        """Test get_directories_to_monitor excludes monitor_enabled=False directories."""
+        # Create unmonitored directory
         DirectoryMapping.objects.create(
-            schema=self.schema, input_path=self.temp_dir, output_path="/output/", is_watched=False
+            schema=self.schema, input_path=self.temp_dir, output_path="/output/", monitor_enabled=False
         )
 
         cmd = Command()
@@ -334,11 +334,11 @@ class ManagementCommandTestCase(TestCase):
 
         # Create directory for schema 1
         dir1 = DirectoryMapping.objects.create(
-            schema=self.schema, input_path="/input1/", output_path="/output1/", is_watched=True
+            schema=self.schema, input_path="/input1/", output_path="/output1/", monitor_enabled=True
         )
 
         # Create directory for schema 2
-        DirectoryMapping.objects.create(schema=schema2, input_path="/input2/", output_path="/output2/", is_watched=True)
+        DirectoryMapping.objects.create(schema=schema2, input_path="/input2/", output_path="/output2/", monitor_enabled=True)
 
         cmd = Command()
         directories = cmd.get_directories_to_monitor(schema_id=self.schema.id)
@@ -381,7 +381,7 @@ class LatencyTestCase(TransactionTestCase):
         temp_dir = tempfile.mkdtemp()
         schema = Schema.objects.create(name="Latency Test Schema", is_active=True)
 
-        DirectoryMapping.objects.create(schema=schema, input_path=temp_dir, output_path="/output/", is_watched=True)
+        DirectoryMapping.objects.create(schema=schema, input_path=temp_dir, output_path="/output/", monitor_enabled=True)
 
         try:
             # Start observer

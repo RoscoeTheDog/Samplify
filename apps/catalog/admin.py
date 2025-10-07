@@ -76,7 +76,7 @@ class DirectoryMappingInline(admin.TabularInline):
 
     model = DirectoryMapping
     extra = 1
-    fields = ("input_path", "output_path", "is_watched")
+    fields = ("input_path", "output_path", "monitor_enabled")
 
 
 @admin.register(Schema)
@@ -141,6 +141,6 @@ class SchemaTransformationAdmin(admin.ModelAdmin):
 class DirectoryMappingAdmin(admin.ModelAdmin):
     """Admin interface for DirectoryMapping model."""
 
-    list_display = ("schema", "input_path", "output_path", "is_watched")
-    list_filter = ("is_watched", "schema")
+    list_display = ("schema", "input_path", "output_path", "monitor_enabled")
+    list_filter = ("monitor_enabled", "schema")
     search_fields = ("input_path", "output_path")

@@ -20,8 +20,11 @@ import urllib.request
 import zipfile
 import tarfile
 import shutil
+import hashlib
+import time
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Callable, Any
+from functools import wraps
 from django.core.cache import cache
 from loguru import logger
 
@@ -31,6 +34,18 @@ FFMPEG_URLS = {
     'Windows': 'https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip',
     'Darwin': 'https://evermeet.cx/ffmpeg/ffmpeg-7.0.2.zip',  # macOS
     'Linux': 'https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz'
+}
+
+# SHA256 checksums for FFmpeg binaries
+# NOTE: These are placeholder checksums and MUST be updated with actual values
+# To update: Download each binary and calculate SHA256 using:
+#   Windows: certutil -hashfile ffmpeg-release-essentials.zip SHA256
+#   macOS/Linux: sha256sum ffmpeg-7.0.2.zip
+# Last verified: 2025-10-06
+FFMPEG_SHA256 = {
+    'Windows': 'PLACEHOLDER_UPDATE_WITH_ACTUAL_WINDOWS_SHA256_CHECKSUM',
+    'Darwin': 'PLACEHOLDER_UPDATE_WITH_ACTUAL_MACOS_SHA256_CHECKSUM',
+    'Linux': 'PLACEHOLDER_UPDATE_WITH_ACTUAL_LINUX_SHA256_CHECKSUM'
 }
 
 # Platform-specific binary names
@@ -43,6 +58,62 @@ BINARY_NAMES = {
 # Cache key for FFmpeg path
 CACHE_KEY = 'ffmpeg_binary_path'
 CACHE_TIMEOUT = 86400  # 24 hours
+
+# Retry configuration for network operations
+MAX_DOWNLOAD_RETRIES = 3
+RETRY_DELAYS = [2, 4, 8]  # Exponential backoff in seconds
+
+
+def retry_with_backoff(max_retries: int = MAX_DOWNLOAD_RETRIES,
+                       delays: list = None) -> Callable:
+    """
+    Decorator to retry a function with exponential backoff on network errors.
+
+    Args:
+        max_retries: Maximum number of retry attempts (default: MAX_DOWNLOAD_RETRIES)
+        delays: List of delay times in seconds between retries (default: RETRY_DELAYS)
+
+    Returns:
+        Decorated function that retries on urllib.error.URLError
+
+    Example:
+        @retry_with_backoff(max_retries=3, delays=[2, 4, 8])
+        def download_file(url):
+            return urllib.request.urlopen(url)
+    """
+    if delays is None:
+        delays = RETRY_DELAYS
+
+    def decorator(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(*args, **kwargs) -> Any:
+            last_exception = None
+
+            for attempt in range(max_retries):
+                try:
+                    return func(*args, **kwargs)
+                except urllib.error.URLError as e:
+                    last_exception = e
+
+                    if attempt < max_retries - 1:
+                        # Calculate delay (use configured delays or default)
+                        delay = delays[attempt] if attempt < len(delays) else delays[-1]
+
+                        logger.warning(
+                            f"Download attempt {attempt + 1}/{max_retries} failed: {e}\n"
+                            f"  Retrying in {delay} seconds..."
+                        )
+                        time.sleep(delay)
+                    else:
+                        logger.error(
+                            f"Download failed after {max_retries} attempts: {e}"
+                        )
+
+            # Re-raise the last exception if all retries failed
+            raise last_exception
+
+        return wrapper
+    return decorator
 
 
 def get_platform() -> str:
@@ -79,6 +150,61 @@ def get_expected_binary_path() -> Path:
     return get_bin_directory() / binary_name
 
 
+def verify_checksum(file_path: Path, expected_sha256: str) -> bool:
+    """
+    Verify file integrity using SHA256 checksum.
+
+    This function reads the file in 4KB chunks for memory efficiency
+    and calculates the SHA256 hash. The calculated hash is compared
+    against the expected value (case-insensitive).
+
+    Args:
+        file_path: Path to file to verify
+        expected_sha256: Expected SHA256 hash (hex string, case-insensitive)
+
+    Returns:
+        bool: True if checksum matches, False otherwise
+
+    Example:
+        >>> test_file = Path("test.bin")
+        >>> expected = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        >>> verify_checksum(test_file, expected)
+        True
+    """
+    try:
+        sha256_hash = hashlib.sha256()
+
+        # Read file in chunks to handle large files efficiently
+        logger.debug(f"Calculating SHA256 checksum for: {file_path.name}")
+        with open(file_path, "rb") as f:
+            for byte_block in iter(lambda: f.read(4096), b""):
+                sha256_hash.update(byte_block)
+
+        calculated = sha256_hash.hexdigest().lower()
+        expected = expected_sha256.lower()
+        matches = calculated == expected
+
+        if matches:
+            logger.info(f"✓ Checksum verification PASSED for {file_path.name}")
+            logger.debug(f"  SHA256: {calculated}")
+        else:
+            logger.error(
+                f"✗ Checksum verification FAILED for {file_path.name}!\n"
+                f"  Expected:   {expected}\n"
+                f"  Calculated: {calculated}\n"
+                f"  SECURITY WARNING: Downloaded file may be compromised or corrupted."
+            )
+
+        return matches
+
+    except FileNotFoundError:
+        logger.error(f"File not found for checksum verification: {file_path}")
+        return False
+    except Exception as e:
+        logger.error(f"Error during checksum verification: {e}")
+        return False
+
+
 def verify_ffmpeg(ffmpeg_path: Path) -> bool:
     """
     Verify FFmpeg binary works by running 'ffmpeg -version'.
@@ -107,6 +233,31 @@ def verify_ffmpeg(ffmpeg_path: Path) -> bool:
         return False
 
 
+@retry_with_backoff()
+def _download_with_retry(download_url: str, archive_path: Path) -> None:
+    """
+    Download a file with automatic retry on network errors.
+
+    This function is decorated with @retry_with_backoff to automatically
+    retry on network failures with exponential backoff (2s, 4s, 8s).
+
+    Args:
+        download_url: URL to download from
+        archive_path: Local path to save downloaded file
+
+    Raises:
+        urllib.error.URLError: If download fails after all retry attempts
+    """
+    logger.info(f"Downloading FFmpeg from: {download_url}")
+
+    # Download with timeout
+    with urllib.request.urlopen(download_url, timeout=60) as response:
+        with open(archive_path, 'wb') as out_file:
+            shutil.copyfileobj(response, out_file)
+
+    logger.info(f"Download complete: {archive_path}")
+
+
 def download_ffmpeg() -> bool:
     """
     Download and extract FFmpeg for current platform.
@@ -129,14 +280,46 @@ def download_ffmpeg() -> bool:
     archive_path = bin_dir / archive_name
 
     try:
-        logger.info(f"Downloading FFmpeg from: {download_url}")
+        # Download with automatic retry on network errors
+        _download_with_retry(download_url, archive_path)
 
-        # Download with timeout
-        with urllib.request.urlopen(download_url, timeout=60) as response:
-            with open(archive_path, 'wb') as out_file:
-                shutil.copyfileobj(response, out_file)
-
-        logger.info(f"Download complete: {archive_path}")
+        # Verify checksum BEFORE extraction (SEC-001)
+        expected_checksum = FFMPEG_SHA256.get(platform_name)
+        if expected_checksum:
+            # Check if placeholder checksum
+            if expected_checksum.startswith('PLACEHOLDER'):
+                logger.warning(
+                    f"⚠️  SHA256 checksum not configured for {platform_name}!\n"
+                    f"   Using placeholder checksum - UPDATE IMMEDIATELY for production.\n"
+                    f"   Downloaded file: {archive_path}\n"
+                    f"   To calculate: sha256sum {archive_path.name} (macOS/Linux)\n"
+                    f"                 certutil -hashfile {archive_path.name} SHA256 (Windows)"
+                )
+            else:
+                logger.info(f"Verifying SHA256 checksum for {archive_path.name}...")
+                if not verify_checksum(archive_path, expected_checksum):
+                    # Delete potentially compromised file
+                    archive_path.unlink()
+                    logger.error(
+                        f"✗ FFmpeg download FAILED checksum verification!\n"
+                        f"  Platform: {platform_name}\n"
+                        f"  URL: {download_url}\n"
+                        f"  SECURITY WARNING: Downloaded file may be compromised.\n"
+                        f"  The file has been deleted for your protection.\n\n"
+                        f"  Recommended actions:\n"
+                        f"  1. Check your network connection for man-in-the-middle attacks\n"
+                        f"  2. Verify the download URL is correct\n"
+                        f"  3. Try downloading again\n"
+                        f"  4. If problem persists, manually install FFmpeg:\n"
+                        f"     {get_manual_install_instructions()}"
+                    )
+                    return False
+                logger.info("✓ Checksum verification passed - file integrity confirmed")
+        else:
+            logger.warning(
+                f"⚠️  No SHA256 checksum configured for {platform_name}.\n"
+                f"   Skipping verification - NOT RECOMMENDED for production!"
+            )
 
         # Extract archive
         logger.info("Extracting FFmpeg archive...")

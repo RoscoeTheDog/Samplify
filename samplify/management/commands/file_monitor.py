@@ -225,7 +225,7 @@ class Command(BaseCommand):
         directories = self.get_directories_to_monitor(schema_id)
 
         if not directories:
-            logger.warning("No directories to monitor (check is_watched flag)")
+            logger.warning("No directories to monitor (check monitor_enabled flag)")
             return
 
         # Create scanning service instance for metadata extraction
@@ -285,9 +285,9 @@ class Command(BaseCommand):
             schema_id: Optional schema ID to filter by
 
         Returns:
-            List of DirectoryMapping objects with is_watched=True
+            List of DirectoryMapping objects with monitor_enabled=True
         """
-        query = DirectoryMapping.objects.filter(is_watched=True)
+        query = DirectoryMapping.objects.filter(monitor_enabled=True)
 
         if schema_id:
             try:

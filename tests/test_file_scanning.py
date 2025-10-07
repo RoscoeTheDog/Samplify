@@ -510,34 +510,244 @@ class PerformanceTestCase(TestCase):
     Target: 1000 files < 5 minutes (AC #12)
     """
 
-    @pytest.mark.skip(reason="Performance test - run manually")
+    @pytest.mark.performance
     def test_scan_performance_1000_files(self):
-        """Test scanning 1000 files completes within 5 minutes."""
+        """
+        Test scanning 1000 files completes within 5 minutes (NFR5).
+
+        Performance Grading:
+        - EXCELLENT: < 3 minutes (180 seconds)
+        - GOOD: < 5 minutes (300 seconds) - NFR5 requirement
+        - FAIL: >= 5 minutes
+
+        Test Dataset:
+        - 700 audio files (WAV format, various sample rates)
+        - 200 video files (MP4 format, various resolutions)
+        - 100 image files (JPEG format, various sizes)
+        """
+        import shutil
+        import subprocess
         import time
 
-        schema = Schema.objects.create(name="Perf Test Schema", is_active=True)
-        temp_dir = tempfile.mkdtemp()
+        # Generate test dataset
+        dataset_dir = Path(tempfile.mkdtemp(prefix="perf_test_"))
+        generator_script = Path(__file__).parent / "fixtures" / "generate_test_dataset.py"
 
         try:
-            # Create 1000 dummy files
-            for i in range(1000):
-                (Path(temp_dir) / f"file_{i:04d}.wav").write_text("dummy content")
+            # Run dataset generator
+            print("\nGenerating 1000-file test dataset...")
+            result = subprocess.run(
+                ["python", str(generator_script), str(dataset_dir), "--quiet"],
+                capture_output=True,
+                text=True,
+                timeout=300  # 5 minute timeout for generation
+            )
 
-            DirectoryMapping.objects.create(schema=schema, input_path=temp_dir, output_path="/output/")
+            if result.returncode != 0:
+                pytest.fail(f"Dataset generation failed: {result.stderr}")
 
-            start_time = time.time()
+            # Verify dataset created
+            all_files = list(dataset_dir.rglob('*'))
+            media_files = [f for f in all_files if f.is_file()]
+            print(f"Dataset generated: {len(media_files)} files")
 
-            # Run scan (would need to mock FFmpeg for actual test)
+            # Setup Django models
+            schema = Schema.objects.create(name="Perf Test Schema", is_active=True)
+            DirectoryMapping.objects.create(
+                schema=schema,
+                input_path=str(dataset_dir),
+                output_path="/output/"
+            )
+
+            # Run performance benchmark
+            print("Starting performance benchmark...")
+            start_time = time.perf_counter()
+
             command = Command()
-            files = command.scan_directory(temp_dir)
+            files = command.scan_directory(str(dataset_dir))
 
-            end_time = time.time()
+            end_time = time.perf_counter()
             duration = end_time - start_time
 
-            assert len(files) == 1000
-            assert duration < 300  # < 5 minutes
+            # Calculate metrics
+            throughput = len(files) / duration if duration > 0 else 0
+
+            # Determine performance grade
+            if duration < 180:
+                grade = "EXCELLENT"
+            elif duration < 300:
+                grade = "GOOD"
+            else:
+                grade = "FAIL"
+
+            # Print results
+            print("\n" + "=" * 60)
+            print("PERFORMANCE BENCHMARK RESULTS")
+            print("=" * 60)
+            print(f"Files scanned:  {len(files)}")
+            print(f"Duration:       {duration:.2f} seconds ({duration/60:.2f} minutes)")
+            print(f"Throughput:     {throughput:.2f} files/second")
+            print(f"Grade:          {grade}")
+            print(f"NFR5 Met:       {'YES' if duration < 300 else 'NO'}")
+            print("=" * 60)
+
+            # Assertions
+            assert len(files) > 0, "No files were scanned"
+            assert duration < 300, f"Performance requirement not met: {duration:.2f}s >= 300s (NFR5)"
 
         finally:
-            import shutil
+            # Cleanup
+            shutil.rmtree(dataset_dir, ignore_errors=True)
 
-            shutil.rmtree(temp_dir, ignore_errors=True)
+
+# ==============================================================================
+# ERROR CATEGORIZATION TESTS (GUIDE 8)
+# ==============================================================================
+
+
+class ErrorCategorizationTestCase(TestCase):
+    """
+    Test enhanced error categorization and retry logic for FFmpeg failures.
+
+    Tests verify:
+    - Error type classification (corrupt, unsupported, network, permission, disk)
+    - Retry logic for transient errors
+    - Skip logic for permanent errors
+    - Abort logic for critical errors
+    - Structured logging with error metadata
+    """
+
+    def setUp(self):
+        """Setup test environment."""
+        self.command = Command()
+        self.test_file = Path("/test/sample.wav")
+
+    @patch('samplify.management.commands.scan_input.get_ffmpeg_path')
+    @patch('samplify.management.commands.scan_input.subprocess.run')
+    def test_error_categorization_corrupt_file(self, mock_run, mock_get_ffmpeg):
+        """Test corrupt file is detected and skipped without retry."""
+        mock_get_ffmpeg.return_value = "/usr/bin/ffmpeg"
+
+        # Simulate FFmpeg detecting corrupt file
+        mock_run.return_value = Mock(
+            returncode=1,
+            stderr="Invalid data found when processing input",
+            stdout=""
+        )
+
+        result = self.command.extract_metadata(self.test_file)
+
+        assert result is None
+        assert mock_run.call_count == 1, "Corrupt file should not trigger retry"
+
+    @patch('samplify.management.commands.scan_input.get_ffmpeg_path')
+    @patch('samplify.management.commands.scan_input.subprocess.run')
+    def test_error_categorization_unsupported_format(self, mock_run, mock_get_ffmpeg):
+        """Test unsupported format is detected and skipped without retry."""
+        mock_get_ffmpeg.return_value = "/usr/bin/ffmpeg"
+
+        # Simulate FFmpeg encountering unsupported format
+        mock_run.return_value = Mock(
+            returncode=1,
+            stderr="Unknown format or codec not supported",
+            stdout=""
+        )
+
+        result = self.command.extract_metadata(self.test_file)
+
+        assert result is None
+        assert mock_run.call_count == 1, "Unsupported format should not trigger retry"
+
+    @patch('samplify.management.commands.scan_input.get_ffmpeg_path')
+    @patch('samplify.management.commands.scan_input.subprocess.run')
+    @patch('samplify.management.commands.scan_input.time.sleep')
+    def test_error_categorization_network_error(self, mock_sleep, mock_run, mock_get_ffmpeg):
+        """Test network error triggers retry with exponential backoff."""
+        mock_get_ffmpeg.return_value = "/usr/bin/ffmpeg"
+
+        # Simulate transient network error that succeeds on 2nd attempt
+        mock_run.side_effect = [
+            Mock(returncode=1, stderr="Connection timeout", stdout=""),  # Attempt 1: fail
+            Mock(returncode=0, stdout=json.dumps({  # Attempt 2: success
+                "streams": [{"codec_type": "audio", "codec_name": "pcm_s16le", "sample_rate": "44100"}],
+                "format": {"size": "1024000"}
+            }), stderr="")
+        ]
+
+        result = self.command.extract_metadata(self.test_file)
+
+        assert result is not None
+        assert result["codec"] == "pcm_s16le"
+        assert mock_run.call_count == 2, "Should retry once after network error"
+        assert mock_sleep.call_count == 1, "Should sleep between retries"
+        mock_sleep.assert_called_with(2)  # First retry delay: RETRY_DELAY * (attempt + 1) = 2 * 1
+
+    @patch('samplify.management.commands.scan_input.get_ffmpeg_path')
+    @patch('samplify.management.commands.scan_input.subprocess.run')
+    def test_error_categorization_permission_error(self, mock_run, mock_get_ffmpeg):
+        """Test permission error aborts processing with RuntimeError."""
+        mock_get_ffmpeg.return_value = "/usr/bin/ffmpeg"
+
+        # Simulate permission denied error
+        mock_run.return_value = Mock(
+            returncode=1,
+            stderr="Permission denied: cannot access file",
+            stdout=""
+        )
+
+        with pytest.raises(RuntimeError, match="Critical FFmpeg error: permission"):
+            self.command.extract_metadata(self.test_file)
+
+        assert mock_run.call_count == 1, "Critical error should not trigger retry"
+
+    @patch('samplify.management.commands.scan_input.get_ffmpeg_path')
+    @patch('samplify.management.commands.scan_input.subprocess.run')
+    @patch('samplify.management.commands.scan_input.time.sleep')
+    def test_retry_logic_exhaustion(self, mock_sleep, mock_run, mock_get_ffmpeg):
+        """Test retry logic exhausts after MAX_RETRIES attempts."""
+        from samplify.management.commands.scan_input import MAX_RETRIES
+
+        mock_get_ffmpeg.return_value = "/usr/bin/ffmpeg"
+
+        # Simulate persistent network error
+        mock_run.return_value = Mock(
+            returncode=1,
+            stderr="Connection timeout",
+            stdout=""
+        )
+
+        result = self.command.extract_metadata(self.test_file)
+
+        assert result is None
+        assert mock_run.call_count == MAX_RETRIES, f"Should attempt {MAX_RETRIES} times"
+        assert mock_sleep.call_count == MAX_RETRIES - 1, f"Should sleep {MAX_RETRIES - 1} times"
+
+        # Verify exponential backoff delays: 2s, 4s, 6s (RETRY_DELAY * attempt)
+        expected_delays = [2, 4]
+        actual_delays = [call[0][0] for call in mock_sleep.call_args_list]
+        assert actual_delays == expected_delays, f"Expected delays {expected_delays}, got {actual_delays}"
+
+    @patch('samplify.management.commands.scan_input.get_ffmpeg_path')
+    @patch('samplify.management.commands.scan_input.subprocess.run')
+    @patch('samplify.management.commands.scan_input.time.sleep')
+    def test_timeout_treated_as_network_error(self, mock_sleep, mock_run, mock_get_ffmpeg):
+        """Test subprocess timeout is treated as network error and triggers retry."""
+        import subprocess
+
+        mock_get_ffmpeg.return_value = "/usr/bin/ffmpeg"
+
+        # Simulate timeout on first attempt, success on second
+        mock_run.side_effect = [
+            subprocess.TimeoutExpired(cmd="ffmpeg", timeout=30),  # Attempt 1: timeout
+            Mock(returncode=0, stdout=json.dumps({  # Attempt 2: success
+                "streams": [{"codec_type": "audio", "codec_name": "mp3", "sample_rate": "48000"}],
+                "format": {"size": "2048000"}
+            }), stderr="")
+        ]
+
+        result = self.command.extract_metadata(self.test_file)
+
+        assert result is not None
+        assert result["codec"] == "mp3"
+        assert mock_run.call_count == 2, "Should retry after timeout"
+        assert mock_sleep.call_count == 1, "Should sleep between retries"

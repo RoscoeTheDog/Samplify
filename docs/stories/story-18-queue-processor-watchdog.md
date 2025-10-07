@@ -529,4 +529,218 @@ pytest tests/test_queue_processor.py::test_24_hour_stability -v --timeout=86400
 ---
 
 ## QA Results
-(To be populated by QA agent after implementation)
+
+### Review Date: 2025-10-06
+
+### Reviewed By: Quinn (Test Architect)
+
+### Code Quality Assessment
+
+**Overall Grade: A- (88/100)**
+
+The queue processor watchdog implementation demonstrates excellent code quality with clean architecture, comprehensive error handling, and strong integration patterns. The implementation successfully coordinates with Story 1.7 (file monitor) and Story 1.6 (batch processing) while preserving CR2 multiprocessing requirements.
+
+**Key Strengths:**
+- ✅ Clean, well-documented code with comprehensive docstrings and type hints
+- ✅ Proper atomic transaction handling for race condition prevention
+- ✅ Excellent integration with Story 1.6 batch processing (CR2 patterns preserved)
+- ✅ Comprehensive error handling with graceful degradation
+- ✅ 100% test pass rate (15/15 tests passing)
+- ✅ Proper signal handling for graceful shutdown (SIGINT/SIGTERM)
+- ✅ Good separation of concerns (polling, processing, status management)
+
+**Areas for Improvement:**
+- **MEDIUM**: Schema filtering not implemented - queue processor queries all files regardless of schema (AC#5 not fully met)
+- **LOW**: SQLite limitation acknowledged but select_for_update(skip_locked=True) not portable to production databases
+- **LOW**: No metrics/monitoring instrumentation for production observability
+- **LOW**: Missing retry logic with exponential backoff for database connection errors
+
+### Refactoring Performed
+
+**None.** Per QA protocol, I identified improvements but did not perform refactoring to maintain stability of the working implementation. The dev team should address the items in the Improvements Checklist below.
+
+### Compliance Check
+
+- **Coding Standards**: ✓ **PASS** - Follows Python/Django conventions, PEP 8 compliant, comprehensive type hints
+- **Project Structure**: ✓ **PASS** - Correct location for management command (samplify/management/commands/)
+- **Testing Strategy**: ✓ **PASS** - 15 comprehensive tests covering all acceptance criteria
+- **All ACs Met**: ⚠️ **PARTIAL** - AC#5 schema filtering not implemented correctly (filters by active schema but doesn't filter files by schema relationship)
+- **Story Integration**: ✓ **PASS** - Integrates correctly with Story 1.6 (batch processing) and Story 1.7 (file monitor)
+
+### Requirements Traceability (Given-When-Then)
+
+**AC1-2: Management Command & Database Polling**
+- **Given** a Django project needing automated file processing
+- **When** developer runs `python manage.py queue_processor`
+- **Then** command polls database for files with status='pending' every 5 seconds
+- **Tests**: `test_poll_finds_pending_files`, `test_poll_ignores_non_pending_files`
+- **Status**: ✅ COVERED
+
+**AC3-4: Batch Processing Integration & Status Management**
+- **Given** pending files in database queue
+- **When** queue processor polls and finds files
+- **Then** files are processed via Story 1.6 batch processor and status updated (pending → processing → completed/failed)
+- **Tests**: `test_batch_processor_called_with_files`, `test_status_transition_pending_to_processing`, `test_failed_status_on_processing_error`
+- **Status**: ✅ COVERED
+
+**AC5: Schema Configuration Respect**
+- **Given** active schema configuration
+- **When** queue processor queries pending files
+- **Then** only files associated with active schema are processed
+- **Tests**: `test_schema_id_argument` (partial coverage)
+- **Status**: ⚠️ **PARTIAL** - Schema argument handled but file filtering by schema not implemented
+
+**AC6-7: Polling Configuration & Background Service**
+- **Given** configurable polling interval
+- **When** service runs as background process
+- **Then** polling respects interval and runs continuously until interrupted
+- **Tests**: `test_custom_poll_interval`, `test_poll_respects_batch_size`
+- **Status**: ✅ COVERED
+
+**AC8-11: Integration & Multiprocessing**
+- **Given** File model, batch processing, and file monitor integration
+- **When** queue processor operates
+- **Then** integrates with all dependencies and preserves CR2 multiprocessing patterns
+- **Tests**: `test_batch_processor_called_with_files`, `test_workers_scheduled_on_first_batch`
+- **Status**: ✅ COVERED
+
+**AC12-13: Processing Timing & Race Conditions**
+- **Given** files arriving via file monitor
+- **When** queue processor polls database
+- **Then** processing starts within polling interval with no race conditions
+- **Tests**: `test_select_for_update_prevents_double_processing`, `test_poll_orders_by_created_at`
+- **Status**: ✅ COVERED (Note: SQLite limitation acknowledged in test comments)
+
+**AC14-15: Stability & Graceful Shutdown**
+- **Given** long-running queue processor service
+- **When** interrupted with SIGINT/SIGTERM
+- **Then** service shuts down gracefully
+- **Tests**: `test_sigint_stops_processing_loop`, `test_sigterm_stops_processing_loop`, `test_continues_after_polling_error`
+- **Status**: ✅ COVERED (Note: 24-hour stability not tested)
+
+### Improvements Checklist
+
+- [ ] **HIGH PRIORITY**: Implement schema-based file filtering (AC#5)
+  - **Issue**: Files are queried without filtering by schema relationship (samplify/management/commands/queue_processor.py:153-156)
+  - **Current**: `File.objects.filter(processing_status="pending")` - no schema filter
+  - **Required**: Files should be filtered by schema relationship (e.g., via DirectoryMapping or similar)
+  - **Impact**: Queue processor may process files not associated with the active schema
+  - **Refs**: ["samplify/management/commands/queue_processor.py:153-156"]
+
+- [ ] **MEDIUM PRIORITY**: Add production database compatibility notes
+  - **Issue**: Code uses select_for_update(skip_locked=True) but tests acknowledge SQLite limitations
+  - **Recommended**: Document PostgreSQL/MySQL requirement for production deployment
+  - **Impact**: Production deployment clarity and database selection guidance
+  - **Refs**: ["samplify/management/commands/queue_processor.py:152", "tests/test_queue_processor.py:168-174"]
+
+- [ ] **MEDIUM PRIORITY**: Add retry logic for database connection errors
+  - **Issue**: Database errors logged but no exponential backoff retry
+  - **Recommended**: Implement exponential backoff (3 retries with 1s, 2s, 4s delays)
+  - **Impact**: Improves reliability during transient database issues
+  - **Refs**: ["samplify/management/commands/queue_processor.py:174-176"]
+
+- [ ] **LOW PRIORITY**: Add metrics/monitoring instrumentation
+  - **Issue**: No metrics emitted for production observability
+  - **Recommended**: Add counters for files_processed, errors, latency metrics
+  - **Impact**: Better production monitoring and debugging
+  - **Refs**: ["samplify/management/commands/queue_processor.py:132-176"]
+
+- [ ] **LOW PRIORITY**: Execute 24-hour stability test (AC14)
+  - **Current**: No long-running stability test implemented
+  - **Recommended**: Run queue processor for 24+ hours to validate stability requirement
+  - **Impact**: Validates AC14 compliance for production readiness
+  - **Refs**: ["tests/test_queue_processor.py"]
+
+### Security Review
+
+✅ **PASS** - No security concerns identified.
+
+- Database queries use Django ORM (no SQL injection vectors)
+- Atomic transactions prevent race conditions
+- No file system operations or arbitrary code execution
+- Proper signal handling for graceful shutdown
+- No sensitive data logged
+
+### Performance Considerations
+
+✓ **GOOD** with minor concerns
+
+**Positive Aspects:**
+- Efficient database polling with batch size limits
+- Proper use of select_for_update to prevent locking overhead
+- Worker pool reused across iterations (no repeated spawning)
+- Atomic transactions minimize lock contention
+
+**Concerns:**
+1. **Polling overhead**: Continuous polling every 5 seconds regardless of queue depth
+2. **No backpressure handling**: Large pending queues could overwhelm batch processor
+3. **SQLite limitations**: select_for_update(skip_locked=True) has limited support on SQLite (acknowledged in tests)
+
+**Recommendations:**
+- Consider adaptive polling (faster when queue is active, slower when idle)
+- Add queue depth monitoring and backpressure mechanisms
+- Document PostgreSQL/MySQL requirement for production
+- Add circuit breaker for batch processor failures
+
+### Non-Functional Requirements (NFR) Validation
+
+**NFR (Implicit): Processing Latency (AC12)**
+- **Status**: ✓ **PASS** - Processing starts within polling interval
+- **Notes**: Default 5-second interval meets reasonable latency expectations
+
+**NFR (Implicit): Reliability & Error Handling (AC14)**
+- **Status**: ✓ **PASS** - Good error handling with graceful degradation
+- **Notes**: Continues processing after errors, logs failures appropriately
+
+**NFR (Implicit): Race Condition Prevention (AC13)**
+- **Status**: ✓ **PASS** - Atomic transactions prevent double-processing
+- **Notes**: SQLite limitation acknowledged but pattern correct for production databases
+
+**NFR (Implicit): Maintainability**
+- **Status**: ✓ **PASS** - Clean code structure with excellent documentation
+- **Notes**: Type hints, docstrings, and clear separation of concerns
+
+**NFR (Implicit): Stability (24+ hours operation - AC14)**
+- **Status**: ⚠️ **CONCERNS** - No long-running stability test
+- **Notes**: Code patterns suggest stability but not validated in tests
+
+### Files Modified During Review
+
+**None** - No files modified during this review. All improvements listed as recommendations for dev team.
+
+### Gate Status
+
+**Gate: CONCERNS** → docs/qa/gates/1.8-queue-processor-watchdog.yml
+
+**Reason**: Implementation is functionally solid with excellent error handling and test coverage, but has a MEDIUM priority issue where AC#5 (schema filtering) is not fully implemented. Files are queried without filtering by schema relationship. Additionally, long-running stability (AC14) is not validated in tests.
+
+**Risk Profile**: N/A (not generated for this review)
+**NFR Assessment**: N/A (not generated for this review)
+
+### Recommended Status
+
+⚠️ **Changes Required** before Done:
+1. **MUST FIX**: Implement schema-based file filtering to fully meet AC#5
+2. **SHOULD FIX**: Add test or documentation for 24-hour stability requirement (AC14)
+3. **CONSIDER**: Document production database requirements (PostgreSQL/MySQL vs SQLite)
+
+**(Story owner decides final status)**
+
+### Additional Notes
+
+**Schema Filtering Gap - Action Required:**
+The story AC#5 explicitly states *"Service respects active schema configuration"*, but the implementation at samplify/management/commands/queue_processor.py:153-156 queries all pending files without filtering by schema relationship. This requires clarification:
+- Option A: Add schema filter to File query (e.g., via DirectoryMapping.schema relationship)
+- Option B: Update AC to reflect that schema is used for batch processing rules only, not file filtering
+- Option C: Verify if File model has direct schema relationship that should be used
+
+This is a functional gap that should be addressed for story completion as it represents a requirements-implementation mismatch.
+
+**Integration Quality:**
+The batch processing integration is well-implemented with proper delegation to Story 1.6's BatchCommand. The multiprocessing patterns (CR2) are correctly preserved through delegation.
+
+**Testing Quality:**
+15 passing tests provide excellent coverage of core functionality. The race condition test appropriately acknowledges SQLite limitations while validating the atomic transaction pattern that will work correctly in production databases.
+
+**Production Readiness:**
+After resolving the schema filtering gap, this implementation is production-ready for PostgreSQL/MySQL deployments. SQLite limitations are well-documented in tests and should be noted in deployment documentation.
