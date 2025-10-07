@@ -757,9 +757,9 @@ Story 1.3 uses custom loguru fork (https://github.com/RoscoeTheDog/loguru) with 
 | Story | Priority | Effort | Status | Assigned | Deadline | Blocked By |
 |-------|----------|--------|--------|----------|----------|------------|
 | R1.1  | 🔴 HIGH  | 1h     | 📋 TODO | Architect | TBD | - |
-| R1.2  | 🔴 HIGH  | 1h     | 📋 TODO | Dev | TBD | - |
-| R1.3  | 🔴 HIGH  | 2h     | 📋 TODO | Dev | TBD | - |
-| R1.4  | 🔴 HIGH  | 30m    | 📋 TODO | Dev | TBD | - |
+| R1.2  | 🔴 HIGH  | 1h     | ✅ DONE | Dev (James) | 2025-10-07 | - |
+| R1.3  | 🔴 HIGH  | 2h     | ✅ DONE | Dev (James) | 2025-10-07 | - |
+| R1.4  | 🔴 HIGH  | 30m    | ✅ DONE | Dev (James) | 2025-10-07 | - |
 | R2.1  | 🟡 MED   | 2h     | 📋 TODO | Dev+SM | TBD | R1.1 |
 | R2.2  | 🟡 MED   | 30m    | 📋 TODO | QA | TBD | - |
 | R2.3  | 🟡 MED   | 3h     | 📋 TODO | Dev | TBD | R2.2 |
